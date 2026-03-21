@@ -6,163 +6,136 @@
 <title>今日のスケジュール</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --sky:#E8F4FD; --blue:#4A90D9; --blue-dark:#2C6FAC;
-    --green:#5CB85C; --green-light:#EAF7EA;
-    --orange:#FF8C42; --orange-light:#FFF3EB;
-    --pink:#F06292; --pink-light:#FDE8F0;
-    --yellow:#FFD54F; --yellow-light:#FFFDE7;
-    --purple:#9C6FD6; --purple-light:#F3EDFF;
-    --gray:#F5F5F5; --text:#2D2D2D; --text-light:#888;
-    --radius:20px; --shadow:0 4px 16px rgba(0,0,0,0.12);
-  }
+  :root{--sky:#E8F4FD;--blue:#4A90D9;--blue-dark:#2C6FAC;--green:#5CB85C;--green-light:#EAF7EA;--orange:#FF8C42;--orange-light:#FFF3EB;--pink:#F06292;--pink-light:#FDE8F0;--yellow:#FFD54F;--yellow-light:#FFFDE7;--purple:#9C6FD6;--purple-light:#F3EDFF;--gray:#F5F5F5;--text:#2D2D2D;--text-light:#888;--radius:20px;--shadow:0 4px 16px rgba(0,0,0,0.12);}
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#E8F4FD 0%,#FFF8E1 50%,#FCE4EC 100%);min-height:100vh;color:var(--text);padding-bottom:80px;}
-
-  /* HEADER */
   header{background:white;padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100;}
   .header-title .jp{font-size:18px;font-weight:900;color:var(--blue-dark);}
   .header-title .ko{font-size:11px;font-weight:600;color:var(--text-light);}
   .date-badge{background:var(--blue);color:white;border-radius:12px;padding:5px 12px;font-size:13px;font-weight:700;}
-
-  /* TABS */
-  .tabs{display:flex;margin:12px 12px 0;background:white;border-radius:16px;padding:4px;box-shadow:var(--shadow);gap:4px;}
-  .tab{flex:1;padding:9px 6px;border:none;background:transparent;border-radius:12px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:700;color:var(--text-light);cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px;}
-  .tab .ti{font-size:20px;}
+  .tabs{display:flex;margin:12px 12px 0;background:white;border-radius:16px;padding:4px;box-shadow:var(--shadow);gap:3px;}
+  .tab{flex:1;padding:8px 4px;border:none;background:transparent;border-radius:12px;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;color:var(--text-light);cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .tab .ti{font-size:18px;}
   .tab.active{background:var(--blue);color:white;box-shadow:0 2px 8px rgba(74,144,217,0.4);}
-
-  /* PANELS */
-  .panel{display:none;padding:12px;}
-  .panel.active{display:block;}
-
-  /* SCHEDULE HEADER */
+  .panel{display:none;padding:12px;}.panel.active{display:block;}
   .sch-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
   .sch-title{font-size:14px;font-weight:800;color:var(--blue-dark);}
   .add-btn{background:var(--orange);color:white;border:none;border-radius:12px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 3px 8px rgba(255,140,66,0.4);}
-
-  /* ── STEP CARD ── 사진 크게! */
   .step-card{background:white;border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden;animation:slideIn 0.3s ease;position:relative;}
   @keyframes slideIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-
-  /* 번호 배지 */
   .step-num{position:absolute;top:10px;left:10px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:white;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,0.25);}
-  /* 완료 버튼 */
   .step-done{position:absolute;top:10px;right:10px;width:42px;height:42px;border-radius:50%;border:3px solid rgba(255,255,255,0.8);background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:all 0.2s;z-index:2;}
   .step-done.done{background:var(--green);border-color:var(--green);color:white;}
-
-  /* 메인 사진 — 크게! */
   .step-photo{width:100%;height:220px;background:var(--gray);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;}
   .step-photo img{width:100%;height:100%;object-fit:cover;}
   .step-photo-ph{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-light);}
-  .step-photo-ph .big{font-size:64px;}
-  .step-photo-ph span{font-size:12px;font-weight:600;}
-
-  /* 완료 오버레이 */
+  .step-photo-ph .big{font-size:64px;}.step-photo-ph span{font-size:12px;font-weight:600;}
   .step-card.completed .step-photo::after{content:'✅';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(92,184,92,0.55);display:flex;align-items:center;justify-content:center;font-size:80px;}
-
-  /* 텍스트 영역 */
   .step-body{padding:10px 14px 12px;}
   .step-jp{font-size:24px;font-weight:900;color:var(--text);}
   .step-ko{font-size:13px;font-weight:600;color:var(--text-light);margin-top:2px;}
   .step-card.completed .step-jp{text-decoration:line-through;color:#aaa;}
-
-  /* CHAIN (다음 단계) — 사진 크게! */
   .chain-list{margin-top:8px;}
-  .chain-item{margin-top:8px;display:flex;flex-direction:column;gap:0;}
+  .chain-item{margin-top:8px;display:flex;flex-direction:column;}
   .chain-arrow-row{text-align:center;font-size:28px;color:var(--blue);line-height:1.2;}
   .chain-box{background:var(--sky);border-radius:14px;overflow:hidden;}
-  /* 체인 사진 크게 */
   .chain-photo{width:100%;height:160px;background:#dce8f5;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;}
   .chain-photo img{width:100%;height:100%;object-fit:cover;}
   .chain-photo-ph{font-size:48px;}
-  .chain-info{padding:8px 12px 10px;display:flex;align-items:center;justify-content:space-between;}
+  .chain-info{padding:8px 12px 10px;}
   .chain-texts .jp{font-size:17px;font-weight:800;}
   .chain-texts .ko{font-size:11px;font-weight:600;color:var(--text-light);}
-
-  /* STEP ACTIONS */
   .step-actions{display:flex;gap:6px;margin-top:8px;border-top:1px solid #f0f0f0;padding-top:8px;}
   .s-btn{flex:1;padding:8px 4px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;}
-  .s-edit{background:var(--sky);color:var(--blue-dark);}
-  .s-del{background:#FFEBEE;color:#C62828;}
-  .s-up,.s-dn{background:var(--gray);color:var(--text-light);}
+  .s-edit{background:var(--sky);color:var(--blue-dark);}.s-del{background:#FFEBEE;color:#C62828;}.s-up,.s-dn{background:var(--gray);color:var(--text-light);}
+
+  /* ── ROUTINE TAB ── */
+  .routine-section{margin-bottom:20px;}
+  /* 요일 선택 바 */
+  .day-bar{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;}
+  .day-btn{flex-shrink:0;width:42px;height:42px;border-radius:50%;border:2px solid #ddd;background:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--text-light);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+  .day-btn.active{background:var(--blue);color:white;border-color:var(--blue);box-shadow:0 2px 8px rgba(74,144,217,0.4);}
+  .day-btn.has-routine{border-color:var(--green);color:var(--green);}
+  .day-btn.active.has-routine{background:var(--green);border-color:var(--green);color:white;}
+  /* 루틴 템플릿 카드 */
+  .routine-card{background:white;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
+  .routine-icon{font-size:32px;flex-shrink:0;}
+  .routine-info{flex:1;}
+  .routine-name{font-size:16px;font-weight:800;color:var(--text);}
+  .routine-meta{font-size:12px;font-weight:600;color:var(--text-light);margin-top:2px;}
+  .routine-actions{display:flex;gap:6px;flex-shrink:0;}
+  .r-load-btn{background:var(--blue);color:white;border:none;border-radius:10px;padding:7px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+  .r-del-btn{background:#FFEBEE;color:#C62828;border:none;border-radius:10px;padding:7px 10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+  /* 현재 일정 저장 버튼 */
+  .save-routine-bar{background:white;border-radius:14px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;}
+  .save-routine-bar input{flex:1;padding:10px 12px;border:2px solid #E0E0E0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;outline:none;}
+  .save-routine-bar input:focus{border-color:var(--blue);}
+  .save-r-btn{background:var(--green);color:white;border:none;border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;}
+  /* 요일 루틴 섹션 */
+  .day-routine-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .day-routine-title{font-size:14px;font-weight:800;color:var(--blue-dark);}
+  .set-day-btn{background:var(--purple);color:white;border:none;border-radius:10px;padding:7px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+  .day-routine-preview{background:white;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);}
+  .day-preview-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f5f5f5;}
+  .day-preview-item:last-child{border-bottom:none;}
+  .dpi-emoji{font-size:22px;flex-shrink:0;}
+  .dpi-text{font-size:14px;font-weight:700;}
+  .no-day-routine{text-align:center;padding:20px;color:var(--text-light);font-size:13px;font-weight:600;}
+  /* 오늘 요일 로드 버튼 */
+  .today-load-bar{background:linear-gradient(135deg,var(--blue),var(--blue-dark));border-radius:14px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 4px 12px rgba(74,144,217,0.35);}
+  .tlb-text{color:white;}
+  .tlb-title{font-size:14px;font-weight:800;}
+  .tlb-sub{font-size:11px;font-weight:600;opacity:0.85;margin-top:2px;}
+  .tlb-btn{background:white;color:var(--blue-dark);border:none;border-radius:10px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
 
   /* LIBRARY */
   .sec-lbl{font-size:13px;font-weight:800;color:var(--blue-dark);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
   .card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
   .lib-card{background:white;border-radius:14px;padding:10px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,0.08);cursor:pointer;transition:transform 0.15s;border:3px solid transparent;text-align:center;}
   .lib-card:active{transform:scale(0.94);}
-  .lib-card .ce{font-size:34px;}
-  .lib-card .cj{font-size:12px;font-weight:800;color:var(--text);}
-  .lib-card .ck{font-size:10px;font-weight:600;color:var(--text-light);}
-
+  .lib-card .ce{font-size:34px;}.lib-card .cj{font-size:12px;font-weight:800;color:var(--text);}.lib-card .ck{font-size:10px;font-weight:600;color:var(--text-light);}
   /* COMM */
   .comm-sec{margin-bottom:18px;}
   .comm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
   .cc{border-radius:16px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:var(--shadow);transition:transform 0.15s;text-align:center;border:none;}
   .cc:active{transform:scale(0.92);}
-  .cc .ce{font-size:38px;}
-  .cc .cj{font-size:13px;font-weight:900;}
-  .cc .ck{font-size:10px;font-weight:600;opacity:0.65;}
-  .cc.yes{background:var(--green-light);color:var(--green);}
-  .cc.no{background:#FFEBEE;color:#E53935;}
-  .cc.wait{background:var(--yellow-light);color:#F57F17;}
-  .cc.toilet{background:var(--purple-light);color:var(--purple);}
-  .cc.eat{background:var(--orange-light);color:var(--orange);}
-  .cc.play{background:var(--pink-light);color:var(--pink);}
-  .cc.tired{background:#E8EAF6;color:#3949AB;}
-  .cc.hug{background:#FCE4EC;color:#AD1457;}
-  .cc.water{background:#E1F5FE;color:#0277BD;}
-
+  .cc .ce{font-size:38px;}.cc .cj{font-size:13px;font-weight:900;}.cc .ck{font-size:10px;font-weight:600;opacity:0.65;}
+  .cc.yes{background:var(--green-light);color:var(--green);}.cc.no{background:#FFEBEE;color:#E53935;}.cc.wait{background:var(--yellow-light);color:#F57F17;}
+  .cc.toilet{background:var(--purple-light);color:var(--purple);}.cc.eat{background:var(--orange-light);color:var(--orange);}.cc.play{background:var(--pink-light);color:var(--pink);}
+  .cc.tired{background:#E8EAF6;color:#3949AB;}.cc.hug{background:#FCE4EC;color:#AD1457;}.cc.water{background:#E1F5FE;color:#0277BD;}
   /* MODAL */
   .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center;}
   .modal-overlay.open{display:flex;}
   .modal{background:white;border-radius:24px 24px 0 0;padding:18px;width:100%;max-height:92vh;overflow-y:auto;animation:slideUp 0.3s ease;}
   @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
   .modal-title{font-size:16px;font-weight:900;color:var(--blue-dark);margin-bottom:14px;text-align:center;}
-  .fg{margin-bottom:12px;}
-  .fl{font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:5px;display:block;}
+  .fg{margin-bottom:12px;}.fl{font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:5px;display:block;}
   .fi{width:100%;padding:11px 13px;border:2px solid #E0E0E0;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;outline:none;transition:border-color 0.2s;}
   .fi:focus{border-color:var(--blue);}
   .ep{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:5px;}
   .eo{width:100%;aspect-ratio:1;border:3px solid transparent;border-radius:10px;background:var(--gray);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
   .eo.sel{border-color:var(--blue);background:var(--sky);}
-
-  /* 사진 업로드 — 모달에서도 크게 */
   .pu{width:100%;height:160px;border:3px dashed #ccc;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:var(--gray);font-size:13px;font-weight:700;color:var(--text-light);overflow:hidden;}
   .pu img{width:100%;height:100%;object-fit:cover;border-radius:11px;}
-
-  /* CHAIN EDITOR */
   .chain-ed{margin-top:12px;}
   .chain-ed-hdr{font-size:13px;font-weight:800;color:var(--blue-dark);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
   .add-chain-btn{background:var(--blue);color:white;border:none;border-radius:10px;padding:6px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
   .chain-entry{background:var(--sky);border-radius:14px;padding:10px 12px;margin-bottom:8px;}
   .ce-hdr{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:12px;font-weight:800;color:var(--blue-dark);}
   .ce-del{margin-left:auto;width:24px;height:24px;border-radius:50%;border:none;background:#FFEBEE;color:#C62828;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-  /* 체인 사진 모달에서도 크게 */
   .chain-pu{width:100%;height:130px;border:2px dashed #bcd;border-radius:10px;background:white;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-light);overflow:hidden;margin-top:6px;}
   .chain-pu img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
-
   .modal-actions{display:flex;gap:10px;margin-top:14px;}
   .btn-cancel{flex:1;padding:13px;border:none;background:var(--gray);border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;color:var(--text-light);}
   .btn-save{flex:2;padding:13px;border:none;background:var(--blue);border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;color:white;box-shadow:0 4px 12px rgba(74,144,217,0.4);}
-
-  /* TOAST */
   .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:white;padding:10px 20px;border-radius:20px;font-size:14px;font-weight:700;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
   .toast.show{opacity:1;}
-
-  /* EMPTY */
   .empty{text-align:center;padding:40px 20px;color:var(--text-light);}
-  .empty .ee{font-size:60px;margin-bottom:10px;}
-  .empty .ej{font-size:17px;font-weight:800;margin-bottom:4px;}
-  .empty .ek{font-size:13px;font-weight:600;}
-
-  .c1{background:#4A90D9}.c2{background:#5CB85C}.c3{background:#FF8C42}
-  .c4{background:#F06292}.c5{background:#9C6FD6}.c6{background:#26B5A0}
-  .c7{background:#FFB300}.c8{background:#EF5350}
+  .empty .ee{font-size:60px;margin-bottom:10px;}.empty .ej{font-size:17px;font-weight:800;margin-bottom:4px;}.empty .ek{font-size:13px;font-weight:600;}
+  .c1{background:#4A90D9}.c2{background:#5CB85C}.c3{background:#FF8C42}.c4{background:#F06292}.c5{background:#9C6FD6}.c6{background:#26B5A0}.c7{background:#FFB300}.c8{background:#EF5350}
 </style>
 </head>
 <body>
-
 <header>
   <div class="header-title">
     <div class="jp">📅 今日のスケジュール</div>
@@ -172,9 +145,10 @@
 </header>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('schedule')"><span class="ti">📋</span><span>スケジュール<br><small>일정</small></span></button>
-  <button class="tab" onclick="switchTab('library')"><span class="ti">🗂️</span><span>カード<br><small>카드</small></span></button>
-  <button class="tab" onclick="switchTab('comm')"><span class="ti">💬</span><span>きもち<br><small>소통</small></span></button>
+  <button class="tab active" onclick="switchTab('schedule')"><span class="ti">📋</span><span>일정<br>スケジュール</span></button>
+  <button class="tab" onclick="switchTab('routine')"><span class="ti">🔁</span><span>루틴<br>ルーティン</span></button>
+  <button class="tab" onclick="switchTab('library')"><span class="ti">🗂️</span><span>카드<br>カード</span></button>
+  <button class="tab" onclick="switchTab('comm')"><span class="ti">💬</span><span>소통<br>きもち</span></button>
 </div>
 
 <!-- SCHEDULE -->
@@ -184,6 +158,36 @@
     <button class="add-btn" onclick="openAddModal()">➕ 追加</button>
   </div>
   <div id="stepList"></div>
+</div>
+
+<!-- ROUTINE -->
+<div class="panel" id="panel-routine">
+
+  <!-- 오늘 요일 루틴 자동 로드 배너 -->
+  <div class="today-load-bar" id="todayLoadBar" onclick="loadTodayDayRoutine()">
+    <div class="tlb-text">
+      <div class="tlb-title" id="todayLoadTitle">🗓️ 오늘 요일 루틴 불러오기</div>
+      <div class="tlb-sub" id="todayLoadSub">요일 루틴이 설정되어 있으면 자동 로드</div>
+    </div>
+    <button class="tlb-btn">불러오기</button>
+  </div>
+
+  <!-- 루틴 템플릿 저장/불러오기 -->
+  <div class="routine-section">
+    <div class="sec-lbl">💾 ルーティンテンプレート / 루틴 템플릿</div>
+    <div class="save-routine-bar">
+      <input type="text" id="routineNameInput" placeholder="루틴 이름 입력 (예: 학교 가는 날)" maxlength="20">
+      <button class="save-r-btn" onclick="saveCurrentAsRoutine()">현재 일정 저장</button>
+    </div>
+    <div id="routineList"></div>
+  </div>
+
+  <!-- 요일별 루틴 설정 -->
+  <div class="routine-section">
+    <div class="sec-lbl">📅 요일별 루틴 / 曜日ルーティン</div>
+    <div class="day-bar" id="dayBar"></div>
+    <div id="dayRoutineContent"></div>
+  </div>
 </div>
 
 <!-- LIBRARY -->
@@ -197,70 +201,55 @@
 
 <!-- COMM -->
 <div class="panel" id="panel-comm">
-  <div class="comm-sec">
-    <div class="sec-lbl">✅ 基本の返事 / 기본 응답</div>
-    <div class="comm-grid">
-      <button class="cc yes" onclick="speak('はい','네')"><span class="ce">👍</span><span class="cj">はい</span><span class="ck">네</span></button>
-      <button class="cc no" onclick="speak('いいえ','아니요')"><span class="ce">👎</span><span class="cj">いいえ</span><span class="ck">아니요</span></button>
-      <button class="cc wait" onclick="speak('ちょっとまって','잠깐만요')"><span class="ce">✋</span><span class="cj">ちょっとまって</span><span class="ck">잠깐만요</span></button>
-      <button class="cc" onclick="speak('もっと','더')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">➕</span><span class="cj">もっと</span><span class="ck">더 해요</span></button>
-      <button class="cc" onclick="speak('おわった','끝났어요')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🏁</span><span class="cj">おわった</span><span class="ck">끝났어요</span></button>
-      <button class="cc" onclick="speak('てつだって','도와주세요')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">🙋</span><span class="cj">てつだって</span><span class="ck">도와주세요</span></button>
-    </div>
-  </div>
-  <div class="comm-sec">
-    <div class="sec-lbl">😊 きもち / 감정</div>
-    <div class="comm-grid">
-      <button class="cc yes" onclick="speak('うれしい','기뻐요')"><span class="ce">😄</span><span class="cj">うれしい</span><span class="ck">기뻐요</span></button>
-      <button class="cc no" onclick="speak('かなしい','슬퍼요')"><span class="ce">😢</span><span class="cj">かなしい</span><span class="ck">슬퍼요</span></button>
-      <button class="cc no" onclick="speak('おこった','화났어요')"><span class="ce">😠</span><span class="cj">おこった</span><span class="ck">화났어요</span></button>
-      <button class="cc no" onclick="speak('こわい','무서워요')"><span class="ce">😨</span><span class="cj">こわい</span><span class="ck">무서워요</span></button>
-      <button class="cc tired" onclick="speak('つかれた','피곤해요')"><span class="ce">😴</span><span class="cj">つかれた</span><span class="ck">피곤해요</span></button>
-      <button class="cc wait" onclick="speak('いやだ','싫어요')"><span class="ce">🙅</span><span class="cj">いやだ</span><span class="ck">싫어요</span></button>
-      <button class="cc hug" onclick="speak('すき','좋아요')"><span class="ce">❤️</span><span class="cj">すき</span><span class="ck">좋아요</span></button>
-      <button class="cc" onclick="speak('びっくりした','깜짝 놀랐어요')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">😲</span><span class="cj">びっくりした</span><span class="ck">깜짝 놀랐어요</span></button>
-      <button class="cc" onclick="speak('たのしい','재미있어요')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">🎉</span><span class="cj">たのしい</span><span class="ck">재미있어요</span></button>
-    </div>
-  </div>
-  <div class="comm-sec">
-    <div class="sec-lbl">🩺 からだ / 몸</div>
-    <div class="comm-grid">
-      <button class="cc" onclick="speak('いたい','아파요')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤕</span><span class="cj">いたい</span><span class="ck">아파요</span></button>
-      <button class="cc" onclick="speak('あたまいたい','머리 아파요')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤯</span><span class="cj">あたまいたい</span><span class="ck">머리 아파요</span></button>
-      <button class="cc" onclick="speak('おなかいたい','배 아파요')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤢</span><span class="cj">おなかいたい</span><span class="ck">배 아파요</span></button>
-      <button class="cc toilet" onclick="speak('トイレ','화장실')"><span class="ce">🚽</span><span class="cj">トイレ</span><span class="ck">화장실</span></button>
-      <button class="cc" onclick="speak('ねつがある','열이 나요')" style="background:#FFEBEE;color:#C62828"><span class="ce">🌡️</span><span class="cj">ねつがある</span><span class="ck">열이 나요</span></button>
-      <button class="cc" onclick="speak('きもちわるい','토할 것 같아요')" style="background:var(--green-light);color:#1B5E20"><span class="ce">🤮</span><span class="cj">きもちわるい</span><span class="ck">토할 것 같아요</span></button>
-    </div>
-  </div>
-  <div class="comm-sec">
-    <div class="sec-lbl">🙏 ほしいもの / 필요한 것</div>
-    <div class="comm-grid">
-      <button class="cc eat" onclick="speak('おなかすいた','배고파요')"><span class="ce">🍱</span><span class="cj">おなかすいた</span><span class="ck">배고파요</span></button>
-      <button class="cc water" onclick="speak('みずがのみたい','물 마시고 싶어요')"><span class="ce">💧</span><span class="cj">みずがのみたい</span><span class="ck">물 마시고 싶어요</span></button>
-      <button class="cc play" onclick="speak('あそびたい','놀고 싶어요')"><span class="ce">🎈</span><span class="cj">あそびたい</span><span class="ck">놀고 싶어요</span></button>
-      <button class="cc hug" onclick="speak('だっこして','안아주세요')"><span class="ce">🤗</span><span class="cj">だっこして</span><span class="ck">안아주세요</span></button>
-      <button class="cc" onclick="speak('おうちにかえりたい','집에 가고 싶어요')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🏠</span><span class="cj">おうちにかえりたい</span><span class="ck">집에 가고 싶어요</span></button>
-      <button class="cc" onclick="speak('やすみたい','쉬고 싶어요')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🛋️</span><span class="cj">やすみたい</span><span class="ck">쉬고 싶어요</span></button>
-      <button class="cc" onclick="speak('おやつたべたい','간식 먹고 싶어요')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍪</span><span class="cj">おやつたべたい</span><span class="ck">간식 먹고 싶어요</span></button>
-      <button class="cc" onclick="speak('テレビみたい','TV 보고 싶어요')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">📺</span><span class="cj">テレビみたい</span><span class="ck">TV 보고 싶어요</span></button>
-      <button class="cc" onclick="speak('おんがくききたい','음악 듣고 싶어요')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">🎵</span><span class="cj">おんがくききたい</span><span class="ck">음악 듣고 싶어요</span></button>
-    </div>
-  </div>
-  <div class="comm-sec">
-    <div class="sec-lbl">👋 あいさつ / 인사</div>
-    <div class="comm-grid">
-      <button class="cc yes" onclick="speak('こんにちは','안녕하세요')"><span class="ce">👋</span><span class="cj">こんにちは</span><span class="ck">안녕하세요</span></button>
-      <button class="cc" onclick="speak('ありがとう','감사해요')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">🙏</span><span class="cj">ありがとう</span><span class="ck">감사해요</span></button>
-      <button class="cc" onclick="speak('ごめんなさい','미안해요')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">😔</span><span class="cj">ごめんなさい</span><span class="ck">미안해요</span></button>
-      <button class="cc" onclick="speak('いっしょにあそぼう','같이 놀아요')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🤝</span><span class="cj">いっしょにあそぼう</span><span class="ck">같이 놀아요</span></button>
-      <button class="cc" onclick="speak('おやすみ','잘 자요')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🌙</span><span class="cj">おやすみ</span><span class="ck">잘 자요</span></button>
-      <button class="cc" onclick="speak('いただきます','잘 먹겠습니다')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍽️</span><span class="cj">いただきます</span><span class="ck">잘 먹겠습니다</span></button>
-    </div>
-  </div>
+  <div class="comm-sec"><div class="sec-lbl">✅ 基本の返事 / 기본 응답</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('はい','네')"><span class="ce">👍</span><span class="cj">はい</span><span class="ck">네</span></button>
+    <button class="cc no" onclick="speak('いいえ','아니요')"><span class="ce">👎</span><span class="cj">いいえ</span><span class="ck">아니요</span></button>
+    <button class="cc wait" onclick="speak('ちょっとまって','잠깐만요')"><span class="ce">✋</span><span class="cj">ちょっとまって</span><span class="ck">잠깐만요</span></button>
+    <button class="cc" onclick="speak('もっと','더')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">➕</span><span class="cj">もっと</span><span class="ck">더</span></button>
+    <button class="cc" onclick="speak('おわった','끝났어요')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🏁</span><span class="cj">おわった</span><span class="ck">끝났어요</span></button>
+    <button class="cc" onclick="speak('てつだって','도와주세요')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">🙋</span><span class="cj">てつだって</span><span class="ck">도와주세요</span></button>
+  </div></div>
+  <div class="comm-sec"><div class="sec-lbl">😊 きもち / 감정</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('うれしい','기뻐요')"><span class="ce">😄</span><span class="cj">うれしい</span><span class="ck">기뻐요</span></button>
+    <button class="cc no" onclick="speak('かなしい','슬퍼요')"><span class="ce">😢</span><span class="cj">かなしい</span><span class="ck">슬퍼요</span></button>
+    <button class="cc no" onclick="speak('おこった','화났어요')"><span class="ce">😠</span><span class="cj">おこった</span><span class="ck">화났어요</span></button>
+    <button class="cc no" onclick="speak('こわい','무서워요')"><span class="ce">😨</span><span class="cj">こわい</span><span class="ck">무서워요</span></button>
+    <button class="cc tired" onclick="speak('つかれた','피곤해요')"><span class="ce">😴</span><span class="cj">つかれた</span><span class="ck">피곤해요</span></button>
+    <button class="cc wait" onclick="speak('いやだ','싫어요')"><span class="ce">🙅</span><span class="cj">いやだ</span><span class="ck">싫어요</span></button>
+    <button class="cc hug" onclick="speak('すき','좋아요')"><span class="ce">❤️</span><span class="cj">すき</span><span class="ck">좋아요</span></button>
+    <button class="cc" onclick="speak('びっくりした','깜짝 놀랐어요')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">😲</span><span class="cj">びっくりした</span><span class="ck">깜짝 놀랐어요</span></button>
+    <button class="cc" onclick="speak('たのしい','재미있어요')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">🎉</span><span class="cj">たのしい</span><span class="ck">재미있어요</span></button>
+  </div></div>
+  <div class="comm-sec"><div class="sec-lbl">🩺 からだ / 몸</div><div class="comm-grid">
+    <button class="cc" onclick="speak('いたい','아파요')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤕</span><span class="cj">いたい</span><span class="ck">아파요</span></button>
+    <button class="cc" onclick="speak('あたまいたい','머리 아파요')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤯</span><span class="cj">あたまいたい</span><span class="ck">머리 아파요</span></button>
+    <button class="cc" onclick="speak('おなかいたい','배 아파요')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤢</span><span class="cj">おなかいたい</span><span class="ck">배 아파요</span></button>
+    <button class="cc toilet" onclick="speak('トイレ','화장실')"><span class="ce">🚽</span><span class="cj">トイレ</span><span class="ck">화장실</span></button>
+    <button class="cc" onclick="speak('ねつがある','열이 나요')" style="background:#FFEBEE;color:#C62828"><span class="ce">🌡️</span><span class="cj">ねつがある</span><span class="ck">열이 나요</span></button>
+    <button class="cc" onclick="speak('きもちわるい','토할 것 같아요')" style="background:var(--green-light);color:#1B5E20"><span class="ce">🤮</span><span class="cj">きもちわるい</span><span class="ck">토할 것 같아요</span></button>
+  </div></div>
+  <div class="comm-sec"><div class="sec-lbl">🙏 ほしいもの / 필요한 것</div><div class="comm-grid">
+    <button class="cc eat" onclick="speak('おなかすいた','배고파요')"><span class="ce">🍱</span><span class="cj">おなかすいた</span><span class="ck">배고파요</span></button>
+    <button class="cc water" onclick="speak('みずがのみたい','물 마시고 싶어요')"><span class="ce">💧</span><span class="cj">みずがのみたい</span><span class="ck">물 마시고 싶어요</span></button>
+    <button class="cc play" onclick="speak('あそびたい','놀고 싶어요')"><span class="ce">🎈</span><span class="cj">あそびたい</span><span class="ck">놀고 싶어요</span></button>
+    <button class="cc hug" onclick="speak('だっこして','안아주세요')"><span class="ce">🤗</span><span class="cj">だっこして</span><span class="ck">안아주세요</span></button>
+    <button class="cc" onclick="speak('おうちにかえりたい','집에 가고 싶어요')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🏠</span><span class="cj">おうちにかえりたい</span><span class="ck">집에 가고 싶어요</span></button>
+    <button class="cc" onclick="speak('やすみたい','쉬고 싶어요')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🛋️</span><span class="cj">やすみたい</span><span class="ck">쉬고 싶어요</span></button>
+    <button class="cc" onclick="speak('おやつたべたい','간식 먹고 싶어요')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍪</span><span class="cj">おやつたべたい</span><span class="ck">간식 먹고 싶어요</span></button>
+    <button class="cc" onclick="speak('テレビみたい','TV 보고 싶어요')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">📺</span><span class="cj">テレビみたい</span><span class="ck">TV 보고 싶어요</span></button>
+    <button class="cc" onclick="speak('おんがくききたい','음악 듣고 싶어요')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">🎵</span><span class="cj">おんがくききたい</span><span class="ck">음악 듣고 싶어요</span></button>
+  </div></div>
+  <div class="comm-sec"><div class="sec-lbl">👋 あいさつ / 인사</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('こんにちは','안녕하세요')"><span class="ce">👋</span><span class="cj">こんにちは</span><span class="ck">안녕하세요</span></button>
+    <button class="cc" onclick="speak('ありがとう','감사해요')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">🙏</span><span class="cj">ありがとう</span><span class="ck">감사해요</span></button>
+    <button class="cc" onclick="speak('ごめんなさい','미안해요')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">😔</span><span class="cj">ごめんなさい</span><span class="ck">미안해요</span></button>
+    <button class="cc" onclick="speak('いっしょにあそぼう','같이 놀아요')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🤝</span><span class="cj">いっしょにあそぼう</span><span class="ck">같이 놀아요</span></button>
+    <button class="cc" onclick="speak('おやすみ','잘 자요')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🌙</span><span class="cj">おやすみ</span><span class="ck">잘 자요</span></button>
+    <button class="cc" onclick="speak('いただきます','잘 먹겠습니다')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍽️</span><span class="cj">いただきます</span><span class="ck">잘 먹겠습니다</span></button>
+  </div></div>
 </div>
 
-<!-- MODAL -->
+<!-- STEP MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-title" id="modalTitle">新しいステップ追加</div>
@@ -268,17 +257,12 @@
     <div class="fg"><label class="fl">🇰🇷 韓国語（任意） / 한국어</label><input class="fi" id="inputKo" placeholder="예: 학교에 가요" maxlength="30"></div>
     <div class="fg"><label class="fl">アイコン / 아이콘</label><div class="ep" id="emojiPicker"></div></div>
     <div class="fg">
-      <label class="fl">写真 / 사진 <small style="color:#aaa">(크게 표시됩니다)</small></label>
-      <div class="pu" id="photoUploadArea" onclick="triggerPhotoUpload()">
-        <span style="font-size:32px">📷</span><span>タップして写真を追加 / 터치하여 사진 추가</span>
-      </div>
+      <label class="fl">写真 / 사진</label>
+      <div class="pu" id="photoUploadArea" onclick="triggerPhotoUpload()"><span style="font-size:32px">📷</span><span>タップして写真を追加</span></div>
       <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handleMainPhoto(event)">
     </div>
     <div class="chain-ed">
-      <div class="chain-ed-hdr">
-        <span>↓ 次のステップ / 다음 단계 연결</span>
-        <button class="add-chain-btn" onclick="addChainEntry()">＋ 追加</button>
-      </div>
+      <div class="chain-ed-hdr"><span>↓ 次のステップ / 다음 단계</span><button class="add-chain-btn" onclick="addChainEntry()">＋ 追加</button></div>
       <div id="chainEntriesEditor"></div>
     </div>
     <div class="modal-actions">
@@ -292,19 +276,24 @@
 
 <script>
 const EMOJIS=['🚗','🏫','🏠','🎮','🍱','🛁','😴','🏃','🛒','🌳','🎈','🎨','📚','🎵','🐶','🏊','⚽','🧸','👨‍👩‍👦','🚌','🏥','🍜','🎪','🌸','🚂','✂️','🖍️','🧩','📌'];
+const DAY_JP=['日','月','火','水','木','金','土'];
+const DAY_KO=['일','월','화','수','목','금','토'];
 
-let steps=[], editingIdx=null, selectedEmoji='📌', mainPhotoData=null, chainDraft=[];
+let steps=[], routines=[], dayRoutines={}, selectedDayIdx=new Date().getDay();
+let editingIdx=null, selectedEmoji='📌', mainPhotoData=null, chainDraft=[];
 
-// 날짜
-const d=new Date(), days=['日','月','火','水','木','金','土'];
-document.getElementById('dateBadge').textContent=`${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
+const d=new Date();
+document.getElementById('dateBadge').textContent=`${d.getMonth()+1}/${d.getDate()}(${DAY_JP[d.getDay()]})`;
 
-// ── IndexedDB (용량 제한 없이 사진 저장) ──
+// ── IndexedDB ──
 let db;
 function openDB(){
   return new Promise((res,rej)=>{
-    const req=indexedDB.open('scheduleAppDB',1);
-    req.onupgradeneeded=e=>e.target.result.createObjectStore('data');
+    const req=indexedDB.open('scheduleAppDB',2);
+    req.onupgradeneeded=e=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains('data')) db.createObjectStore('data');
+    };
     req.onsuccess=e=>{db=e.target.result;res(db);};
     req.onerror=()=>rej('DB error');
   });
@@ -312,52 +301,52 @@ function openDB(){
 function dbSet(k,v){return new Promise((res,rej)=>{const tx=db.transaction('data','readwrite');tx.objectStore('data').put(v,k);tx.oncomplete=res;tx.onerror=rej;});}
 function dbGet(k){return new Promise(res=>{const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get(k);req.onsuccess=()=>res(req.result);req.onerror=()=>res(null);});}
 
-async function save(){await dbSet('steps',JSON.stringify(steps));}
-async function loadSteps(){
+async function saveAll(){
+  await dbSet('steps',JSON.stringify(steps));
+  await dbSet('routines',JSON.stringify(routines));
+  await dbSet('dayRoutines',JSON.stringify(dayRoutines));
+}
+async function loadAll(){
+  // steps
   let raw=await dbGet('steps');
-  // localStorage 마이그레이션
   if(!raw){const old=localStorage.getItem('scheduleSteps');if(old){raw=old;localStorage.removeItem('scheduleSteps');}}
-  if(!raw)return;
-  steps=JSON.parse(raw).map(s=>{
-    if(s.sub&&!Array.isArray(s.chain)){s.chain=[s.sub];delete s.sub;}
-    if(!s.chain)s.chain=[];
-    return s;
-  });
-  render();
+  if(raw) steps=JSON.parse(raw).map(s=>{if(s.sub&&!Array.isArray(s.chain)){s.chain=[s.sub];delete s.sub;}if(!s.chain)s.chain=[];return s;});
+  // routines
+  const rr=await dbGet('routines'); if(rr) routines=JSON.parse(rr);
+  // dayRoutines
+  const dr=await dbGet('dayRoutines'); if(dr) dayRoutines=JSON.parse(dr);
+  render(); renderRoutineTab(); updateTodayBanner();
 }
 
-// ── 이미지 압축 (표시는 크게, 파일 용량만 줄임) ──
-// 최대 1200px, 품질 0.7 — 알아볼 수 있는 품질 유지
-function compressImage(file, callback){
+// ── 이미지 압축 (1200px, 품질 0.7) ──
+function compressImage(file,cb){
   const reader=new FileReader();
   reader.onload=ev=>{
     const img=new Image();
     img.onload=()=>{
-      const canvas=document.createElement('canvas');
-      let w=img.width, h=img.height, mx=1200;
+      const c=document.createElement('canvas');
+      let w=img.width,h=img.height,mx=1200;
       if(w>mx||h>mx){if(w>h){h=Math.round(h*mx/w);w=mx;}else{w=Math.round(w*mx/h);h=mx;}}
-      canvas.width=w; canvas.height=h;
-      canvas.getContext('2d').drawImage(img,0,0,w,h);
-      callback(canvas.toDataURL('image/jpeg',0.7));
+      c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',0.7));
     };
     img.src=ev.target.result;
   };
   reader.readAsDataURL(file);
 }
 
-// ── RENDER ──
+// ── TABS ──
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['schedule','library','comm'][i]===name));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['schedule','routine','library','comm'][i]===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
+  if(name==='routine'){renderRoutineTab();updateTodayBanner();}
 }
 
+// ── RENDER STEPS ──
 function render(){
   const list=document.getElementById('stepList');
-  if(!steps.length){
-    list.innerHTML=`<div class="empty"><div class="ee">📋</div><div class="ej">まだスケジュールがありません</div><div class="ek">아직 일정이 없어요</div></div>`;
-    return;
-  }
+  if(!steps.length){list.innerHTML=`<div class="empty"><div class="ee">📋</div><div class="ej">まだスケジュールがありません</div><div class="ek">아직 일정이 없어요</div></div>`;return;}
   list.innerHTML=steps.map((s,i)=>`
     <div class="step-card ${s.done?'completed':''}" id="sc${i}">
       <div class="step-num c${(i%8)+1}">${i+1}</div>
@@ -368,25 +357,18 @@ function render(){
       <div class="step-body">
         <div class="step-jp">${s.emoji} ${s.jp}</div>
         ${s.ko&&s.ko!==s.jp?`<div class="step-ko">${s.ko}</div>`:''}
-        ${(s.chain||[]).length?`
-          <div class="chain-list">${s.chain.map((c,ci)=>`
-            <div class="chain-item">
-              <div class="chain-arrow-row">↓</div>
-              <div class="chain-box">
-                <div class="chain-photo" onclick="triggerChainPhoto(${i},${ci})">
-                  ${c.photo?`<img src="${c.photo}">`:`<div class="chain-photo-ph">${c.emoji||'📍'}</div>`}
-                </div>
-                <div class="chain-info">
-                  <div class="chain-texts">
-                    <div class="jp">${c.jp||''}</div>
-                    ${c.ko&&c.ko!==c.jp?`<div class="ko">${c.ko}</div>`:''}
-                  </div>
-                </div>
+        ${(s.chain||[]).length?`<div class="chain-list">${s.chain.map((c,ci)=>`
+          <div class="chain-item">
+            <div class="chain-arrow-row">↓</div>
+            <div class="chain-box">
+              <div class="chain-photo" onclick="triggerChainPhoto(${i},${ci})">
+                ${c.photo?`<img src="${c.photo}">`:`<div class="chain-photo-ph">${c.emoji||'📍'}</div>`}
               </div>
+              <div class="chain-info"><div class="chain-texts"><div class="jp">${c.jp||''}</div>${c.ko&&c.ko!==c.jp?`<div class="ko">${c.ko}</div>`:''}</div></div>
             </div>
-            <input type="file" id="cp${i}_${ci}" accept="image/*" style="display:none" onchange="handleChainPhoto(event,${i},${ci})">
-          `).join('')}</div>
-        `:''}
+          </div>
+          <input type="file" id="cp${i}_${ci}" accept="image/*" style="display:none" onchange="handleChainPhoto(event,${i},${ci})">
+        `).join('')}</div>`:''}
         <div class="step-actions">
           ${i>0?`<button class="s-btn s-up" onclick="moveStep(${i},-1)">⬆️</button>`:''}
           ${i<steps.length-1?`<button class="s-btn s-dn" onclick="moveStep(${i},1)">⬇️</button>`:''}
@@ -399,20 +381,151 @@ function render(){
   `).join('');
 }
 
-function toggleDone(i){steps[i].done=!steps[i].done;save();render();if(steps[i].done)showToast('✅ できた！/ 완료!');}
-function moveStep(i,dir){const j=i+dir;if(j<0||j>=steps.length)return;[steps[i],steps[j]]=[steps[j],steps[i]];save();render();}
-function deleteStep(i){if(confirm('削除しますか？')){steps.splice(i,1);save();render();}}
+function toggleDone(i){steps[i].done=!steps[i].done;saveAll();render();if(steps[i].done)showToast('✅ できた！');}
+function moveStep(i,dir){const j=i+dir;if(j<0||j>=steps.length)return;[steps[i],steps[j]]=[steps[j],steps[i]];saveAll();render();}
+function deleteStep(i){if(confirm('削除しますか？')){steps.splice(i,1);saveAll();render();}}
 function triggerStepPhoto(i){document.getElementById(`sp${i}`).click();}
-function handleStepPhoto(e,i){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{steps[i].photo=c;save();render();});}
+function handleStepPhoto(e,i){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{steps[i].photo=c;saveAll();render();});}
 function triggerChainPhoto(i,ci){document.getElementById(`cp${i}_${ci}`).click();}
-function handleChainPhoto(e,i,ci){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{steps[i].chain[ci].photo=c;save();render();});}
+function handleChainPhoto(e,i,ci){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{steps[i].chain[ci].photo=c;saveAll();render();});}
 
-// ── MODAL ──
-function buildEmojiPicker(){
-  document.getElementById('emojiPicker').innerHTML=EMOJIS.map(e=>`<div class="eo ${e===selectedEmoji?'sel':''}" onclick="selEmoji('${e}')">${e}</div>`).join('');
+// ── ROUTINE TAB ──
+function updateTodayBanner(){
+  const today=new Date().getDay();
+  const dr=dayRoutines[today];
+  const el=document.getElementById('todayLoadTitle');
+  const sub=document.getElementById('todayLoadSub');
+  if(el){
+    el.textContent=`🗓️ ${DAY_JP[today]}曜日(${DAY_KO[today]}요일) ルーティン`;
+    sub.textContent=dr?`「${dr.name}」 → 일정탭에 불러오기`:'요일 루틴이 아직 설정되어 있지 않아요';
+  }
 }
-function selEmoji(e){selectedEmoji=e;document.querySelectorAll('.eo').forEach(el=>el.classList.toggle('sel',el.textContent===e));}
 
+function loadTodayDayRoutine(){
+  const today=new Date().getDay();
+  const dr=dayRoutines[today];
+  if(!dr){showToast('오늘 요일 루틴이 없어요');return;}
+  const tpl=routines.find(r=>r.id===dr.routineId);
+  if(!tpl){showToast('루틴을 찾을 수 없어요');return;}
+  if(confirm(`「${tpl.name}」을 오늘 일정으로 불러올까요?\n현재 일정은 유지됩니다.`)){
+    const fresh=JSON.parse(JSON.stringify(tpl.steps)).map(s=>({...s,done:false}));
+    steps=[...fresh];
+    saveAll();render();switchTab('schedule');
+    showToast(`✅ ${tpl.name} 불러왔어요`);
+  }
+}
+
+function renderRoutineTab(){
+  renderRoutineList();
+  renderDayBar();
+  renderDayRoutineContent();
+}
+
+function renderRoutineList(){
+  const el=document.getElementById('routineList');
+  if(!routines.length){el.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-light);font-size:13px;font-weight:600;">아직 저장된 루틴이 없어요<br>현재 일정을 이름 붙여 저장해보세요!</div>`;return;}
+  el.innerHTML=routines.map((r,i)=>`
+    <div class="routine-card">
+      <div class="routine-icon">${r.steps[0]?.emoji||'📋'}</div>
+      <div class="routine-info">
+        <div class="routine-name">${r.name}</div>
+        <div class="routine-meta">${r.steps.length}개 일정 · ${r.savedAt}</div>
+      </div>
+      <div class="routine-actions">
+        <button class="r-load-btn" onclick="loadRoutine(${i})">불러오기</button>
+        <button class="r-del-btn" onclick="deleteRoutine(${i})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderDayBar(){
+  const bar=document.getElementById('dayBar');
+  bar.innerHTML=DAY_JP.map((jp,i)=>{
+    const hasR=!!dayRoutines[i];
+    const isActive=i===selectedDayIdx;
+    return `<button class="day-btn ${isActive?'active':''} ${hasR&&!isActive?'has-routine':''}" onclick="selectDay(${i})">${jp}<br><small style="font-size:9px">${DAY_KO[i]}</small></button>`;
+  }).join('');
+}
+
+function selectDay(i){selectedDayIdx=i;renderDayBar();renderDayRoutineContent();}
+
+function renderDayRoutineContent(){
+  const el=document.getElementById('dayRoutineContent');
+  const dr=dayRoutines[selectedDayIdx];
+  const tpl=dr?routines.find(r=>r.id===dr.routineId):null;
+  let html=`<div class="day-routine-hdr">
+    <div class="day-routine-title">${DAY_JP[selectedDayIdx]}曜日(${DAY_KO[selectedDayIdx]}요일) 루틴</div>
+    <button class="set-day-btn" onclick="openSetDayRoutine(${selectedDayIdx})">루틴 설정</button>
+  </div>`;
+  if(tpl){
+    html+=`<div class="day-routine-preview">
+      <div style="font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:8px;">📋 ${tpl.name}</div>
+      ${tpl.steps.map(s=>`<div class="day-preview-item"><span class="dpi-emoji">${s.emoji}</span><span class="dpi-text">${s.jp}</span></div>`).join('')}
+      <button style="margin-top:10px;width:100%;padding:10px;background:var(--blue);color:white;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;" onclick="clearDayRoutine(${selectedDayIdx})">이 요일 루틴 해제</button>
+    </div>`;
+  } else {
+    html+=`<div class="day-routine-preview"><div class="no-day-routine">설정된 루틴이 없어요<br>「루틴 설정」을 눌러 지정해보세요</div></div>`;
+  }
+  el.innerHTML=html;
+}
+
+function openSetDayRoutine(dayIdx){
+  if(!routines.length){showToast('먼저 루틴 템플릿을 저장해주세요');return;}
+  const options=routines.map((r,i)=>`${i+1}. ${r.name} (${r.steps.length}개)`).join('\n');
+  const input=prompt(`${DAY_JP[dayIdx]}曜日에 적용할 루틴을 선택하세요:\n\n${options}\n\n번호를 입력하세요:`);
+  if(!input)return;
+  const idx=parseInt(input)-1;
+  if(idx<0||idx>=routines.length){showToast('잘못된 번호예요');return;}
+  dayRoutines[dayIdx]={routineId:routines[idx].id,name:routines[idx].name};
+  saveAll();renderDayBar();renderDayRoutineContent();updateTodayBanner();
+  showToast(`✅ ${DAY_JP[dayIdx]}曜日 → ${routines[idx].name}`);
+}
+
+function clearDayRoutine(dayIdx){
+  if(confirm(`${DAY_JP[dayIdx]}曜日의 루틴 설정을 해제할까요?`)){
+    delete dayRoutines[dayIdx];
+    saveAll();renderDayBar();renderDayRoutineContent();updateTodayBanner();
+  }
+}
+
+function saveCurrentAsRoutine(){
+  const name=document.getElementById('routineNameInput').value.trim();
+  if(!name){showToast('루틴 이름을 입력해주세요');return;}
+  if(!steps.length){showToast('저장할 일정이 없어요');return;}
+  const id='r_'+Date.now();
+  const now=new Date();
+  const savedAt=`${now.getMonth()+1}/${now.getDate()}`;
+  // 완료 상태 제거하고 저장
+  const snapshot=JSON.parse(JSON.stringify(steps)).map(s=>({...s,done:false}));
+  routines.push({id,name,steps:snapshot,savedAt});
+  document.getElementById('routineNameInput').value='';
+  saveAll();renderRoutineList();
+  showToast(`💾 「${name}」 저장했어요`);
+}
+
+function loadRoutine(i){
+  const r=routines[i];
+  if(confirm(`「${r.name}」을 현재 일정으로 불러올까요?\n현재 일정은 교체됩니다.`)){
+    steps=JSON.parse(JSON.stringify(r.steps)).map(s=>({...s,done:false}));
+    saveAll();render();switchTab('schedule');
+    showToast(`✅ 「${r.name}」 불러왔어요`);
+  }
+}
+
+function deleteRoutine(i){
+  if(confirm(`「${routines[i].name}」을 삭제할까요?`)){
+    const id=routines[i].id;
+    routines.splice(i,1);
+    // dayRoutines에서도 해제
+    Object.keys(dayRoutines).forEach(d=>{if(dayRoutines[d].routineId===id)delete dayRoutines[d];});
+    saveAll();renderRoutineList();renderDayBar();renderDayRoutineContent();
+  }
+}
+
+// ── STEP MODAL ──
+function buildEmojiPicker(){document.getElementById('emojiPicker').innerHTML=EMOJIS.map(e=>`<div class="eo ${e===selectedEmoji?'sel':''}" onclick="selEmoji('${e}')">${e}</div>`).join('');}
+function selEmoji(e){selectedEmoji=e;document.querySelectorAll('.eo').forEach(el=>el.classList.toggle('sel',el.textContent===e));}
 function renderChainEditor(){
   document.getElementById('chainEntriesEditor').innerHTML=chainDraft.map((c,ci)=>`
     <div class="chain-entry">
@@ -426,65 +539,35 @@ function renderChainEditor(){
     </div>
   `).join('');
 }
-function addChainEntry(){
-  chainDraft.push({jp:'',ko:'',photo:null});
-  renderChainEditor();
-  setTimeout(()=>{const es=document.querySelectorAll('.chain-entry');if(es.length)es[es.length-1].scrollIntoView({behavior:'smooth',block:'nearest'});},100);
-}
+function addChainEntry(){chainDraft.push({jp:'',ko:'',photo:null});renderChainEditor();setTimeout(()=>{const es=document.querySelectorAll('.chain-entry');if(es.length)es[es.length-1].scrollIntoView({behavior:'smooth',block:'nearest'});},100);}
 function removeChainEntry(ci){chainDraft.splice(ci,1);renderChainEditor();}
 function triggerChainEdPh(ci){document.getElementById(`ceph${ci}`).click();}
-function handleChainEdPh(e,ci){
-  const f=e.target.files[0];if(!f)return;
-  compressImage(f,c=>{
-    chainDraft[ci].photo=c;
-    const a=document.getElementById(`cpu${ci}`);
-    if(a)a.innerHTML=`<img src="${c}">`;
-  });
-}
-
+function handleChainEdPh(e,ci){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{chainDraft[ci].photo=c;const a=document.getElementById(`cpu${ci}`);if(a)a.innerHTML=`<img src="${c}">`});}
 function openAddModal(){
   editingIdx=null;selectedEmoji='📌';mainPhotoData=null;chainDraft=[];
   document.getElementById('modalTitle').textContent='新しいステップ追加 / 새 일정 추가';
-  document.getElementById('inputJp').value='';
-  document.getElementById('inputKo').value='';
-  document.getElementById('photoUploadArea').innerHTML='<span style="font-size:32px">📷</span><span>タップして写真を追加 / 터치하여 사진 추가</span>';
-  renderChainEditor();buildEmojiPicker();
-  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('inputJp').value='';document.getElementById('inputKo').value='';
+  document.getElementById('photoUploadArea').innerHTML='<span style="font-size:32px">📷</span><span>タップして写真を追加</span>';
+  renderChainEditor();buildEmojiPicker();document.getElementById('modalOverlay').classList.add('open');
 }
 function openEditModal(i){
-  editingIdx=i;const s=steps[i];
-  selectedEmoji=s.emoji;mainPhotoData=s.photo||null;
-  chainDraft=JSON.parse(JSON.stringify(s.chain||[]));
-  document.getElementById('modalTitle').textContent='ステップ編集 / 일정 편집';
-  document.getElementById('inputJp').value=s.jp||'';
-  document.getElementById('inputKo').value=s.ko||'';
-  const pa=document.getElementById('photoUploadArea');
-  pa.innerHTML=mainPhotoData?`<img src="${mainPhotoData}">`:'<span style="font-size:32px">📷</span><span>タップして写真を追加</span>';
-  renderChainEditor();buildEmojiPicker();
-  document.getElementById('modalOverlay').classList.add('open');
+  editingIdx=i;const s=steps[i];selectedEmoji=s.emoji;mainPhotoData=s.photo||null;chainDraft=JSON.parse(JSON.stringify(s.chain||[]));
+  document.getElementById('modalTitle').textContent='ステップ編集';
+  document.getElementById('inputJp').value=s.jp||'';document.getElementById('inputKo').value=s.ko||'';
+  const pa=document.getElementById('photoUploadArea');pa.innerHTML=mainPhotoData?`<img src="${mainPhotoData}">`:'<span style="font-size:32px">📷</span><span>タップして写真を追加</span>';
+  renderChainEditor();buildEmojiPicker();document.getElementById('modalOverlay').classList.add('open');
 }
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
 function triggerPhotoUpload(){document.getElementById('photoInput').click();}
-function handleMainPhoto(e){
-  const f=e.target.files[0];if(!f)return;
-  compressImage(f,c=>{
-    mainPhotoData=c;
-    document.getElementById('photoUploadArea').innerHTML=`<img src="${c}">`;
-  });
-}
+function handleMainPhoto(e){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{mainPhotoData=c;document.getElementById('photoUploadArea').innerHTML=`<img src="${c}">`;});}
 function saveStep(){
-  const jp=document.getElementById('inputJp').value.trim();
-  const ko=document.getElementById('inputKo').value.trim();
+  const jp=document.getElementById('inputJp').value.trim(),ko=document.getElementById('inputKo').value.trim();
   if(!jp&&!ko){showToast('どちらか入力してください');return;}
-  chainDraft.forEach((c,ci)=>{
-    const j=document.getElementById(`cjp${ci}`),k=document.getElementById(`cko${ci}`);
-    if(j)c.jp=j.value.trim();if(k)c.ko=k.value.trim();
-  });
+  chainDraft.forEach((c,ci)=>{const j=document.getElementById(`cjp${ci}`),k=document.getElementById(`cko${ci}`);if(j)c.jp=j.value.trim();if(k)c.ko=k.value.trim();});
   const validChain=chainDraft.filter(c=>c.jp||c.ko).map(c=>({jp:c.jp||c.ko,ko:c.ko||c.jp,photo:c.photo,emoji:'📍'}));
   const step={jp:jp||ko,ko:ko||jp,emoji:selectedEmoji,photo:mainPhotoData,done:false,chain:validChain};
-  if(editingIdx!==null){step.done=steps[editingIdx].done;steps[editingIdx]=step;}
-  else{steps.push(step);}
-  save();render();closeModal();
+  if(editingIdx!==null){step.done=steps[editingIdx].done;steps[editingIdx]=step;}else{steps.push(step);}
+  saveAll();render();closeModal();
   showToast(editingIdx!==null?'✏️ 編集しました':'✅ 追加しました');
 }
 
@@ -496,34 +579,14 @@ const library={
   food:[{emoji:'🍱',jp:'おべんとう',ko:'도시락'},{emoji:'🍚',jp:'ごはん',ko:'밥'},{emoji:'🍜',jp:'ラーメン',ko:'라면'},{emoji:'🍞',jp:'パン',ko:'빵'},{emoji:'🍎',jp:'りんご',ko:'사과'},{emoji:'🍌',jp:'バナナ',ko:'바나나'},{emoji:'🍪',jp:'おかし',ko:'과자'},{emoji:'🧃',jp:'ジュース',ko:'주스'},{emoji:'🍦',jp:'アイスクリーム',ko:'아이스크림'}],
   person:[{emoji:'👩',jp:'ママ',ko:'엄마'},{emoji:'👨',jp:'パパ',ko:'아빠'},{emoji:'👦',jp:'おにいちゃん',ko:'오빠/형'},{emoji:'👧',jp:'おねえちゃん',ko:'언니/누나'},{emoji:'👴',jp:'おじいちゃん',ko:'할아버지'},{emoji:'👵',jp:'おばあちゃん',ko:'할머니'},{emoji:'👩‍🏫',jp:'せんせい',ko:'선생님'},{emoji:'🧑‍⚕️',jp:'おいしゃさん',ko:'의사 선생님'},{emoji:'👫',jp:'ともだち',ko:'친구'}],
 };
-function buildLibrary(){
-  Object.entries(library).forEach(([key,items])=>{
-    const el=document.getElementById(`lib-${key}`);if(!el)return;
-    el.innerHTML=items.map(item=>`<div class="lib-card" onclick="addFromLibrary('${item.emoji}','${item.jp}','${item.ko}')"><span class="ce">${item.emoji}</span><span class="cj">${item.jp}</span><span class="ck">${item.ko}</span></div>`).join('');
-  });
-}
-function addFromLibrary(emoji,jp,ko){
-  steps.push({jp,ko,emoji,photo:null,done:false,chain:[]});
-  save();render();switchTab('schedule');
-  showToast(`${emoji} ${jp} 追加しました`);
-}
+function buildLibrary(){Object.entries(library).forEach(([key,items])=>{const el=document.getElementById(`lib-${key}`);if(!el)return;el.innerHTML=items.map(item=>`<div class="lib-card" onclick="addFromLibrary('${item.emoji}','${item.jp}','${item.ko}')"><span class="ce">${item.emoji}</span><span class="cj">${item.jp}</span><span class="ck">${item.ko}</span></div>`).join('');});}
+function addFromLibrary(emoji,jp,ko){steps.push({jp,ko,emoji,photo:null,done:false,chain:[]});saveAll();render();switchTab('schedule');showToast(`${emoji} ${jp} 追加しました`);}
 
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
-
-// ── 음성: 일본어만 ──
-function speak(jp, ko){
-  // 한국어는 표시용, 음성은 일본어만
-  if('speechSynthesis' in window){
-    window.speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(jp);
-    u.lang='ja-JP';
-    window.speechSynthesis.speak(u);
-  }
-  showToast(`${jp}　${ko}`);
-}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function speak(jp,ko){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(jp);u.lang='ja-JP';window.speechSynthesis.speak(u);}showToast(`${jp}　${ko}`);}
 
 buildLibrary();
-openDB().then(loadSteps);
+openDB().then(loadAll);
 </script>
 </body>
 </html>

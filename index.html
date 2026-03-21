@@ -507,7 +507,7 @@ function loadTodayDayRoutine(){
   if(!dr){showToast('今日のルーティンがありません');return;}
   const tpl=routines.find(r=>r.id===dr.routineId);
   if(!tpl){showToast('ルーティンがみつかりません');return;}
-  if(confirm(`「${tpl.name}」을 오늘 일정으로 불러올까요?\nいまのスケジュールはそのままです。`)){
+  if(confirm(`「${tpl.name}」をよみこみますか？\nいまのスケジュールはそのままです。`)){
     const fresh=JSON.parse(JSON.stringify(tpl.steps)).map(s=>({...s,done:false}));
     steps=[...fresh];
     saveAll();render();switchTab('schedule');
@@ -573,7 +573,7 @@ function renderDayRoutineContent(){
 function openSetDayRoutine(dayIdx){
   if(!routines.length){showToast('まずルーティンをほぞんしてください');return;}
   const options=routines.map((r,i)=>`${i+1}. ${r.name} (${r.steps.length}ステップ)`).join('\n');
-  const input=prompt(`${DAY_JP[dayIdx]}曜日にてきようする 루틴을 선택하세요:\n\n${options}\n\nばんごうをにゅうりょくしてください：`);
+  const input=prompt(`${DAY_JP[dayIdx]}曜日のルーティンをえらんでください：\n\n${options}\n\nばんごうをにゅうりょくしてください：`);
   if(!input)return;
   const idx=parseInt(input)-1;
   if(idx<0||idx>=routines.length){showToast('ばんごうがちがいます');return;}
@@ -583,7 +583,7 @@ function openSetDayRoutine(dayIdx){
 }
 
 function clearDayRoutine(dayIdx){
-  if(confirm(`${DAY_JP[dayIdx]}曜日의 ルーティンをせってい을 해제할까요?`)){
+  if(confirm(`${DAY_JP[dayIdx]}曜日のルーティンをかいじょしますか？`)){
     delete dayRoutines[dayIdx];
     saveAll();renderDayBar();renderDayRoutineContent();updateTodayBanner();
   }
@@ -606,7 +606,7 @@ function saveCurrentAsRoutine(){
 
 function loadRoutine(i){
   const r=routines[i];
-  if(confirm(`「${r.name}」을 현재 일정으로 불러올까요?\nいまのスケジュールがかわります。`)){
+  if(confirm(`「${r.name}」をよみこみますか？\nいまのスケジュールがかわります。`)){
     steps=JSON.parse(JSON.stringify(r.steps)).map(s=>({...s,done:false}));
     saveAll();render();switchTab('schedule');
     showToast(`✅ 「${r.name}」 をよみこみました`);
@@ -800,8 +800,7 @@ async function exportBackup(){
 async function importBackup(e){
   const file = e.target.files[0];
   if(!file) return;
-  if(!confirm('バックアップからデータをよみこみます。
-いまのデータはうわがきされます。よろしいですか？')) return;
+  if(!confirm('バックアップからデータをよみこみます。\nいまのデータはうわがきされます。よろしいですか？')) return;
   try {
     const text = await file.text();
     const data = JSON.parse(text);

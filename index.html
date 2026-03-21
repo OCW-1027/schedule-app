@@ -51,13 +51,13 @@
 
   /* ── ROUTINE TAB ── */
   .routine-section{margin-bottom:20px;}
-  /* 요일 선택 바 */
+  
   .day-bar{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;}
   .day-btn{flex-shrink:0;width:42px;height:42px;border-radius:50%;border:2px solid #ddd;background:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--text-light);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
   .day-btn.active{background:var(--blue);color:white;border-color:var(--blue);box-shadow:0 2px 8px rgba(74,144,217,0.4);}
   .day-btn.has-routine{border-color:var(--green);color:var(--green);}
   .day-btn.active.has-routine{background:var(--green);border-color:var(--green);color:white;}
-  /* 루틴 템플릿 카드 */
+  
   .routine-card{background:white;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
   .routine-icon{font-size:32px;flex-shrink:0;}
   .routine-info{flex:1;}
@@ -66,12 +66,12 @@
   .routine-actions{display:flex;gap:6px;flex-shrink:0;}
   .r-load-btn{background:var(--blue);color:white;border:none;border-radius:10px;padding:7px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
   .r-del-btn{background:#FFEBEE;color:#C62828;border:none;border-radius:10px;padding:7px 10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
-  /* 현재 일정 저장 버튼 */
+  
   .save-routine-bar{background:white;border-radius:14px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;}
   .save-routine-bar input{flex:1;padding:10px 12px;border:2px solid #E0E0E0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;outline:none;}
   .save-routine-bar input:focus{border-color:var(--blue);}
   .save-r-btn{background:var(--green);color:white;border:none;border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;}
-  /* 요일 루틴 섹션 */
+  
   .day-routine-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
   .day-routine-title{font-size:14px;font-weight:800;color:var(--blue-dark);}
   .set-day-btn{background:var(--purple);color:white;border:none;border-radius:10px;padding:7px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
@@ -81,7 +81,7 @@
   .dpi-emoji{font-size:22px;flex-shrink:0;}
   .dpi-text{font-size:14px;font-weight:700;}
   .no-day-routine{text-align:center;padding:20px;color:var(--text-light);font-size:13px;font-weight:600;}
-  /* 오늘 요일 로드 버튼 */
+  
   .today-load-bar{background:linear-gradient(135deg,var(--blue),var(--blue-dark));border-radius:14px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 4px 12px rgba(74,144,217,0.35);}
   .tlb-text{color:white;}
   .tlb-title{font-size:14px;font-weight:800;}
@@ -139,23 +139,22 @@
 <header>
   <div class="header-title">
     <div class="jp">📅 今日のスケジュール</div>
-    <div class="ko">오늘의 일정</div>
   </div>
   <div class="date-badge" id="dateBadge"></div>
 </header>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('schedule')"><span class="ti">📋</span><span>일정<br>スケジュール</span></button>
-  <button class="tab" onclick="switchTab('routine')"><span class="ti">🔁</span><span>루틴<br>ルーティン</span></button>
-  <button class="tab" onclick="switchTab('library')"><span class="ti">🗂️</span><span>카드<br>カード</span></button>
-  <button class="tab" onclick="switchTab('comm')"><span class="ti">💬</span><span>소통<br>きもち</span></button>
+  <button class="tab active" onclick="switchTab('schedule')"><span class="ti">📋</span><span>スケジュール</span></button>
+  <button class="tab" onclick="switchTab('routine')"><span class="ti">🔁</span><span>ルーティン</span></button>
+  <button class="tab" onclick="switchTab('library')"><span class="ti">🗂️</span><span>カード</span></button>
+  <button class="tab" onclick="switchTab('comm')"><span class="ti">💬</span><span>きもち</span></button>
 </div>
 
 <!-- SCHEDULE -->
 <div class="panel active" id="panel-schedule">
   <div class="sch-hdr">
-    <span class="sch-title">今日すること / 오늘 할 일</span>
-    <button class="add-btn" onclick="openAddModal()">➕ 追加</button>
+    <span class="sch-title">今日すること</span>
+    <button class="add-btn" onclick="openAddModal()">➕ ついか</button>
   </div>
   <div id="stepList"></div>
 </div>
@@ -163,28 +162,28 @@
 <!-- ROUTINE -->
 <div class="panel" id="panel-routine">
 
-  <!-- 오늘 요일 루틴 자동 로드 배너 -->
+  
   <div class="today-load-bar" id="todayLoadBar" onclick="loadTodayDayRoutine()">
     <div class="tlb-text">
-      <div class="tlb-title" id="todayLoadTitle">🗓️ 오늘 요일 루틴 불러오기</div>
-      <div class="tlb-sub" id="todayLoadSub">요일 루틴이 설정되어 있으면 자동 로드</div>
+      <div class="tlb-title" id="todayLoadTitle">🗓️ 今日のルーティンをよみこむ</div>
+      <div class="tlb-sub" id="todayLoadSub">ルーティンがあれば読み込めます</div>
     </div>
-    <button class="tlb-btn">불러오기</button>
+    <button class="tlb-btn">よみこむ</button>
   </div>
 
-  <!-- 루틴 템플릿 저장/불러오기 -->
+  
   <div class="routine-section">
-    <div class="sec-lbl">💾 ルーティンテンプレート / 루틴 템플릿</div>
+    <div class="sec-lbl">💾 ルーティンテンプレート</div>
     <div class="save-routine-bar">
-      <input type="text" id="routineNameInput" placeholder="루틴 이름 입력 (예: 학교 가는 날)" maxlength="20">
-      <button class="save-r-btn" onclick="saveCurrentAsRoutine()">현재 일정 저장</button>
+      <input type="text" id="routineNameInput" placeholder="ルーティン名をにゅうりょく（例：がっこうのひ）" maxlength="20">
+      <button class="save-r-btn" onclick="saveCurrentAsRoutine()">今のスケジュールをほぞん</button>
     </div>
     <div id="routineList"></div>
   </div>
 
-  <!-- 요일별 루틴 설정 -->
+  
   <div class="routine-section">
-    <div class="sec-lbl">📅 요일별 루틴 / 曜日ルーティン</div>
+    <div class="sec-lbl">📅 曜日ルーティン</div>
     <div class="day-bar" id="dayBar"></div>
     <div id="dayRoutineContent"></div>
   </div>
@@ -192,60 +191,60 @@
 
 <!-- LIBRARY -->
 <div class="panel" id="panel-library">
-  <div class="sec-lbl">🚗 移動 / 이동</div><div class="card-grid" id="lib-move"></div>
-  <div class="sec-lbl">🏫 場所 / 장소</div><div class="card-grid" id="lib-place"></div>
-  <div class="sec-lbl">🎮 活動 / 활동</div><div class="card-grid" id="lib-activity"></div>
-  <div class="sec-lbl">🍎 食べ物 / 음식</div><div class="card-grid" id="lib-food"></div>
-  <div class="sec-lbl">👨‍👩‍👦 人 / 사람</div><div class="card-grid" id="lib-person"></div>
+  <div class="sec-lbl">🚗 いどう</div><div class="card-grid" id="lib-move"></div>
+  <div class="sec-lbl">🏫 ばしょ</div><div class="card-grid" id="lib-place"></div>
+  <div class="sec-lbl">🎮 かつどう</div><div class="card-grid" id="lib-activity"></div>
+  <div class="sec-lbl">🍎 たべもの</div><div class="card-grid" id="lib-food"></div>
+  <div class="sec-lbl">👨‍👩‍👦 ひと</div><div class="card-grid" id="lib-person"></div>
 </div>
 
 <!-- COMM -->
 <div class="panel" id="panel-comm">
-  <div class="comm-sec"><div class="sec-lbl">✅ 基本の返事 / 기본 응답</div><div class="comm-grid">
-    <button class="cc yes" onclick="speak('はい','네')"><span class="ce">👍</span><span class="cj">はい</span><span class="ck">네</span></button>
-    <button class="cc no" onclick="speak('いいえ','아니요')"><span class="ce">👎</span><span class="cj">いいえ</span><span class="ck">아니요</span></button>
-    <button class="cc wait" onclick="speak('ちょっとまって','잠깐만요')"><span class="ce">✋</span><span class="cj">ちょっとまって</span><span class="ck">잠깐만요</span></button>
-    <button class="cc" onclick="speak('もっと','더')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">➕</span><span class="cj">もっと</span><span class="ck">더</span></button>
-    <button class="cc" onclick="speak('おわった','끝났어요')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🏁</span><span class="cj">おわった</span><span class="ck">끝났어요</span></button>
-    <button class="cc" onclick="speak('てつだって','도와주세요')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">🙋</span><span class="cj">てつだって</span><span class="ck">도와주세요</span></button>
+  <div class="comm-sec"><div class="sec-lbl">✅ 基本のへんじ</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('はい','')"><span class="ce">👍</span><span class="cj">はい</span></button>
+    <button class="cc no" onclick="speak('いいえ','')"><span class="ce">👎</span><span class="cj">いいえ</span></button>
+    <button class="cc wait" onclick="speak('ちょっとまって','')"><span class="ce">✋</span><span class="cj">ちょっとまって</span></button>
+    <button class="cc" onclick="speak('もっと','')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">➕</span><span class="cj">もっと</span></button>
+    <button class="cc" onclick="speak('おわった','')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🏁</span><span class="cj">おわった</span></button>
+    <button class="cc" onclick="speak('てつだって','')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">🙋</span><span class="cj">てつだって</span></button>
   </div></div>
-  <div class="comm-sec"><div class="sec-lbl">😊 きもち / 감정</div><div class="comm-grid">
-    <button class="cc yes" onclick="speak('うれしい','기뻐요')"><span class="ce">😄</span><span class="cj">うれしい</span><span class="ck">기뻐요</span></button>
-    <button class="cc no" onclick="speak('かなしい','슬퍼요')"><span class="ce">😢</span><span class="cj">かなしい</span><span class="ck">슬퍼요</span></button>
-    <button class="cc no" onclick="speak('おこった','화났어요')"><span class="ce">😠</span><span class="cj">おこった</span><span class="ck">화났어요</span></button>
-    <button class="cc no" onclick="speak('こわい','무서워요')"><span class="ce">😨</span><span class="cj">こわい</span><span class="ck">무서워요</span></button>
-    <button class="cc tired" onclick="speak('つかれた','피곤해요')"><span class="ce">😴</span><span class="cj">つかれた</span><span class="ck">피곤해요</span></button>
-    <button class="cc wait" onclick="speak('いやだ','싫어요')"><span class="ce">🙅</span><span class="cj">いやだ</span><span class="ck">싫어요</span></button>
-    <button class="cc hug" onclick="speak('すき','좋아요')"><span class="ce">❤️</span><span class="cj">すき</span><span class="ck">좋아요</span></button>
-    <button class="cc" onclick="speak('びっくりした','깜짝 놀랐어요')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">😲</span><span class="cj">びっくりした</span><span class="ck">깜짝 놀랐어요</span></button>
-    <button class="cc" onclick="speak('たのしい','재미있어요')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">🎉</span><span class="cj">たのしい</span><span class="ck">재미있어요</span></button>
+  <div class="comm-sec"><div class="sec-lbl">😊 きもち</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('うれしい','')"><span class="ce">😄</span><span class="cj">うれしい</span></button>
+    <button class="cc no" onclick="speak('かなしい','')"><span class="ce">😢</span><span class="cj">かなしい</span></button>
+    <button class="cc no" onclick="speak('おこった','')"><span class="ce">😠</span><span class="cj">おこった</span></button>
+    <button class="cc no" onclick="speak('こわい','')"><span class="ce">😨</span><span class="cj">こわい</span></button>
+    <button class="cc tired" onclick="speak('つかれた','')"><span class="ce">😴</span><span class="cj">つかれた</span></button>
+    <button class="cc wait" onclick="speak('いやだ','')"><span class="ce">🙅</span><span class="cj">いやだ</span></button>
+    <button class="cc hug" onclick="speak('すき','')"><span class="ce">❤️</span><span class="cj">すき</span></button>
+    <button class="cc" onclick="speak('びっくりした','')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">😲</span><span class="cj">びっくりした</span></button>
+    <button class="cc" onclick="speak('たのしい','')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">🎉</span><span class="cj">たのしい</span></button>
   </div></div>
-  <div class="comm-sec"><div class="sec-lbl">🩺 からだ / 몸</div><div class="comm-grid">
-    <button class="cc" onclick="speak('いたい','아파요')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤕</span><span class="cj">いたい</span><span class="ck">아파요</span></button>
-    <button class="cc" onclick="speak('あたまいたい','머리 아파요')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤯</span><span class="cj">あたまいたい</span><span class="ck">머리 아파요</span></button>
-    <button class="cc" onclick="speak('おなかいたい','배 아파요')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤢</span><span class="cj">おなかいたい</span><span class="ck">배 아파요</span></button>
-    <button class="cc toilet" onclick="speak('トイレ','화장실')"><span class="ce">🚽</span><span class="cj">トイレ</span><span class="ck">화장실</span></button>
-    <button class="cc" onclick="speak('ねつがある','열이 나요')" style="background:#FFEBEE;color:#C62828"><span class="ce">🌡️</span><span class="cj">ねつがある</span><span class="ck">열이 나요</span></button>
-    <button class="cc" onclick="speak('きもちわるい','토할 것 같아요')" style="background:var(--green-light);color:#1B5E20"><span class="ce">🤮</span><span class="cj">きもちわるい</span><span class="ck">토할 것 같아요</span></button>
+  <div class="comm-sec"><div class="sec-lbl">🩺 からだ</div><div class="comm-grid">
+    <button class="cc" onclick="speak('いたい','')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤕</span><span class="cj">いたい</span></button>
+    <button class="cc" onclick="speak('あたまいたい','')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤯</span><span class="cj">あたまいたい</span></button>
+    <button class="cc" onclick="speak('おなかいたい','')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤢</span><span class="cj">おなかいたい</span></button>
+    <button class="cc toilet" onclick="speak('トイレ','')"><span class="ce">🚽</span><span class="cj">トイレ</span></button>
+    <button class="cc" onclick="speak('ねつがある','')" style="background:#FFEBEE;color:#C62828"><span class="ce">🌡️</span><span class="cj">ねつがある</span></button>
+    <button class="cc" onclick="speak('きもちわるい','')" style="background:var(--green-light);color:#1B5E20"><span class="ce">🤮</span><span class="cj">きもちわるい</span></button>
   </div></div>
-  <div class="comm-sec"><div class="sec-lbl">🙏 ほしいもの / 필요한 것</div><div class="comm-grid">
-    <button class="cc eat" onclick="speak('おなかすいた','배고파요')"><span class="ce">🍱</span><span class="cj">おなかすいた</span><span class="ck">배고파요</span></button>
-    <button class="cc water" onclick="speak('みずがのみたい','물 마시고 싶어요')"><span class="ce">💧</span><span class="cj">みずがのみたい</span><span class="ck">물 마시고 싶어요</span></button>
-    <button class="cc play" onclick="speak('あそびたい','놀고 싶어요')"><span class="ce">🎈</span><span class="cj">あそびたい</span><span class="ck">놀고 싶어요</span></button>
-    <button class="cc hug" onclick="speak('だっこして','안아주세요')"><span class="ce">🤗</span><span class="cj">だっこして</span><span class="ck">안아주세요</span></button>
-    <button class="cc" onclick="speak('おうちにかえりたい','집에 가고 싶어요')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🏠</span><span class="cj">おうちにかえりたい</span><span class="ck">집에 가고 싶어요</span></button>
-    <button class="cc" onclick="speak('やすみたい','쉬고 싶어요')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🛋️</span><span class="cj">やすみたい</span><span class="ck">쉬고 싶어요</span></button>
-    <button class="cc" onclick="speak('おやつたべたい','간식 먹고 싶어요')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍪</span><span class="cj">おやつたべたい</span><span class="ck">간식 먹고 싶어요</span></button>
-    <button class="cc" onclick="speak('テレビみたい','TV 보고 싶어요')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">📺</span><span class="cj">テレビみたい</span><span class="ck">TV 보고 싶어요</span></button>
-    <button class="cc" onclick="speak('おんがくききたい','음악 듣고 싶어요')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">🎵</span><span class="cj">おんがくききたい</span><span class="ck">음악 듣고 싶어요</span></button>
+  <div class="comm-sec"><div class="sec-lbl">🙏 ほしいもの</div><div class="comm-grid">
+    <button class="cc eat" onclick="speak('おなかすいた','')"><span class="ce">🍱</span><span class="cj">おなかすいた</span></button>
+    <button class="cc water" onclick="speak('みずがのみたい','')"><span class="ce">💧</span><span class="cj">みずがのみたい</span></button>
+    <button class="cc play" onclick="speak('あそびたい','')"><span class="ce">🎈</span><span class="cj">あそびたい</span></button>
+    <button class="cc hug" onclick="speak('だっこして','')"><span class="ce">🤗</span><span class="cj">だっこして</span></button>
+    <button class="cc" onclick="speak('おうちにかえりたい','')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🏠</span><span class="cj">おうちにかえりたい</span></button>
+    <button class="cc" onclick="speak('やすみたい','')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🛋️</span><span class="cj">やすみたい</span></button>
+    <button class="cc" onclick="speak('おやつたべたい','')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍪</span><span class="cj">おやつたべたい</span></button>
+    <button class="cc" onclick="speak('テレビみたい','')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">📺</span><span class="cj">テレビみたい</span></button>
+    <button class="cc" onclick="speak('おんがくききたい','')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">🎵</span><span class="cj">おんがくききたい</span></button>
   </div></div>
-  <div class="comm-sec"><div class="sec-lbl">👋 あいさつ / 인사</div><div class="comm-grid">
-    <button class="cc yes" onclick="speak('こんにちは','안녕하세요')"><span class="ce">👋</span><span class="cj">こんにちは</span><span class="ck">안녕하세요</span></button>
-    <button class="cc" onclick="speak('ありがとう','감사해요')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">🙏</span><span class="cj">ありがとう</span><span class="ck">감사해요</span></button>
-    <button class="cc" onclick="speak('ごめんなさい','미안해요')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">😔</span><span class="cj">ごめんなさい</span><span class="ck">미안해요</span></button>
-    <button class="cc" onclick="speak('いっしょにあそぼう','같이 놀아요')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🤝</span><span class="cj">いっしょにあそぼう</span><span class="ck">같이 놀아요</span></button>
-    <button class="cc" onclick="speak('おやすみ','잘 자요')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🌙</span><span class="cj">おやすみ</span><span class="ck">잘 자요</span></button>
-    <button class="cc" onclick="speak('いただきます','잘 먹겠습니다')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍽️</span><span class="cj">いただきます</span><span class="ck">잘 먹겠습니다</span></button>
+  <div class="comm-sec"><div class="sec-lbl">👋 あいさつ</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('こんにちは','')"><span class="ce">👋</span><span class="cj">こんにちは</span></button>
+    <button class="cc" onclick="speak('ありがとう','')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">🙏</span><span class="cj">ありがとう</span></button>
+    <button class="cc" onclick="speak('ごめんなさい','')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">😔</span><span class="cj">ごめんなさい</span></button>
+    <button class="cc" onclick="speak('いっしょにあそぼう','')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🤝</span><span class="cj">いっしょにあそぼう</span></button>
+    <button class="cc" onclick="speak('おやすみ','')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🌙</span><span class="cj">おやすみ</span></button>
+    <button class="cc" onclick="speak('いただきます','')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍽️</span><span class="cj">いただきます</span></button>
   </div></div>
 </div>
 
@@ -253,21 +252,21 @@
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-title" id="modalTitle">新しいステップ追加</div>
-    <div class="fg"><label class="fl">🇯🇵 日本語（メイン） / 일본어</label><input class="fi" id="inputJp" placeholder="例: がっこうにいく" maxlength="30"></div>
-    <div class="fg"><label class="fl">🇰🇷 韓国語（任意） / 한국어</label><input class="fi" id="inputKo" placeholder="예: 학교에 가요" maxlength="30"></div>
-    <div class="fg"><label class="fl">アイコン / 아이콘</label><div class="ep" id="emojiPicker"></div></div>
+    <div class="fg"><label class="fl">日本語</label><input class="fi" id="inputJp" placeholder="例: がっこうにいく" maxlength="30"></div>
+    <div class="fg"><label class="fl">かんこくご（にゅうりょくしなくてもいい）</label><input class="fi" id="inputKo" placeholder="예: 학교에 가요" maxlength="30"></div>
+    <div class="fg"><label class="fl">アイコン</label><div class="ep" id="emojiPicker"></div></div>
     <div class="fg">
-      <label class="fl">写真 / 사진</label>
-      <div class="pu" id="photoUploadArea" onclick="triggerPhotoUpload()"><span style="font-size:32px">📷</span><span>タップして写真を追加</span></div>
+      <label class="fl">写真</label>
+      <div class="pu" id="photoUploadArea" onclick="triggerPhotoUpload()"><span style="font-size:32px">📷</span><span>タップして写真をついか</span></div>
       <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handleMainPhoto(event)">
     </div>
     <div class="chain-ed">
-      <div class="chain-ed-hdr"><span>↓ 次のステップ / 다음 단계</span><button class="add-chain-btn" onclick="addChainEntry()">＋ 追加</button></div>
+      <div class="chain-ed-hdr"><span>↓ 次のステップ</span><button class="add-chain-btn" onclick="addChainEntry()">＋ 追加</button></div>
       <div id="chainEntriesEditor"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">キャンセル</button>
-      <button class="btn-save" onclick="saveStep()">保存 / 저장</button>
+      <button class="btn-cancel" onclick="closeModal()">やめる</button>
+      <button class="btn-save" onclick="saveStep()">ほぞん</button>
     </div>
   </div>
 </div>
@@ -277,7 +276,7 @@
 <script>
 const EMOJIS=['🚗','🏫','🏠','🎮','🍱','🛁','😴','🏃','🛒','🌳','🎈','🎨','📚','🎵','🐶','🏊','⚽','🧸','👨‍👩‍👦','🚌','🏥','🍜','🎪','🌸','🚂','✂️','🖍️','🧩','📌'];
 const DAY_JP=['日','月','火','水','木','金','土'];
-const DAY_KO=['일','월','화','수','목','금','토'];
+const DAY_KO=['にち','げつ','か','すい','もく','きん','ど'];
 
 let steps=[], routines=[], dayRoutines={}, selectedDayIdx=new Date().getDay();
 let editingIdx=null, selectedEmoji='📌', mainPhotoData=null, chainDraft=[];
@@ -318,7 +317,7 @@ async function loadAll(){
   render(); renderRoutineTab(); updateTodayBanner();
 }
 
-// ── 이미지 압축 (1200px, 품질 0.7) ──
+// image compress
 function compressImage(file,cb){
   const reader=new FileReader();
   reader.onload=ev=>{
@@ -346,13 +345,13 @@ function switchTab(name){
 // ── RENDER STEPS ──
 function render(){
   const list=document.getElementById('stepList');
-  if(!steps.length){list.innerHTML=`<div class="empty"><div class="ee">📋</div><div class="ej">まだスケジュールがありません</div><div class="ek">아직 일정이 없어요</div></div>`;return;}
+  if(!steps.length){list.innerHTML=`<div class="empty"><div class="ee">📋</div><div class="ej">まだスケジュールがありません</div><div class="ek">スケジュールがまだないよ</div></div>`;return;}
   list.innerHTML=steps.map((s,i)=>`
     <div class="step-card ${s.done?'completed':''}" id="sc${i}">
       <div class="step-num c${(i%8)+1}">${i+1}</div>
       <div class="step-done ${s.done?'done':''}" onclick="toggleDone(${i})">${s.done?'✅':'○'}</div>
       <div class="step-photo" onclick="triggerStepPhoto(${i})">
-        ${s.photo?`<img src="${s.photo}" alt="">`:`<div class="step-photo-ph"><span class="big">${s.emoji}</span><span>タップして写真追加</span></div>`}
+        ${s.photo?`<img src="${s.photo}" alt="">`:`<div class="step-photo-ph"><span class="big">${s.emoji}</span><span>タップして写真をついか</span></div>`}
       </div>
       <div class="step-body">
         <div class="step-jp">${s.emoji} ${s.jp}</div>
@@ -364,7 +363,7 @@ function render(){
               <div class="chain-photo" onclick="triggerChainPhoto(${i},${ci})">
                 ${c.photo?`<img src="${c.photo}">`:`<div class="chain-photo-ph">${c.emoji||'📍'}</div>`}
               </div>
-              <div class="chain-info"><div class="chain-texts"><div class="jp">${c.jp||''}</div>${c.ko&&c.ko!==c.jp?`<div class="ko">${c.ko}</div>`:''}</div></div>
+              <div class="chain-info"><div class="chain-texts"><div class="jp">${c.jp||''}</div>${c.ko&&c.ko!==c.jp?``:''}</div></div>
             </div>
           </div>
           <input type="file" id="cp${i}_${ci}" accept="image/*" style="display:none" onchange="handleChainPhoto(event,${i},${ci})">
@@ -372,7 +371,7 @@ function render(){
         <div class="step-actions">
           ${i>0?`<button class="s-btn s-up" onclick="moveStep(${i},-1)">⬆️</button>`:''}
           ${i<steps.length-1?`<button class="s-btn s-dn" onclick="moveStep(${i},1)">⬇️</button>`:''}
-          <button class="s-btn s-edit" onclick="openEditModal(${i})">✏️ 編集</button>
+          <button class="s-btn s-edit" onclick="openEditModal(${i})">✏️ へんしゅう</button>
           <button class="s-btn s-del" onclick="deleteStep(${i})">🗑️</button>
         </div>
       </div>
@@ -383,7 +382,7 @@ function render(){
 
 function toggleDone(i){steps[i].done=!steps[i].done;saveAll();render();if(steps[i].done)showToast('✅ できた！');}
 function moveStep(i,dir){const j=i+dir;if(j<0||j>=steps.length)return;[steps[i],steps[j]]=[steps[j],steps[i]];saveAll();render();}
-function deleteStep(i){if(confirm('削除しますか？')){steps.splice(i,1);saveAll();render();}}
+function deleteStep(i){if(confirm('さくじょしますか？')){steps.splice(i,1);saveAll();render();}}
 function triggerStepPhoto(i){document.getElementById(`sp${i}`).click();}
 function handleStepPhoto(e,i){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{steps[i].photo=c;saveAll();render();});}
 function triggerChainPhoto(i,ci){document.getElementById(`cp${i}_${ci}`).click();}
@@ -396,22 +395,22 @@ function updateTodayBanner(){
   const el=document.getElementById('todayLoadTitle');
   const sub=document.getElementById('todayLoadSub');
   if(el){
-    el.textContent=`🗓️ ${DAY_JP[today]}曜日(${DAY_KO[today]}요일) ルーティン`;
-    sub.textContent=dr?`「${dr.name}」 → 일정탭에 불러오기`:'요일 루틴이 아직 설정되어 있지 않아요';
+    el.textContent=`🗓️ ${DAY_JP[today]}曜日のルーティン`;
+    sub.textContent=dr?`「${dr.name}」 → よみこめます`:'ルーティンがまだせっていされていません';
   }
 }
 
 function loadTodayDayRoutine(){
   const today=new Date().getDay();
   const dr=dayRoutines[today];
-  if(!dr){showToast('오늘 요일 루틴이 없어요');return;}
+  if(!dr){showToast('今日のルーティンがありません');return;}
   const tpl=routines.find(r=>r.id===dr.routineId);
-  if(!tpl){showToast('루틴을 찾을 수 없어요');return;}
-  if(confirm(`「${tpl.name}」을 오늘 일정으로 불러올까요?\n현재 일정은 유지됩니다.`)){
+  if(!tpl){showToast('ルーティンがみつかりません');return;}
+  if(confirm(`「${tpl.name}」을 오늘 일정으로 불러올까요?\nいまのスケジュールはそのままです。`)){
     const fresh=JSON.parse(JSON.stringify(tpl.steps)).map(s=>({...s,done:false}));
     steps=[...fresh];
     saveAll();render();switchTab('schedule');
-    showToast(`✅ ${tpl.name} 불러왔어요`);
+    showToast(`✅ ${tpl.name} をよみこみました`);
   }
 }
 
@@ -423,16 +422,16 @@ function renderRoutineTab(){
 
 function renderRoutineList(){
   const el=document.getElementById('routineList');
-  if(!routines.length){el.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-light);font-size:13px;font-weight:600;">아직 저장된 루틴이 없어요<br>현재 일정을 이름 붙여 저장해보세요!</div>`;return;}
+  if(!routines.length){el.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-light);font-size:13px;font-weight:600;">まだルーティンがありません<br>いまのスケジュールをほぞんしてみよう！</div>`;return;}
   el.innerHTML=routines.map((r,i)=>`
     <div class="routine-card">
       <div class="routine-icon">${r.steps[0]?.emoji||'📋'}</div>
       <div class="routine-info">
         <div class="routine-name">${r.name}</div>
-        <div class="routine-meta">${r.steps.length}개 일정 · ${r.savedAt}</div>
+        <div class="routine-meta">${r.steps.length}ステップ · ${r.savedAt}</div>
       </div>
       <div class="routine-actions">
-        <button class="r-load-btn" onclick="loadRoutine(${i})">불러오기</button>
+        <button class="r-load-btn" onclick="loadRoutine(${i})">よみこむ</button>
         <button class="r-del-btn" onclick="deleteRoutine(${i})">🗑️</button>
       </div>
     </div>
@@ -455,35 +454,35 @@ function renderDayRoutineContent(){
   const dr=dayRoutines[selectedDayIdx];
   const tpl=dr?routines.find(r=>r.id===dr.routineId):null;
   let html=`<div class="day-routine-hdr">
-    <div class="day-routine-title">${DAY_JP[selectedDayIdx]}曜日(${DAY_KO[selectedDayIdx]}요일) 루틴</div>
-    <button class="set-day-btn" onclick="openSetDayRoutine(${selectedDayIdx})">루틴 설정</button>
+    <div class="day-routine-title">${DAY_JP[selectedDayIdx]}曜日のルーティン</div>
+    <button class="set-day-btn" onclick="openSetDayRoutine(${selectedDayIdx})">ルーティンをせってい</button>
   </div>`;
   if(tpl){
     html+=`<div class="day-routine-preview">
       <div style="font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:8px;">📋 ${tpl.name}</div>
       ${tpl.steps.map(s=>`<div class="day-preview-item"><span class="dpi-emoji">${s.emoji}</span><span class="dpi-text">${s.jp}</span></div>`).join('')}
-      <button style="margin-top:10px;width:100%;padding:10px;background:var(--blue);color:white;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;" onclick="clearDayRoutine(${selectedDayIdx})">이 요일 루틴 해제</button>
+      <button style="margin-top:10px;width:100%;padding:10px;background:var(--blue);color:white;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;" onclick="clearDayRoutine(${selectedDayIdx})">このルーティンをかいじょ</button>
     </div>`;
   } else {
-    html+=`<div class="day-routine-preview"><div class="no-day-routine">설정된 루틴이 없어요<br>「루틴 설정」을 눌러 지정해보세요</div></div>`;
+    html+=`<div class="day-routine-preview"><div class="no-day-routine">ルーティンがまだありません<br>「ルーティンをせってい」をおしてください</div></div>`;
   }
   el.innerHTML=html;
 }
 
 function openSetDayRoutine(dayIdx){
-  if(!routines.length){showToast('먼저 루틴 템플릿을 저장해주세요');return;}
-  const options=routines.map((r,i)=>`${i+1}. ${r.name} (${r.steps.length}개)`).join('\n');
-  const input=prompt(`${DAY_JP[dayIdx]}曜日에 적용할 루틴을 선택하세요:\n\n${options}\n\n번호를 입력하세요:`);
+  if(!routines.length){showToast('まずルーティンをほぞんしてください');return;}
+  const options=routines.map((r,i)=>`${i+1}. ${r.name} (${r.steps.length}ステップ)`).join('\n');
+  const input=prompt(`${DAY_JP[dayIdx]}曜日にてきようする 루틴을 선택하세요:\n\n${options}\n\nばんごうをにゅうりょくしてください：`);
   if(!input)return;
   const idx=parseInt(input)-1;
-  if(idx<0||idx>=routines.length){showToast('잘못된 번호예요');return;}
+  if(idx<0||idx>=routines.length){showToast('ばんごうがちがいます');return;}
   dayRoutines[dayIdx]={routineId:routines[idx].id,name:routines[idx].name};
   saveAll();renderDayBar();renderDayRoutineContent();updateTodayBanner();
   showToast(`✅ ${DAY_JP[dayIdx]}曜日 → ${routines[idx].name}`);
 }
 
 function clearDayRoutine(dayIdx){
-  if(confirm(`${DAY_JP[dayIdx]}曜日의 루틴 설정을 해제할까요?`)){
+  if(confirm(`${DAY_JP[dayIdx]}曜日의 ルーティンをせってい을 해제할까요?`)){
     delete dayRoutines[dayIdx];
     saveAll();renderDayBar();renderDayRoutineContent();updateTodayBanner();
   }
@@ -491,33 +490,33 @@ function clearDayRoutine(dayIdx){
 
 function saveCurrentAsRoutine(){
   const name=document.getElementById('routineNameInput').value.trim();
-  if(!name){showToast('루틴 이름을 입력해주세요');return;}
-  if(!steps.length){showToast('저장할 일정이 없어요');return;}
+  if(!name){showToast('ルーティン名をにゅうりょくしてください');return;}
+  if(!steps.length){showToast('ほぞんするスケジュールがありません');return;}
   const id='r_'+Date.now();
   const now=new Date();
   const savedAt=`${now.getMonth()+1}/${now.getDate()}`;
-  // 완료 상태 제거하고 저장
+  // done state reset
   const snapshot=JSON.parse(JSON.stringify(steps)).map(s=>({...s,done:false}));
   routines.push({id,name,steps:snapshot,savedAt});
   document.getElementById('routineNameInput').value='';
   saveAll();renderRoutineList();
-  showToast(`💾 「${name}」 저장했어요`);
+  showToast(`💾 「${name}」 をほぞんしました`);
 }
 
 function loadRoutine(i){
   const r=routines[i];
-  if(confirm(`「${r.name}」을 현재 일정으로 불러올까요?\n현재 일정은 교체됩니다.`)){
+  if(confirm(`「${r.name}」을 현재 일정으로 불러올까요?\nいまのスケジュールがかわります。`)){
     steps=JSON.parse(JSON.stringify(r.steps)).map(s=>({...s,done:false}));
     saveAll();render();switchTab('schedule');
-    showToast(`✅ 「${r.name}」 불러왔어요`);
+    showToast(`✅ 「${r.name}」 をよみこみました`);
   }
 }
 
 function deleteRoutine(i){
-  if(confirm(`「${routines[i].name}」을 삭제할까요?`)){
+  if(confirm(`「${routines[i].name}」をさくじょしますか？`)){
     const id=routines[i].id;
     routines.splice(i,1);
-    // dayRoutines에서도 해제
+    // remove from dayRoutines
     Object.keys(dayRoutines).forEach(d=>{if(dayRoutines[d].routineId===id)delete dayRoutines[d];});
     saveAll();renderRoutineList();renderDayBar();renderDayRoutineContent();
   }
@@ -531,9 +530,9 @@ function renderChainEditor(){
     <div class="chain-entry">
       <div class="ce-hdr"><span>↓ ステップ ${ci+1}</span><button class="ce-del" onclick="removeChainEntry(${ci})">✕</button></div>
       <input class="fi" id="cjp${ci}" placeholder="例: あそぶ" maxlength="30" value="${c.jp||''}" oninput="chainDraft[${ci}].jp=this.value">
-      <input class="fi" style="margin-top:6px" id="cko${ci}" placeholder="예: 놀기 (선택)" maxlength="30" value="${c.ko||''}" oninput="chainDraft[${ci}].ko=this.value">
+      <input class="fi" style="margin-top:6px" id="cko${ci}" placeholder="にゅうりょくしなくてもいい" maxlength="30" value="${c.ko||''}" oninput="chainDraft[${ci}].ko=this.value">
       <div class="chain-pu" id="cpu${ci}" onclick="triggerChainEdPh(${ci})">
-        ${c.photo?`<img src="${c.photo}">`:'<span style="font-size:24px">📷</span><span>写真追加</span>'}
+        ${c.photo?`<img src="${c.photo}">`:'<span style="font-size:24px">📷</span><span>写真をついか</span>'}
       </div>
       <input type="file" id="ceph${ci}" accept="image/*" style="display:none" onchange="handleChainEdPh(event,${ci})">
     </div>
@@ -545,16 +544,16 @@ function triggerChainEdPh(ci){document.getElementById(`ceph${ci}`).click();}
 function handleChainEdPh(e,ci){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{chainDraft[ci].photo=c;const a=document.getElementById(`cpu${ci}`);if(a)a.innerHTML=`<img src="${c}">`});}
 function openAddModal(){
   editingIdx=null;selectedEmoji='📌';mainPhotoData=null;chainDraft=[];
-  document.getElementById('modalTitle').textContent='新しいステップ追加 / 새 일정 추가';
+  document.getElementById('modalTitle').textContent='新しいステップをついか';
   document.getElementById('inputJp').value='';document.getElementById('inputKo').value='';
-  document.getElementById('photoUploadArea').innerHTML='<span style="font-size:32px">📷</span><span>タップして写真を追加</span>';
+  document.getElementById('photoUploadArea').innerHTML='<span style="font-size:32px">📷</span><span>タップして写真をついか</span>';
   renderChainEditor();buildEmojiPicker();document.getElementById('modalOverlay').classList.add('open');
 }
 function openEditModal(i){
   editingIdx=i;const s=steps[i];selectedEmoji=s.emoji;mainPhotoData=s.photo||null;chainDraft=JSON.parse(JSON.stringify(s.chain||[]));
-  document.getElementById('modalTitle').textContent='ステップ編集';
+  document.getElementById('modalTitle').textContent='へんしゅう';
   document.getElementById('inputJp').value=s.jp||'';document.getElementById('inputKo').value=s.ko||'';
-  const pa=document.getElementById('photoUploadArea');pa.innerHTML=mainPhotoData?`<img src="${mainPhotoData}">`:'<span style="font-size:32px">📷</span><span>タップして写真を追加</span>';
+  const pa=document.getElementById('photoUploadArea');pa.innerHTML=mainPhotoData?`<img src="${mainPhotoData}">`:'<span style="font-size:32px">📷</span><span>タップして写真をついか</span>';
   renderChainEditor();buildEmojiPicker();document.getElementById('modalOverlay').classList.add('open');
 }
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
@@ -568,7 +567,7 @@ function saveStep(){
   const step={jp:jp||ko,ko:ko||jp,emoji:selectedEmoji,photo:mainPhotoData,done:false,chain:validChain};
   if(editingIdx!==null){step.done=steps[editingIdx].done;steps[editingIdx]=step;}else{steps.push(step);}
   saveAll();render();closeModal();
-  showToast(editingIdx!==null?'✏️ 編集しました':'✅ 追加しました');
+  showToast(editingIdx!==null?'✏️ へんしゅうしました':'✅ ついかしました');
 }
 
 // ── LIBRARY ──
@@ -579,11 +578,11 @@ const library={
   food:[{emoji:'🍱',jp:'おべんとう',ko:'도시락'},{emoji:'🍚',jp:'ごはん',ko:'밥'},{emoji:'🍜',jp:'ラーメン',ko:'라면'},{emoji:'🍞',jp:'パン',ko:'빵'},{emoji:'🍎',jp:'りんご',ko:'사과'},{emoji:'🍌',jp:'バナナ',ko:'바나나'},{emoji:'🍪',jp:'おかし',ko:'과자'},{emoji:'🧃',jp:'ジュース',ko:'주스'},{emoji:'🍦',jp:'アイスクリーム',ko:'아이스크림'}],
   person:[{emoji:'👩',jp:'ママ',ko:'엄마'},{emoji:'👨',jp:'パパ',ko:'아빠'},{emoji:'👦',jp:'おにいちゃん',ko:'오빠/형'},{emoji:'👧',jp:'おねえちゃん',ko:'언니/누나'},{emoji:'👴',jp:'おじいちゃん',ko:'할아버지'},{emoji:'👵',jp:'おばあちゃん',ko:'할머니'},{emoji:'👩‍🏫',jp:'せんせい',ko:'선생님'},{emoji:'🧑‍⚕️',jp:'おいしゃさん',ko:'의사 선생님'},{emoji:'👫',jp:'ともだち',ko:'친구'}],
 };
-function buildLibrary(){Object.entries(library).forEach(([key,items])=>{const el=document.getElementById(`lib-${key}`);if(!el)return;el.innerHTML=items.map(item=>`<div class="lib-card" onclick="addFromLibrary('${item.emoji}','${item.jp}','${item.ko}')"><span class="ce">${item.emoji}</span><span class="cj">${item.jp}</span><span class="ck">${item.ko}</span></div>`).join('');});}
-function addFromLibrary(emoji,jp,ko){steps.push({jp,ko,emoji,photo:null,done:false,chain:[]});saveAll();render();switchTab('schedule');showToast(`${emoji} ${jp} 追加しました`);}
+function buildLibrary(){Object.entries(library).forEach(([key,items])=>{const el=document.getElementById(`lib-${key}`);if(!el)return;el.innerHTML=items.map(item=>`<div class="lib-card" onclick="addFromLibrary('${item.emoji}','${item.jp}','${item.ko}')"><span class="ce">${item.emoji}</span><span class="cj">${item.jp}</span></div>`).join('');});}
+function addFromLibrary(emoji,jp,ko){steps.push({jp,ko,emoji,photo:null,done:false,chain:[]});saveAll();render();switchTab('schedule');showToast(`${emoji} ${jp} ついかしました`);}
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
-function speak(jp,ko){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(jp);u.lang='ja-JP';window.speechSynthesis.speak(u);}showToast(`${jp}　${ko}`);}
+function speak(jp,ko){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(jp);u.lang='ja-JP';window.speechSynthesis.speak(u);}showToast(jp);}
 
 buildLibrary();
 openDB().then(loadAll);

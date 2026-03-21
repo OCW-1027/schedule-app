@@ -133,6 +133,17 @@
   .empty{text-align:center;padding:40px 20px;color:var(--text-light);}
   .empty .ee{font-size:60px;margin-bottom:10px;}.empty .ej{font-size:17px;font-weight:800;margin-bottom:4px;}.empty .ek{font-size:13px;font-weight:600;}
 
+
+  /* SETTINGS */
+  .settings-card{background:white;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
+  .settings-icon{font-size:28px;flex-shrink:0;}
+  .settings-info{flex:1;}
+  .settings-title{font-size:15px;font-weight:800;color:var(--text);}
+  .settings-desc{font-size:11px;font-weight:600;color:var(--text-light);margin-top:3px;line-height:1.5;}
+  .settings-btn{border:none;border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+  .settings-btn.green{background:var(--green);color:white;box-shadow:0 2px 8px rgba(92,184,92,0.4);}
+  .settings-btn.blue{background:var(--blue);color:white;box-shadow:0 2px 8px rgba(74,144,217,0.4);}
+  .settings-note{background:var(--yellow-light);border-radius:14px;padding:12px 14px;font-size:12px;font-weight:600;color:#7B6000;line-height:1.6;}
   /* MYCARD */
   .mycard-section{margin-bottom:4px;}
   .add-mycard-btn{background:var(--green);color:white;border:none;border-radius:10px;padding:6px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
@@ -156,6 +167,7 @@
   <button class="tab" onclick="switchTab('routine')"><span class="ti">🔁</span><span>ルーティン</span></button>
   <button class="tab" onclick="switchTab('library')"><span class="ti">🗂️</span><span>カード</span></button>
   <button class="tab" onclick="switchTab('comm')"><span class="ti">💬</span><span>きもち</span></button>
+  <button class="tab" onclick="switchTab('settings')"><span class="ti">⚙️</span><span>せってい</span></button>
 </div>
 
 <!-- SCHEDULE -->
@@ -214,6 +226,45 @@
   <div class="sec-lbl">🎮 かつどう</div><div class="card-grid" id="lib-activity"></div>
   <div class="sec-lbl">🍎 たべもの</div><div class="card-grid" id="lib-food"></div>
   <div class="sec-lbl">👨‍👩‍👦 ひと</div><div class="card-grid" id="lib-person"></div>
+</div>
+
+<!-- SETTINGS -->
+<div class="panel" id="panel-settings">
+  <div class="sec-lbl">💾 バックアップ・ふっきゅう</div>
+
+  <!-- 백업 -->
+  <div class="settings-card">
+    <div class="settings-icon">📤</div>
+    <div class="settings-info">
+      <div class="settings-title">データをバックアップ</div>
+      <div class="settings-desc">スケジュール・ルーティン・マイカードをぜんぶほぞん<br>写真もふくまれます</div>
+    </div>
+    <button class="settings-btn green" onclick="exportBackup()">バックアップ</button>
+  </div>
+
+  <!-- 복원 -->
+  <div class="settings-card">
+    <div class="settings-icon">📥</div>
+    <div class="settings-info">
+      <div class="settings-title">データをふっきゅう</div>
+      <div class="settings-desc">バックアップファイルからデータをよみこみます<br>いまのデータはうわがきされます</div>
+    </div>
+    <button class="settings-btn blue" onclick="document.getElementById('importInput').click()">ふっきゅう</button>
+    <input type="file" id="importInput" accept=".json" style="display:none" onchange="importBackup(event)">
+  </div>
+
+  <div class="settings-note">
+    💡 ヒント：スマホをかえるときや、アプリをさいインストールするまえにバックアップをとっておきましょう！
+  </div>
+
+  <div class="sec-lbl" style="margin-top:20px">ℹ️ アプリじょうほう</div>
+  <div class="settings-card">
+    <div class="settings-icon">📱</div>
+    <div class="settings-info">
+      <div class="settings-title">リオのスケジュールアプリ</div>
+      <div class="settings-desc" id="dataStats">よみこみちゅう...</div>
+    </div>
+  </div>
 </div>
 
 <!-- MYCARD MODAL -->
@@ -385,10 +436,11 @@ function calcPhotoHeight(ratio){
 
 // ── TABS ──
 function switchTab(name){
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['schedule','routine','library','comm'][i]===name));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['schedule','routine','library','comm','settings'][i]===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   if(name==='routine'){renderRoutineTab();updateTodayBanner();}
+  if(name==='settings'){updateDataStats();}
 }
 
 // ── RENDER STEPS ──
@@ -716,6 +768,61 @@ function renderMyCards(){
       </div>
     </div>
   `).join('');
+}
+
+
+// ── バックアップ・ふっきゅう ──
+async function exportBackup(){
+  try {
+    showToast('バックアップをじゅんびちゅう...');
+    const data = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      steps: steps,
+      routines: routines,
+      dayRoutines: dayRoutines,
+      myCards: myCards
+    };
+    const json = JSON.stringify(data);
+    const blob = new Blob([json], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const now = new Date();
+    const fname = `rio-schedule-backup-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.json`;
+    a.href = url; a.download = fname; a.click();
+    URL.revokeObjectURL(url);
+    showToast('✅ バックアップかんりょう！');
+  } catch(e) {
+    showToast('エラーがはっせいしました');
+  }
+}
+
+async function importBackup(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  if(!confirm('バックアップからデータをよみこみます。
+いまのデータはうわがきされます。よろしいですか？')) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if(!data.version) throw new Error('invalid');
+    steps = (data.steps||[]).map(s=>{if(!s.chain)s.chain=[];return s;});
+    routines = data.routines||[];
+    dayRoutines = data.dayRoutines||{};
+    myCards = data.myCards||[];
+    await saveAll();
+    render(); renderRoutineTab(); updateTodayBanner(); renderMyCards(); updateDataStats(); updateDataStats();
+    showToast('✅ データをふっきゅうしました！');
+  } catch(err) {
+    showToast('ファイルがただしくありません');
+  }
+  e.target.value='';
+}
+
+function updateDataStats(){
+  const el = document.getElementById('dataStats');
+  if(!el) return;
+  el.textContent = `スケジュール ${steps.length}こ・ルーティン ${routines.length}こ・マイカード ${myCards.length}まい`;
 }
 
 function buildLibrary(){Object.entries(library).forEach(([key,items])=>{const el=document.getElementById(`lib-${key}`);if(!el)return;el.innerHTML=items.map(item=>`<div class="lib-card" onclick="addFromLibrary('${item.emoji}','${item.jp}','${item.ko}')"><span class="ce">${item.emoji}</span><span class="cj">${item.jp}</span></div>`).join('');});}

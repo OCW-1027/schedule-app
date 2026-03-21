@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>今日のスケジュール</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #E8F4FD; --blue: #4A90D9; --blue-dark: #2C6FAC;
+    --green: #5CB85C; --green-light: #EAF7EA;
+    --orange: #FF8C42; --orange-light: #FFF3EB;
+    --pink: #F06292; --pink-light: #FDE8F0;
+    --yellow: #FFD54F; --yellow-light: #FFFDE7;
+    --purple: #9C6FD6; --purple-light: #F3EDFF;
+    --gray: #F5F5F5; --text: #2D2D2D; --text-light: #777;
+    --radius: 20px; --shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(160deg, #E8F4FD 0%, #FFF8E1 50%, #FCE4EC 100%);
+    min-height: 100vh; color: var(--text); padding-bottom: 80px;
+  }
+
+  /* HEADER */
+  header {
+    background: white; padding: 14px 20px 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: sticky; top: 0; z-index: 100;
+  }
+  .header-title .jp { font-size: 20px; font-weight: 900; color: var(--blue-dark); }
+  .header-title .ko { font-size: 12px; font-weight: 600; color: var(--text-light); }
+  .date-badge { background: var(--blue); color: white; border-radius: 12px; padding: 6px 14px; font-size: 13px; font-weight: 700; }
+
+  /* TABS */
+  .tabs { display: flex; margin: 16px 16px 0; background: white; border-radius: 16px; padding: 4px; box-shadow: var(--shadow); gap: 4px; }
+  .tab {
+    flex: 1; padding: 10px 8px; border: none; background: transparent;
+    border-radius: 12px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
+    color: var(--text-light); cursor: pointer; transition: all 0.2s;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .tab .tab-icon { font-size: 20px; }
+  .tab.active { background: var(--blue); color: white; box-shadow: 0 2px 8px rgba(74,144,217,0.4); }
+
+  /* PANELS */
+  .panel { display: none; padding: 16px; }
+  .panel.active { display: block; }
+
+  /* SCHEDULE HEADER */
+  .schedule-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .schedule-title { font-size: 15px; font-weight: 800; color: var(--blue-dark); }
+  .add-step-btn {
+    background: var(--orange); color: white; border: none; border-radius: 12px;
+    padding: 8px 16px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800;
+    cursor: pointer; box-shadow: 0 3px 8px rgba(255,140,66,0.4); display: flex; align-items: center; gap: 6px;
+  }
+
+  /* STEP CARD */
+  .step-card {
+    background: white; border-radius: var(--radius); margin-bottom: 14px;
+    box-shadow: var(--shadow); overflow: hidden; animation: slideIn 0.3s ease; position: relative;
+  }
+  @keyframes slideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .step-number {
+    position: absolute; top: 12px; left: 12px; width: 36px; height: 36px;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900; color: white; z-index: 1;
+  }
+  .step-done-btn {
+    position: absolute; top: 12px; right: 12px; width: 36px; height: 36px;
+    border-radius: 50%; border: 3px solid #ddd; background: white;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+    cursor: pointer; transition: all 0.2s; z-index: 1;
+  }
+  .step-done-btn.done { background: var(--green); border-color: var(--green); color: white; }
+  .step-image-area {
+    width: 100%; height: 150px; background: var(--gray);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; overflow: hidden; position: relative;
+  }
+  .step-image-area img { width: 100%; height: 100%; object-fit: cover; }
+  .step-image-placeholder { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-light); }
+  .step-image-placeholder .emoji-big { font-size: 48px; }
+  .step-image-placeholder span { font-size: 12px; font-weight: 600; }
+  .step-body { padding: 12px 16px 14px; }
+  .step-texts { display: flex; flex-direction: column; gap: 3px; margin-bottom: 10px; }
+  .step-text-jp { font-size: 22px; font-weight: 900; color: var(--text); }
+  .step-text-ko { font-size: 13px; font-weight: 600; color: var(--text-light); }
+
+  /* CHAIN (multiple sub-steps) */
+  .chain-list { margin-top: 4px; }
+  .chain-item {
+    display: flex; align-items: center; gap: 8px; margin-top: 8px;
+  }
+  .chain-arrow { font-size: 22px; color: var(--blue); flex-shrink: 0; }
+  .chain-box {
+    flex: 1; background: var(--sky); border-radius: 12px; padding: 8px 10px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .chain-img {
+    width: 52px; height: 52px; border-radius: 10px; object-fit: cover;
+    flex-shrink: 0; background: #ddd; overflow: hidden;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 26px;
+  }
+  .chain-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+  .chain-texts .jp { font-size: 16px; font-weight: 800; }
+  .chain-texts .ko { font-size: 11px; font-weight: 600; color: var(--text-light); }
+  .chain-del {
+    width: 28px; height: 28px; border-radius: 50%; border: none;
+    background: #FFEBEE; color: #C62828; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+
+  /* STEP ACTIONS */
+  .step-actions { display: flex; gap: 8px; margin-top: 10px; border-top: 1px solid #f0f0f0; padding-top: 10px; }
+  .step-action-btn {
+    flex: 1; padding: 8px; border: none; border-radius: 10px;
+    font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;
+  }
+  .btn-edit { background: var(--sky); color: var(--blue-dark); }
+  .btn-delete { background: #FFEBEE; color: #C62828; }
+  .btn-move-up, .btn-move-down { background: var(--gray); color: var(--text-light); }
+
+  /* DONE OVERLAY */
+  .step-card.completed .step-image-area::after {
+    content: '✅'; position: absolute; top:0;left:0;right:0;bottom:0;
+    background: rgba(92,184,92,0.6); display: flex; align-items: center; justify-content: center; font-size: 60px;
+  }
+  .step-card.completed .step-text-jp { text-decoration: line-through; color: #aaa; }
+
+  /* LIBRARY */
+  .section-label { font-size: 14px; font-weight: 800; color: var(--blue-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .lib-card {
+    background: white; border-radius: 14px; padding: 10px 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); cursor: pointer;
+    transition: transform 0.15s; border: 3px solid transparent; text-align: center;
+  }
+  .lib-card:active { transform: scale(0.95); }
+  .lib-card .card-emoji { font-size: 36px; }
+  .lib-card .card-jp { font-size: 12px; font-weight: 800; color: var(--text); }
+  .lib-card .card-ko { font-size: 10px; font-weight: 600; color: var(--text-light); }
+
+  /* COMM */
+  .comm-section { margin-bottom: 20px; }
+  .comm-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .comm-card {
+    border-radius: 16px; padding: 14px 8px; display: flex; flex-direction: column;
+    align-items: center; gap: 5px; cursor: pointer; box-shadow: var(--shadow);
+    transition: transform 0.15s; text-align: center; border: none;
+  }
+  .comm-card:active { transform: scale(0.93); }
+  .comm-card .c-emoji { font-size: 38px; }
+  .comm-card .c-jp { font-size: 13px; font-weight: 900; }
+  .comm-card .c-ko { font-size: 10px; font-weight: 600; opacity: 0.7; }
+  .comm-card.yes { background: var(--green-light); color: var(--green); }
+  .comm-card.no { background: #FFEBEE; color: #E53935; }
+  .comm-card.wait { background: var(--yellow-light); color: #F57F17; }
+  .comm-card.toilet { background: var(--purple-light); color: var(--purple); }
+  .comm-card.eat { background: var(--orange-light); color: var(--orange); }
+  .comm-card.play { background: var(--pink-light); color: var(--pink); }
+  .comm-card.tired { background: #E8EAF6; color: #3949AB; }
+  .comm-card.hug { background: #FCE4EC; color: #AD1457; }
+  .comm-card.water { background: #E1F5FE; color: #0277BD; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none; position: fixed; top:0;left:0;right:0;bottom:0;
+    background: rgba(0,0,0,0.5); z-index: 200; align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: white; border-radius: 24px 24px 0 0; padding: 20px;
+    width: 100%; max-height: 92vh; overflow-y: auto; animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-title { font-size: 17px; font-weight: 900; color: var(--blue-dark); margin-bottom: 14px; text-align: center; }
+  .form-group { margin-bottom: 12px; }
+  .form-label { font-size: 12px; font-weight: 700; color: var(--text-light); margin-bottom: 5px; display: block; }
+  .form-input {
+    width: 100%; padding: 11px 13px; border: 2px solid #E0E0E0; border-radius: 12px;
+    font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 600; outline: none; transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--blue); }
+  .emoji-picker { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 6px; }
+  .emoji-opt {
+    width: 100%; aspect-ratio: 1; border: 3px solid transparent; border-radius: 10px;
+    background: var(--gray); font-size: 22px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+  }
+  .emoji-opt.selected { border-color: var(--blue); background: var(--sky); }
+  .photo-upload-area {
+    width: 100%; height: 110px; border: 3px dashed #ccc; border-radius: 14px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; cursor: pointer; background: var(--gray); font-size: 13px; font-weight: 700; color: var(--text-light);
+    overflow: hidden;
+  }
+  .photo-upload-area img { width: 100%; height: 100%; object-fit: cover; border-radius: 11px; }
+
+  /* CHAIN EDITOR in modal */
+  .chain-editor { margin-top: 12px; }
+  .chain-editor-title { font-size: 13px; font-weight: 800; color: var(--blue-dark); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
+  .add-chain-btn {
+    background: var(--blue); color: white; border: none; border-radius: 10px;
+    padding: 6px 12px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; cursor: pointer;
+  }
+  .chain-entry {
+    background: var(--sky); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px;
+    position: relative;
+  }
+  .chain-entry-header { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-size: 12px; font-weight: 800; color: var(--blue-dark); }
+  .chain-entry-del {
+    margin-left: auto; width: 24px; height: 24px; border-radius: 50%; border: none;
+    background: #FFEBEE; color: #C62828; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .chain-mini-photo {
+    width: 100%; height: 70px; border: 2px dashed #bcd; border-radius: 10px;
+    background: white; display: flex; align-items: center; justify-content: center;
+    gap: 6px; cursor: pointer; font-size: 12px; font-weight: 700; color: var(--text-light);
+    overflow: hidden; margin-top: 6px;
+  }
+  .chain-mini-photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+
+  .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .btn-cancel {
+    flex: 1; padding: 13px; border: none; background: var(--gray);
+    border-radius: 14px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer; color: var(--text-light);
+  }
+  .btn-save {
+    flex: 2; padding: 13px; border: none; background: var(--blue);
+    border-radius: 14px; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 900; cursor: pointer; color: white;
+    box-shadow: 0 4px 12px rgba(74,144,217,0.4);
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 20px;
+    font-size: 14px; font-weight: 700; z-index: 300; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-light); }
+  .empty-state .e-emoji { font-size: 60px; margin-bottom: 12px; }
+  .empty-state .e-jp { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+  .empty-state .e-ko { font-size: 13px; font-weight: 600; }
+
+  .color-1{background:#4A90D9} .color-2{background:#5CB85C} .color-3{background:#FF8C42}
+  .color-4{background:#F06292} .color-5{background:#9C6FD6} .color-6{background:#26B5A0}
+  .color-7{background:#FFB300} .color-8{background:#EF5350}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <div class="jp">📅 今日のスケジュール</div>
+    <div class="ko">오늘의 일정</div>
+  </div>
+  <div class="date-badge" id="dateBadge"></div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('schedule')">
+    <span class="tab-icon">📋</span>
+    <span>スケジュール<br><small>일정</small></span>
+  </button>
+  <button class="tab" onclick="switchTab('library')">
+    <span class="tab-icon">🗂️</span>
+    <span>カード<br><small>카드</small></span>
+  </button>
+  <button class="tab" onclick="switchTab('comm')">
+    <span class="tab-icon">💬</span>
+    <span>きもち<br><small>소통</small></span>
+  </button>
+</div>
+
+<!-- SCHEDULE PANEL -->
+<div class="panel active" id="panel-schedule">
+  <div class="schedule-header">
+    <span class="schedule-title">今日すること / 오늘 할 일</span>
+    <button class="add-step-btn" onclick="openAddModal()">➕ 追加</button>
+  </div>
+  <div id="stepList"></div>
+</div>
+
+<!-- LIBRARY PANEL -->
+<div class="panel" id="panel-library">
+  <div class="section-label">🚗 移動 / 이동</div>
+  <div class="card-grid" id="lib-move"></div>
+  <div class="section-label">🏫 場所 / 장소</div>
+  <div class="card-grid" id="lib-place"></div>
+  <div class="section-label">🎮 活動 / 활동</div>
+  <div class="card-grid" id="lib-activity"></div>
+  <div class="section-label">🍎 食べ物 / 음식</div>
+  <div class="card-grid" id="lib-food"></div>
+  <div class="section-label">👨‍👩‍👦 人 / 사람</div>
+  <div class="card-grid" id="lib-person"></div>
+</div>
+
+<!-- COMM PANEL -->
+<div class="panel" id="panel-comm">
+  <div class="comm-section">
+    <div class="section-label">✅ 基本の返事 / 기본 응답</div>
+    <div class="comm-grid">
+      <button class="comm-card yes" onclick="speak('はい / 네')"><span class="c-emoji">👍</span><span class="c-jp">はい</span><span class="c-ko">네</span></button>
+      <button class="comm-card no" onclick="speak('いいえ / 아니요')"><span class="c-emoji">👎</span><span class="c-jp">いいえ</span><span class="c-ko">아니요</span></button>
+      <button class="comm-card wait" onclick="speak('ちょっとまって / 잠깐만요')"><span class="c-emoji">✋</span><span class="c-jp">ちょっとまって</span><span class="c-ko">잠깐만요</span></button>
+      <button class="comm-card" onclick="speak('もっと / 더')" style="background:var(--purple-light);color:var(--purple)"><span class="c-emoji">➕</span><span class="c-jp">もっと</span><span class="c-ko">더 해요</span></button>
+      <button class="comm-card" onclick="speak('おわった / 끝났어요')" style="background:var(--orange-light);color:var(--orange)"><span class="c-emoji">🏁</span><span class="c-jp">おわった</span><span class="c-ko">끝났어요</span></button>
+      <button class="comm-card" onclick="speak('てつだって / 도와주세요')" style="background:var(--sky);color:var(--blue-dark)"><span class="c-emoji">🙋</span><span class="c-jp">てつだって</span><span class="c-ko">도와주세요</span></button>
+    </div>
+  </div>
+  <div class="comm-section">
+    <div class="section-label">😊 きもち / 감정</div>
+    <div class="comm-grid">
+      <button class="comm-card yes" onclick="speak('うれしい / 기뻐요')"><span class="c-emoji">😄</span><span class="c-jp">うれしい</span><span class="c-ko">기뻐요</span></button>
+      <button class="comm-card no" onclick="speak('かなしい / 슬퍼요')"><span class="c-emoji">😢</span><span class="c-jp">かなしい</span><span class="c-ko">슬퍼요</span></button>
+      <button class="comm-card no" onclick="speak('おこった / 화났어요')"><span class="c-emoji">😠</span><span class="c-jp">おこった</span><span class="c-ko">화났어요</span></button>
+      <button class="comm-card no" onclick="speak('こわい / 무서워요')"><span class="c-emoji">😨</span><span class="c-jp">こわい</span><span class="c-ko">무서워요</span></button>
+      <button class="comm-card tired" onclick="speak('つかれた / 피곤해요')"><span class="c-emoji">😴</span><span class="c-jp">つかれた</span><span class="c-ko">피곤해요</span></button>
+      <button class="comm-card wait" onclick="speak('いやだ / 싫어요')"><span class="c-emoji">🙅</span><span class="c-jp">いやだ</span><span class="c-ko">싫어요</span></button>
+      <button class="comm-card hug" onclick="speak('すき / 좋아요')"><span class="c-emoji">❤️</span><span class="c-jp">すき</span><span class="c-ko">좋아요</span></button>
+      <button class="comm-card" onclick="speak('びっくりした / 깜짝 놀랐어요')" style="background:var(--yellow-light);color:#F57F17"><span class="c-emoji">😲</span><span class="c-jp">びっくりした</span><span class="c-ko">깜짝 놀랐어요</span></button>
+      <button class="comm-card" onclick="speak('たのしい / 재미있어요')" style="background:var(--pink-light);color:var(--pink)"><span class="c-emoji">🎉</span><span class="c-jp">たのしい</span><span class="c-ko">재미있어요</span></button>
+    </div>
+  </div>
+  <div class="comm-section">
+    <div class="section-label">🩺 からだ / 몸</div>
+    <div class="comm-grid">
+      <button class="comm-card" onclick="speak('いたい / 아파요')" style="background:var(--yellow-light);color:#E65100"><span class="c-emoji">🤕</span><span class="c-jp">いたい</span><span class="c-ko">아파요</span></button>
+      <button class="comm-card" onclick="speak('あたまいたい / 머리 아파요')" style="background:var(--yellow-light);color:#E65100"><span class="c-emoji">🤯</span><span class="c-jp">あたまいたい</span><span class="c-ko">머리 아파요</span></button>
+      <button class="comm-card" onclick="speak('おなかいたい / 배 아파요')" style="background:var(--yellow-light);color:#E65100"><span class="c-emoji">🤢</span><span class="c-jp">おなかいたい</span><span class="c-ko">배 아파요</span></button>
+      <button class="comm-card toilet" onclick="speak('トイレ / 화장실')"><span class="c-emoji">🚽</span><span class="c-jp">トイレ</span><span class="c-ko">화장실</span></button>
+      <button class="comm-card" onclick="speak('ねつがある / 열이 나요')" style="background:#FFEBEE;color:#C62828"><span class="c-emoji">🌡️</span><span class="c-jp">ねつがある</span><span class="c-ko">열이 나요</span></button>
+      <button class="comm-card" onclick="speak('きもちわるい / 토할 것 같아요')" style="background:var(--green-light);color:#1B5E20"><span class="c-emoji">🤮</span><span class="c-jp">きもちわるい</span><span class="c-ko">토할 것 같아요</span></button>
+    </div>
+  </div>
+  <div class="comm-section">
+    <div class="section-label">🙏 ほしいもの / 필요한 것</div>
+    <div class="comm-grid">
+      <button class="comm-card eat" onclick="speak('おなかすいた / 배고파요')"><span class="c-emoji">🍱</span><span class="c-jp">おなかすいた</span><span class="c-ko">배고파요</span></button>
+      <button class="comm-card water" onclick="speak('みずがのみたい / 물 마시고 싶어요')"><span class="c-emoji">💧</span><span class="c-jp">みずがのみたい</span><span class="c-ko">물 마시고 싶어요</span></button>
+      <button class="comm-card play" onclick="speak('あそびたい / 놀고 싶어요')"><span class="c-emoji">🎈</span><span class="c-jp">あそびたい</span><span class="c-ko">놀고 싶어요</span></button>
+      <button class="comm-card hug" onclick="speak('だっこして / 안아주세요')"><span class="c-emoji">🤗</span><span class="c-jp">だっこして</span><span class="c-ko">안아주세요</span></button>
+      <button class="comm-card" onclick="speak('おうちにかえりたい / 집에 가고 싶어요')" style="background:var(--green-light);color:#2E7D32"><span class="c-emoji">🏠</span><span class="c-jp">おうちにかえりたい</span><span class="c-ko">집에 가고 싶어요</span></button>
+      <button class="comm-card" onclick="speak('やすみたい / 쉬고 싶어요')" style="background:#E8EAF6;color:#3949AB"><span class="c-emoji">🛋️</span><span class="c-jp">やすみたい</span><span class="c-ko">쉬고 싶어요</span></button>
+      <button class="comm-card" onclick="speak('おやつたべたい / 간식 먹고 싶어요')" style="background:var(--orange-light);color:var(--orange)"><span class="c-emoji">🍪</span><span class="c-jp">おやつたべたい</span><span class="c-ko">간식 먹고 싶어요</span></button>
+      <button class="comm-card" onclick="speak('テレビみたい / TV 보고 싶어요')" style="background:var(--sky);color:var(--blue-dark)"><span class="c-emoji">📺</span><span class="c-jp">テレビみたい</span><span class="c-ko">TV 보고 싶어요</span></button>
+      <button class="comm-card" onclick="speak('おんがくききたい / 음악 듣고 싶어요')" style="background:var(--purple-light);color:var(--purple)"><span class="c-emoji">🎵</span><span class="c-jp">おんがくききたい</span><span class="c-ko">음악 듣고 싶어요</span></button>
+    </div>
+  </div>
+  <div class="comm-section">
+    <div class="section-label">👋 あいさつ / 인사</div>
+    <div class="comm-grid">
+      <button class="comm-card yes" onclick="speak('こんにちは / 안녕하세요')"><span class="c-emoji">👋</span><span class="c-jp">こんにちは</span><span class="c-ko">안녕하세요</span></button>
+      <button class="comm-card" onclick="speak('ありがとう / 감사해요')" style="background:var(--yellow-light);color:#F57F17"><span class="c-emoji">🙏</span><span class="c-jp">ありがとう</span><span class="c-ko">감사해요</span></button>
+      <button class="comm-card" onclick="speak('ごめんなさい / 미안해요')" style="background:var(--pink-light);color:var(--pink)"><span class="c-emoji">😔</span><span class="c-jp">ごめんなさい</span><span class="c-ko">미안해요</span></button>
+      <button class="comm-card" onclick="speak('いっしょにあそぼう / 같이 놀아요')" style="background:var(--green-light);color:#2E7D32"><span class="c-emoji">🤝</span><span class="c-jp">いっしょにあそぼう</span><span class="c-ko">같이 놀아요</span></button>
+      <button class="comm-card" onclick="speak('おやすみ / 잘 자요')" style="background:#E8EAF6;color:#3949AB"><span class="c-emoji">🌙</span><span class="c-jp">おやすみ</span><span class="c-ko">잘 자요</span></button>
+      <button class="comm-card" onclick="speak('いただきます / 잘 먹겠습니다')" style="background:var(--orange-light);color:var(--orange)"><span class="c-emoji">🍽️</span><span class="c-jp">いただきます</span><span class="c-ko">잘 먹겠습니다</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">新しいステップ追加 / 새 일정 추가</div>
+
+    <div class="form-group">
+      <label class="form-label">🇯🇵 日本語（メイン） / 일본어 (주)</label>
+      <input class="form-input" id="inputJp" placeholder="例: がっこうにいく" maxlength="30">
+    </div>
+    <div class="form-group">
+      <label class="form-label">🇰🇷 韓国語（任意） / 한국어 (선택)</label>
+      <input class="form-input" id="inputKo" placeholder="예: 학교에 가요" maxlength="30">
+    </div>
+    <div class="form-group">
+      <label class="form-label">アイコン選択 / 아이콘</label>
+      <div class="emoji-picker" id="emojiPicker"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">写真 / 사진</label>
+      <div class="photo-upload-area" id="photoUploadArea" onclick="triggerPhotoUpload()">
+        <span style="font-size:28px">📷</span>
+        <span>タップして写真をアップロード / 터치하여 사진 추가</span>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handleMainPhoto(event)">
+    </div>
+
+    <!-- CHAIN EDITOR -->
+    <div class="chain-editor">
+      <div class="chain-editor-title">
+        <span>↓ 次のステップ / 다음 단계 연결</span>
+        <button class="add-chain-btn" onclick="addChainEntry()">＋ 追加</button>
+      </div>
+      <div id="chainEntriesEditor"></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">キャンセル / 취소</button>
+      <button class="btn-save" onclick="saveStep()">保存 / 저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const EMOJIS = ['🚗','🏫','🏠','🎮','🍱','🛁','😴','🏃','🛒','🌳','🎈','🎨','📚','🎵','🐶','🏊','⚽','🧸','👨‍👩‍👦','🚌','🏥','🍜','🎪','🌸','🚂','✂️','🖍️','🧩','📌'];
+
+// Migrate old data: convert single sub → array
+let steps = JSON.parse(localStorage.getItem('scheduleSteps') || '[]');
+steps = steps.map(s => {
+  if (s.sub && !Array.isArray(s.chain)) {
+    s.chain = [s.sub];
+    delete s.sub;
+  }
+  if (!s.chain) s.chain = [];
+  return s;
+});
+
+let editingIdx = null;
+let selectedEmoji = '📌';
+let mainPhotoData = null;
+// chainDraft: array of {jp, ko, photo}
+let chainDraft = [];
+
+const d = new Date();
+const days = ['日','月','火','水','木','金','土'];
+document.getElementById('dateBadge').textContent = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
+
+function save() { localStorage.setItem('scheduleSteps', JSON.stringify(steps)); }
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('active', ['schedule','library','comm'][i] === name);
+  });
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+// ── RENDER ──
+function render() {
+  const list = document.getElementById('stepList');
+  if (!steps.length) {
+    list.innerHTML = `<div class="empty-state"><div class="e-emoji">📋</div><div class="e-jp">まだスケジュールがありません</div><div class="e-ko">아직 일정이 없어요</div></div>`;
+    return;
+  }
+  list.innerHTML = steps.map((s, i) => `
+    <div class="step-card ${s.done ? 'completed' : ''}" id="stepCard${i}">
+      <div class="step-number color-${(i%8)+1}">${i+1}</div>
+      <div class="step-done-btn ${s.done?'done':''}" onclick="toggleDone(${i})">${s.done?'✅':'○'}</div>
+      <div class="step-image-area" onclick="triggerStepPhoto(${i})">
+        ${s.photo
+          ? `<img src="${s.photo}" alt="">`
+          : `<div class="step-image-placeholder"><span class="emoji-big">${s.emoji}</span><span>タップして写真追加</span></div>`}
+      </div>
+      <div class="step-body">
+        <div class="step-texts">
+          <div class="step-text-jp">${s.emoji} ${s.jp}</div>
+          ${s.ko && s.ko !== s.jp ? `<div class="step-text-ko">${s.ko}</div>` : ''}
+        </div>
+        ${(s.chain||[]).length ? `
+          <div class="chain-list">
+            ${(s.chain).map((c, ci) => `
+              <div class="chain-item">
+                <div class="chain-arrow">↓</div>
+                <div class="chain-box">
+                  <div class="chain-img" onclick="triggerChainPhoto(${i},${ci})">
+                    ${c.photo ? `<img src="${c.photo}">` : (c.emoji || '📍')}
+                  </div>
+                  <div class="chain-texts">
+                    <div class="jp">${c.jp||''}</div>
+                    ${c.ko && c.ko !== c.jp ? `<div class="ko">${c.ko}</div>` : ''}
+                  </div>
+                </div>
+              </div>
+              <input type="file" id="chainPhoto${i}_${ci}" accept="image/*" style="display:none" onchange="handleChainPhoto(event,${i},${ci})">
+            `).join('')}
+          </div>
+        ` : ''}
+        <div class="step-actions">
+          ${i>0 ? `<button class="step-action-btn btn-move-up" onclick="moveStep(${i},-1)">⬆️</button>` : ''}
+          ${i<steps.length-1 ? `<button class="step-action-btn btn-move-down" onclick="moveStep(${i},1)">⬇️</button>` : ''}
+          <button class="step-action-btn btn-edit" onclick="openEditModal(${i})">✏️ 編集</button>
+          <button class="step-action-btn btn-delete" onclick="deleteStep(${i})">🗑️ 削除</button>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="stepPhoto${i}" accept="image/*" style="display:none" onchange="handleStepPhoto(event,${i})">
+  `).join('');
+}
+
+function toggleDone(i) {
+  steps[i].done = !steps[i].done;
+  save(); render();
+  if (steps[i].done) showToast('✅ できた！/ 완료!');
+}
+function moveStep(i, dir) {
+  const j = i+dir;
+  if (j<0||j>=steps.length) return;
+  [steps[i],steps[j]] = [steps[j],steps[i]];
+  save(); render();
+}
+function deleteStep(i) {
+  if (confirm('削除しますか？ / 삭제할까요?')) { steps.splice(i,1); save(); render(); }
+}
+function triggerStepPhoto(i) { document.getElementById(`stepPhoto${i}`).click(); }
+function handleStepPhoto(e, i) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => { steps[i].photo = ev.target.result; save(); render(); };
+  r.readAsDataURL(f);
+}
+function triggerChainPhoto(i, ci) { document.getElementById(`chainPhoto${i}_${ci}`).click(); }
+function handleChainPhoto(e, i, ci) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => { steps[i].chain[ci].photo = ev.target.result; save(); render(); };
+  r.readAsDataURL(f);
+}
+
+// ── MODAL ──
+function buildEmojiPicker() {
+  document.getElementById('emojiPicker').innerHTML =
+    EMOJIS.map(e => `<div class="emoji-opt ${e===selectedEmoji?'selected':''}" onclick="selectEmoji('${e}')">${e}</div>`).join('');
+}
+function selectEmoji(e) {
+  selectedEmoji = e;
+  document.querySelectorAll('.emoji-opt').forEach(el => el.classList.toggle('selected', el.textContent===e));
+}
+
+function renderChainEditor() {
+  document.getElementById('chainEntriesEditor').innerHTML = chainDraft.map((c, ci) => `
+    <div class="chain-entry" id="chainEntry${ci}">
+      <div class="chain-entry-header">
+        <span>↓ ステップ ${ci+1}</span>
+        <button class="chain-entry-del" onclick="removeChainEntry(${ci})">✕</button>
+      </div>
+      <input class="form-input" id="chainJp${ci}" placeholder="例: あそぶ" maxlength="30" value="${c.jp||''}" oninput="chainDraft[${ci}].jp=this.value">
+      <input class="form-input" style="margin-top:6px" id="chainKo${ci}" placeholder="예: 놀기 (선택)" maxlength="30" value="${c.ko||''}" oninput="chainDraft[${ci}].ko=this.value">
+      <div class="chain-mini-photo" id="chainPhotoArea${ci}" onclick="triggerChainEditorPhoto(${ci})">
+        ${c.photo ? `<img src="${c.photo}">` : '<span style="font-size:20px">📷</span><span>写真追加</span>'}
+      </div>
+      <input type="file" id="chainEditorPhoto${ci}" accept="image/*" style="display:none" onchange="handleChainEditorPhoto(event,${ci})">
+    </div>
+  `).join('');
+}
+
+function addChainEntry() {
+  chainDraft.push({jp:'', ko:'', photo:null});
+  renderChainEditor();
+  // scroll to new entry
+  setTimeout(() => {
+    const entries = document.querySelectorAll('.chain-entry');
+    if (entries.length) entries[entries.length-1].scrollIntoView({behavior:'smooth', block:'nearest'});
+  }, 100);
+}
+function removeChainEntry(ci) {
+  chainDraft.splice(ci,1);
+  renderChainEditor();
+}
+function triggerChainEditorPhoto(ci) { document.getElementById(`chainEditorPhoto${ci}`).click(); }
+function handleChainEditorPhoto(e, ci) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    chainDraft[ci].photo = ev.target.result;
+    const area = document.getElementById(`chainPhotoArea${ci}`);
+    if (area) area.innerHTML = `<img src="${ev.target.result}">`;
+  };
+  r.readAsDataURL(f);
+}
+
+function openAddModal() {
+  editingIdx = null; selectedEmoji = '📌'; mainPhotoData = null; chainDraft = [];
+  document.getElementById('modalTitle').textContent = '新しいステップ追加 / 새 일정 추가';
+  document.getElementById('inputJp').value = '';
+  document.getElementById('inputKo').value = '';
+  document.getElementById('photoUploadArea').innerHTML = '<span style="font-size:28px">📷</span><span>タップして写真をアップロード / 터치하여 사진 추가</span>';
+  renderChainEditor();
+  buildEmojiPicker();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function openEditModal(i) {
+  editingIdx = i;
+  const s = steps[i];
+  selectedEmoji = s.emoji;
+  mainPhotoData = s.photo || null;
+  chainDraft = JSON.parse(JSON.stringify(s.chain || []));
+  document.getElementById('modalTitle').textContent = 'ステップ編集 / 일정 편집';
+  document.getElementById('inputJp').value = s.jp || '';
+  document.getElementById('inputKo').value = s.ko || '';
+  const pArea = document.getElementById('photoUploadArea');
+  pArea.innerHTML = mainPhotoData ? `<img src="${mainPhotoData}">` : '<span style="font-size:28px">📷</span><span>タップして写真をアップロード</span>';
+  renderChainEditor();
+  buildEmojiPicker();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+function triggerPhotoUpload() { document.getElementById('photoInput').click(); }
+function handleMainPhoto(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    mainPhotoData = ev.target.result;
+    document.getElementById('photoUploadArea').innerHTML = `<img src="${mainPhotoData}">`;
+  };
+  r.readAsDataURL(f);
+}
+
+function saveStep() {
+  const jp = document.getElementById('inputJp').value.trim();
+  const ko = document.getElementById('inputKo').value.trim();
+  if (!jp && !ko) { showToast('どちらか入力してください / 이름을 입력해주세요'); return; }
+  // sync chainDraft text from inputs (already via oninput, but ensure)
+  chainDraft.forEach((c, ci) => {
+    const jEl = document.getElementById(`chainJp${ci}`);
+    const kEl = document.getElementById(`chainKo${ci}`);
+    if (jEl) c.jp = jEl.value.trim();
+    if (kEl) c.ko = kEl.value.trim();
+  });
+  const validChain = chainDraft.filter(c => c.jp || c.ko).map(c => ({
+    jp: c.jp || c.ko, ko: c.ko || c.jp, photo: c.photo, emoji: '📍'
+  }));
+  const step = { jp: jp||ko, ko: ko||jp, emoji: selectedEmoji, photo: mainPhotoData, done: false, chain: validChain };
+  if (editingIdx !== null) { step.done = steps[editingIdx].done; steps[editingIdx] = step; }
+  else { steps.push(step); }
+  save(); render(); closeModal();
+  showToast(editingIdx !== null ? '✏️ 編集しました / 수정했어요' : '✅ 追加しました / 추가했어요');
+}
+
+// ── LIBRARY ──
+const library = {
+  move: [
+    {emoji:'🚗',jp:'ママのくるま',ko:'엄마 차'},{emoji:'🚙',jp:'パパのくるま',ko:'아빠 차'},
+    {emoji:'🚌',jp:'バス',ko:'버스'},{emoji:'🚃',jp:'でんしゃ',ko:'전철'},
+    {emoji:'🚲',jp:'じてんしゃ',ko:'자전거'},{emoji:'🚶',jp:'あるく',ko:'걷기'},
+    {emoji:'🏃',jp:'かける',ko:'뛰기'},{emoji:'🚕',jp:'タクシー',ko:'택시'},
+    {emoji:'✈️',jp:'ひこうき',ko:'비행기'},
+  ],
+  place: [
+    {emoji:'🏠',jp:'おうち',ko:'집'},{emoji:'🏫',jp:'がっこう',ko:'학교'},
+    {emoji:'🏥',jp:'びょういん',ko:'병원'},{emoji:'🏪',jp:'コンビニ',ko:'편의점'},
+    {emoji:'🛒',jp:'スーパー',ko:'마트'},{emoji:'🌳',jp:'こうえん',ko:'공원'},
+    {emoji:'🍜',jp:'レストラン',ko:'식당'},{emoji:'📚',jp:'としょかん',ko:'도서관'},
+    {emoji:'💈',jp:'びよういん',ko:'미용실'},{emoji:'🏊',jp:'プール',ko:'수영장'},
+    {emoji:'🛍️',jp:'ショッピング',ko:'쇼핑몰'},{emoji:'⛩️',jp:'じんじゃ',ko:'신사'},
+  ],
+  activity: [
+    {emoji:'🍱',jp:'ごはん',ko:'밥 먹기'},{emoji:'🛁',jp:'おふろ',ko:'목욕'},
+    {emoji:'😴',jp:'ねる',ko:'자기'},{emoji:'🪥',jp:'はみがき',ko:'양치하기'},
+    {emoji:'👕',jp:'きがえ',ko:'옷 입기'},{emoji:'🎮',jp:'ゲーム',ko:'게임'},
+    {emoji:'🎨',jp:'おえかき',ko:'그림 그리기'},{emoji:'📖',jp:'ほんをよむ',ko:'책 읽기'},
+    {emoji:'🎵',jp:'おんがく',ko:'음악 듣기'},{emoji:'📺',jp:'テレビ',ko:'TV 보기'},
+    {emoji:'🧩',jp:'パズル',ko:'퍼즐'},{emoji:'⚽',jp:'ボールあそび',ko:'공놀이'},
+    {emoji:'🖍️',jp:'ぬりえ',ko:'색칠하기'},{emoji:'🧸',jp:'ぬいぐるみ',ko:'인형 놀이'},
+    {emoji:'🧼',jp:'てをあらう',ko:'손 씻기'},{emoji:'🎪',jp:'たいけん',ko:'체험'},
+  ],
+  food: [
+    {emoji:'🍱',jp:'おべんとう',ko:'도시락'},{emoji:'🍚',jp:'ごはん',ko:'밥'},
+    {emoji:'🍜',jp:'ラーメン',ko:'라면'},{emoji:'🍞',jp:'パン',ko:'빵'},
+    {emoji:'🍎',jp:'りんご',ko:'사과'},{emoji:'🍌',jp:'バナナ',ko:'바나나'},
+    {emoji:'🍪',jp:'おかし',ko:'과자'},{emoji:'🧃',jp:'ジュース',ko:'주스'},
+    {emoji:'🍦',jp:'アイスクリーム',ko:'아이스크림'},
+  ],
+  person: [
+    {emoji:'👩',jp:'ママ',ko:'엄마'},{emoji:'👨',jp:'パパ',ko:'아빠'},
+    {emoji:'👦',jp:'おにいちゃん',ko:'오빠/형'},{emoji:'👧',jp:'おねえちゃん',ko:'언니/누나'},
+    {emoji:'👴',jp:'おじいちゃん',ko:'할아버지'},{emoji:'👵',jp:'おばあちゃん',ko:'할머니'},
+    {emoji:'👩‍🏫',jp:'せんせい',ko:'선생님'},{emoji:'🧑‍⚕️',jp:'おいしゃさん',ko:'의사 선생님'},
+    {emoji:'👫',jp:'ともだち',ko:'친구'},
+  ],
+};
+
+function buildLibrary() {
+  Object.entries(library).forEach(([key, items]) => {
+    const el = document.getElementById(`lib-${key}`);
+    if (!el) return;
+    el.innerHTML = items.map(item => `
+      <div class="lib-card" onclick="addFromLibrary('${item.emoji}','${item.jp}','${item.ko}')">
+        <span class="card-emoji">${item.emoji}</span>
+        <span class="card-jp">${item.jp}</span>
+        <span class="card-ko">${item.ko}</span>
+      </div>
+    `).join('');
+  });
+}
+
+function addFromLibrary(emoji, jp, ko) {
+  steps.push({jp, ko, emoji, photo:null, done:false, chain:[]});
+  save(); render();
+  switchTab('schedule');
+  showToast(`${emoji} ${jp} 追加しました`);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function speak(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  }
+  showToast(text);
+}
+
+buildLibrary();
+render();
+</script>
+</body>
+</html>

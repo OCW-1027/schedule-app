@@ -26,8 +26,8 @@
   .step-num{position:absolute;top:10px;left:10px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:white;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,0.25);}
   .step-done{position:absolute;top:10px;right:10px;width:42px;height:42px;border-radius:50%;border:3px solid rgba(255,255,255,0.8);background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:all 0.2s;z-index:2;}
   .step-done.done{background:var(--green);border-color:var(--green);color:white;}
-  .step-photo{width:100%;height:220px;background:var(--gray);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;}
-  .step-photo img{width:100%;height:100%;object-fit:cover;}
+  .step-photo{width:100%;height:220px;background:var(--gray);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:height 0.3s ease;}
+  .step-photo img{width:100%;height:100%;object-fit:cover;display:block;}
   .step-photo-ph{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-light);}
   .step-photo-ph .big{font-size:64px;}.step-photo-ph span{font-size:12px;font-weight:600;}
   .step-card.completed .step-photo::after{content:'✅';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(92,184,92,0.55);display:flex;align-items:center;justify-content:center;font-size:80px;}
@@ -39,7 +39,7 @@
   .chain-item{margin-top:8px;display:flex;flex-direction:column;}
   .chain-arrow-row{text-align:center;font-size:28px;color:var(--blue);line-height:1.2;}
   .chain-box{background:var(--sky);border-radius:14px;overflow:hidden;}
-  .chain-photo{width:100%;height:160px;background:#dce8f5;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;}
+  .chain-photo{width:100%;height:160px;background:#dce8f5;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:height 0.3s ease;}
   .chain-photo img{width:100%;height:100%;object-fit:cover;}
   .chain-photo-ph{font-size:48px;}
   .chain-info{padding:8px 12px 10px;}
@@ -123,7 +123,7 @@
   .chain-entry{background:var(--sky);border-radius:14px;padding:10px 12px;margin-bottom:8px;}
   .ce-hdr{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:12px;font-weight:800;color:var(--blue-dark);}
   .ce-del{margin-left:auto;width:24px;height:24px;border-radius:50%;border:none;background:#FFEBEE;color:#C62828;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-  .chain-pu{width:100%;height:130px;border:2px dashed #bcd;border-radius:10px;background:white;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-light);overflow:hidden;margin-top:6px;}
+  .chain-pu{width:100%;height:130px;border:2px dashed #bcd;border-radius:10px;background:white;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-light);overflow:hidden;margin-top:6px;transition:height 0.3s;}
   .chain-pu img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
   .modal-actions{display:flex;gap:10px;margin-top:14px;}
   .btn-cancel{flex:1;padding:13px;border:none;background:var(--gray);border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;color:var(--text-light);}
@@ -317,7 +317,7 @@ const DAY_JP=['日','月','火','水','木','金','土'];
 const DAY_KO=['にち','げつ','か','すい','もく','きん','ど'];
 
 let steps=[], routines=[], dayRoutines={}, selectedDayIdx=new Date().getDay();
-let editingIdx=null, selectedEmoji='📌', mainPhotoData=null, chainDraft=[];
+let editingIdx=null, selectedEmoji='📌', mainPhotoData=null, mainPhotoRatio=null, chainDraft=[];
 
 const d=new Date();
 document.getElementById('dateBadge').textContent=`${d.getMonth()+1}/${d.getDate()}(${DAY_JP[d.getDay()]})`;
@@ -366,11 +366,21 @@ function compressImage(file,cb){
       let w=img.width,h=img.height,mx=1200;
       if(w>mx||h>mx){if(w>h){h=Math.round(h*mx/w);w=mx;}else{w=Math.round(w*mx/h);h=mx;}}
       c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
-      cb(c.toDataURL('image/jpeg',0.7));
+      // 비율 정보도 같이 전달 (세로:가로 비율)
+      const ratio=h/w;
+      cb(c.toDataURL('image/jpeg',0.7), ratio);
     };
     img.src=ev.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+// 사진 비율에 따라 높이 계산 (세로사진: 최대 400px, 가로사진: 220px)
+function calcPhotoHeight(ratio){
+  if(!ratio) return 220;
+  if(ratio>1.2) return Math.min(Math.round(window.innerWidth * ratio * 0.9), 420); // 세로
+  if(ratio>0.8) return 260; // 정사각형에 가까움
+  return 220; // 가로
 }
 
 // ── TABS ──
@@ -389,7 +399,7 @@ function render(){
     <div class="step-card ${s.done?'completed':''}" id="sc${i}">
       <div class="step-num c${(i%8)+1}">${i+1}</div>
       <div class="step-done ${s.done?'done':''}" onclick="toggleDone(${i})">${s.done?'✅':'○'}</div>
-      <div class="step-photo" onclick="triggerStepPhoto(${i})">
+      <div class="step-photo" id="sph${i}" style="height:${calcPhotoHeight(s.photoRatio)}px" onclick="triggerStepPhoto(${i})">
         ${s.photo?`<img src="${s.photo}" alt="">`:`<div class="step-photo-ph"><span class="big">${s.emoji}</span><span>タップして写真をついか</span></div>`}
       </div>
       <div class="step-body">
@@ -399,7 +409,7 @@ function render(){
           <div class="chain-item">
             <div class="chain-arrow-row">↓</div>
             <div class="chain-box">
-              <div class="chain-photo" onclick="triggerChainPhoto(${i},${ci})">
+              <div class="chain-photo" style="height:${calcPhotoHeight(c.photoRatio)}px" onclick="triggerChainPhoto(${i},${ci})">
                 ${c.photo?`<img src="${c.photo}">`:`<div class="chain-photo-ph">${c.emoji||'📍'}</div>`}
               </div>
               <div class="chain-info"><div class="chain-texts"><div class="jp">${c.jp||''}</div>${c.ko&&c.ko!==c.jp?``:''}</div></div>
@@ -423,9 +433,9 @@ function toggleDone(i){steps[i].done=!steps[i].done;saveAll();render();if(steps[
 function moveStep(i,dir){const j=i+dir;if(j<0||j>=steps.length)return;[steps[i],steps[j]]=[steps[j],steps[i]];saveAll();render();}
 function deleteStep(i){if(confirm('さくじょしますか？')){steps.splice(i,1);saveAll();render();}}
 function triggerStepPhoto(i){document.getElementById(`sp${i}`).click();}
-function handleStepPhoto(e,i){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{steps[i].photo=c;saveAll();render();});}
+function handleStepPhoto(e,i){const f=e.target.files[0];if(!f)return;compressImage(f,(c,ratio)=>{steps[i].photo=c;steps[i].photoRatio=ratio;saveAll();render();});}
 function triggerChainPhoto(i,ci){document.getElementById(`cp${i}_${ci}`).click();}
-function handleChainPhoto(e,i,ci){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{steps[i].chain[ci].photo=c;saveAll();render();});}
+function handleChainPhoto(e,i,ci){const f=e.target.files[0];if(!f)return;compressImage(f,(c,ratio)=>{steps[i].chain[ci].photo=c;steps[i].chain[ci].photoRatio=ratio;saveAll();render();});}
 
 // ── ROUTINE TAB ──
 function updateTodayBanner(){
@@ -579,29 +589,39 @@ function renderChainEditor(){
 function addChainEntry(){chainDraft.push({jp:'',ko:'',photo:null});renderChainEditor();setTimeout(()=>{const es=document.querySelectorAll('.chain-entry');if(es.length)es[es.length-1].scrollIntoView({behavior:'smooth',block:'nearest'});},100);}
 function removeChainEntry(ci){chainDraft.splice(ci,1);renderChainEditor();}
 function triggerChainEdPh(ci){document.getElementById(`ceph${ci}`).click();}
-function handleChainEdPh(e,ci){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{chainDraft[ci].photo=c;const a=document.getElementById(`cpu${ci}`);if(a)a.innerHTML=`<img src="${c}">`});}
+function handleChainEdPh(e,ci){const f=e.target.files[0];if(!f)return;compressImage(f,(c,ratio)=>{chainDraft[ci].photo=c;chainDraft[ci].photoRatio=ratio;const a=document.getElementById(`cpu${ci}`);if(a){const h=calcPhotoHeight(ratio);a.style.height=h+'px';a.innerHTML=`<img src="${c}">`;}}); }
 function openAddModal(){
-  editingIdx=null;selectedEmoji='📌';mainPhotoData=null;chainDraft=[];
+  editingIdx=null;selectedEmoji='📌';mainPhotoData=null;mainPhotoRatio=null;chainDraft=[];
   document.getElementById('modalTitle').textContent='新しいステップをついか';
   document.getElementById('inputJp').value='';
   document.getElementById('photoUploadArea').innerHTML='<span style="font-size:32px">📷</span><span>タップして写真をついか</span>';
   renderChainEditor();buildEmojiPicker();document.getElementById('modalOverlay').classList.add('open');
 }
 function openEditModal(i){
-  editingIdx=i;const s=steps[i];selectedEmoji=s.emoji;mainPhotoData=s.photo||null;chainDraft=JSON.parse(JSON.stringify(s.chain||[]));
+  editingIdx=i;const s=steps[i];selectedEmoji=s.emoji;mainPhotoData=s.photo||null;mainPhotoRatio=s.photoRatio||null;chainDraft=JSON.parse(JSON.stringify(s.chain||[]));
   document.getElementById('modalTitle').textContent='へんしゅう';
   document.getElementById('inputJp').value=s.jp||'';
-  const pa=document.getElementById('photoUploadArea');pa.innerHTML=mainPhotoData?`<img src="${mainPhotoData}">`:'<span style="font-size:32px">📷</span><span>タップして写真をついか</span>';
+  const pa=document.getElementById('photoUploadArea');
+  if(mainPhotoData){const h=calcPhotoHeight(mainPhotoRatio);pa.style.height=h+'px';pa.innerHTML=`<img src="${mainPhotoData}">`;}else{pa.style.height='160px';pa.innerHTML='<span style="font-size:32px">📷</span><span>タップして写真をついか</span>';}
   renderChainEditor();buildEmojiPicker();document.getElementById('modalOverlay').classList.add('open');
 }
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
 function triggerPhotoUpload(){document.getElementById('photoInput').click();}
-function handleMainPhoto(e){const f=e.target.files[0];if(!f)return;compressImage(f,c=>{mainPhotoData=c;document.getElementById('photoUploadArea').innerHTML=`<img src="${c}">`;});}
+function handleMainPhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  compressImage(f,(c,ratio)=>{
+    mainPhotoData=c; mainPhotoRatio=ratio;
+    const h=calcPhotoHeight(ratio);
+    const el=document.getElementById('photoUploadArea');
+    el.style.height=h+'px';
+    el.innerHTML=`<img src="${c}">`;
+  });
+}
 function saveStep(){
   const jp=document.getElementById('inputJp').value.trim();
   if(!jp){showToast('なまえをにゅうりょくしてください');return;}
   chainDraft.forEach((c,ci)=>{const j=document.getElementById(`cjp${ci}`);if(j)c.jp=j.value.trim();});
-  const validChain=chainDraft.filter(c=>c.jp).map(c=>({jp:c.jp,ko:c.jp,photo:c.photo,emoji:'📍'}));
+  const validChain=chainDraft.filter(c=>c.jp).map(c=>({jp:c.jp,ko:c.jp,photo:c.photo,photoRatio:c.photoRatio||null,emoji:'📍'}));
   const step={jp,ko:jp,emoji:selectedEmoji,photo:mainPhotoData,done:false,chain:validChain};
   if(editingIdx!==null){step.done=steps[editingIdx].done;steps[editingIdx]=step;}else{steps.push(step);}
   saveAll();render();closeModal();
@@ -621,6 +641,7 @@ const library={
 let myCards = [];
 let mcSelectedEmoji = '⭐';
 let mcPhotoData = null;
+let mcPhotoRatio = null;
 let mcEditingId = null;
 
 function openMycardModal(editId){
@@ -628,12 +649,11 @@ function openMycardModal(editId){
   const existing = editId ? myCards.find(c=>c.id===editId) : null;
   mcSelectedEmoji = existing ? existing.emoji : '⭐';
   mcPhotoData = existing ? existing.photo : null;
+  mcPhotoRatio = existing ? existing.photoRatio : null;
   document.getElementById('mcModalTitle').textContent = existing ? '✏️ カードをへんしゅう' : '⭐ マイカードをついか';
   document.getElementById('mcInputJp').value = existing ? existing.jp : '';
   const pa = document.getElementById('mcPhotoArea');
-  pa.innerHTML = mcPhotoData
-    ? `<img src="${mcPhotoData}" style="width:100%;height:100%;object-fit:cover;border-radius:11px">`
-    : '<span style="font-size:40px">📷</span><span>タップして写真をついか</span>';
+  if(mcPhotoData){const h=calcPhotoHeight(mcPhotoRatio);pa.style.height=h+'px';pa.innerHTML=`<img src="${mcPhotoData}" style="width:100%;height:100%;object-fit:cover;border-radius:11px">`;}else{pa.style.height='180px';pa.innerHTML='<span style="font-size:40px">📷</span><span>タップして写真をついか</span>';}
   document.getElementById('mcEmojiPicker').innerHTML =
     EMOJIS.map(e=>`<div class="eo ${e===mcSelectedEmoji?'sel':''}" onclick="selMcEmoji('${e}')">${e}</div>`).join('');
   document.getElementById('mycardOverlay').classList.add('open');
@@ -645,9 +665,11 @@ function selMcEmoji(e){
 }
 function handleMcPhoto(e){
   const f=e.target.files[0]; if(!f) return;
-  compressImage(f, c=>{
-    mcPhotoData=c;
+  compressImage(f, (c,ratio)=>{
+    mcPhotoData=c; mcPhotoRatio=ratio;
     const pa=document.getElementById('mcPhotoArea');
+    const h=calcPhotoHeight(ratio);
+    pa.style.height=h+'px';
     pa.innerHTML=`<img src="${c}" style="width:100%;height:100%;object-fit:cover;border-radius:11px">`;
   });
 }
@@ -656,9 +678,9 @@ function saveMycard(){
   if(!jp){showToast('なまえをにゅうりょくしてください');return;}
   if(mcEditingId){
     const idx=myCards.findIndex(c=>c.id===mcEditingId);
-    if(idx!==-1) myCards[idx]={...myCards[idx],jp,ko:jp,emoji:mcSelectedEmoji,photo:mcPhotoData};
+    if(idx!==-1) myCards[idx]={...myCards[idx],jp,ko:jp,emoji:mcSelectedEmoji,photo:mcPhotoData,photoRatio:mcPhotoRatio};
   } else {
-    myCards.push({id:'mc_'+Date.now(),jp,ko:jp,emoji:mcSelectedEmoji,photo:mcPhotoData});
+    myCards.push({id:'mc_'+Date.now(),jp,ko:jp,emoji:mcSelectedEmoji,photo:mcPhotoData,photoRatio:mcPhotoRatio});
   }
   saveAll();renderMyCards();closeMycardModal();
   showToast(`⭐ ${jp} をほぞんしました`);
@@ -680,7 +702,7 @@ function renderMyCards(){
       <button class="cdel" onclick="event.stopPropagation();deleteMycard('${c.id}')">✕</button>
       <button class="cedit" onclick="event.stopPropagation();openMycardModal('${c.id}')">✏️</button>
       ${c.photo
-        ? `<img src="${c.photo}" style="width:100%;height:90px;object-fit:cover;">`
+        ? `<img src="${c.photo}" style="width:100%;height:${Math.min(calcPhotoHeight(c.photoRatio||null),160)}px;object-fit:cover;">`
         : `<div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:var(--sky);font-size:44px">${c.emoji}</div>`
       }
       <div style="padding:6px 4px 8px;text-align:center;">

@@ -437,7 +437,16 @@ const d = new Date();
 const days = ['日','月','火','水','木','金','土'];
 document.getElementById('dateBadge').textContent = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
 
-function save() { localStorage.setItem('scheduleSteps', JSON.stringify(steps)); }
+function save() {
+  try {
+    localStorage.setItem('scheduleSteps', JSON.stringify(steps));
+  } catch(e) {
+    // 용량 초과시 사진 제거 후 재시도
+    const slim = steps.map(s => ({...s, photo: null, chain: (s.chain||[]).map(c => ({...c, photo: null}))}));
+    try { localStorage.setItem('scheduleSteps', JSON.stringify(slim)); } catch(e2) {}
+    showToast('⚠️ 写真が多すぎます。一部省略しました。');
+  }
+}
 
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach((t,i) => {
@@ -516,16 +525,12 @@ function deleteStep(i) {
 function triggerStepPhoto(i) { document.getElementById(`stepPhoto${i}`).click(); }
 function handleStepPhoto(e, i) {
   const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => { steps[i].photo = ev.target.result; save(); render(); };
-  r.readAsDataURL(f);
+  compressImage(f, compressed => { steps[i].photo = compressed; save(); render(); });
 }
 function triggerChainPhoto(i, ci) { document.getElementById(`chainPhoto${i}_${ci}`).click(); }
 function handleChainPhoto(e, i, ci) {
   const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => { steps[i].chain[ci].photo = ev.target.result; save(); render(); };
-  r.readAsDataURL(f);
+  compressImage(f, compressed => { steps[i].chain[ci].photo = compressed; save(); render(); });
 }
 
 // ── MODAL ──
@@ -571,13 +576,11 @@ function removeChainEntry(ci) {
 function triggerChainEditorPhoto(ci) { document.getElementById(`chainEditorPhoto${ci}`).click(); }
 function handleChainEditorPhoto(e, ci) {
   const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => {
-    chainDraft[ci].photo = ev.target.result;
+  compressImage(f, compressed => {
+    chainDraft[ci].photo = compressed;
     const area = document.getElementById(`chainPhotoArea${ci}`);
-    if (area) area.innerHTML = `<img src="${ev.target.result}">`;
-  };
-  r.readAsDataURL(f);
+    if (area) area.innerHTML = `<img src="${compressed}">`;
+  });
 }
 
 function openAddModal() {
@@ -609,15 +612,34 @@ function openEditModal(i) {
 
 function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
 
+// ── 이미지 압축 ──
+function compressImage(file, callback) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height, maxS = 800;
+      if (w > maxS || h > maxS) {
+        if (w > h) { h = Math.round(h*maxS/w); w = maxS; }
+        else { w = Math.round(w*maxS/h); h = maxS; }
+      }
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL('image/jpeg', 0.55));
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 function triggerPhotoUpload() { document.getElementById('photoInput').click(); }
 function handleMainPhoto(e) {
   const f = e.target.files[0]; if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => {
-    mainPhotoData = ev.target.result;
+  compressImage(f, compressed => {
+    mainPhotoData = compressed;
     document.getElementById('photoUploadArea').innerHTML = `<img src="${mainPhotoData}">`;
-  };
-  r.readAsDataURL(f);
+  });
 }
 
 function saveStep() {

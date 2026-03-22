@@ -236,7 +236,7 @@
   <div class="mycard-section">
     <div class="sec-lbl" style="justify-content:space-between">
       <span id="lib-mycard-lbl">⭐ マイカード</span>
-      <button class="add-mycard-btn" id="lib-add-mycard" onclick="openMycardModal()">＋ Add Card</button>
+      <button class="add-mycard-btn" id="lib-add-mycard" onclick="openMycardModal()">＋ カードをついか</button>
     </div>
     <div class="card-grid" id="lib-mycard">
       <div class="mycard-empty">まだカードがありません</div>
@@ -331,55 +331,95 @@
 </div>
 
 <!-- COMM -->
-<div class="panel" id="panel-comm" data-rendered="false">
-  <div class="comm-sec"><div class="sec-lbl">✅ 基本のへんじ</div><div class="comm-grid">
-    <button class="cc yes" onclick="speak('はい','')"><span class="ce">👍</span><span class="cj">はい</span></button>
-    <button class="cc no" onclick="speak('いいえ','')"><span class="ce">👎</span><span class="cj">いいえ</span></button>
-    <button class="cc wait" onclick="speak('ちょっとまって','')"><span class="ce">✋</span><span class="cj">ちょっとまって</span></button>
-    <button class="cc" onclick="speak('もっと','')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">➕</span><span class="cj">もっと</span></button>
-    <button class="cc" onclick="speak('おわった','')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🏁</span><span class="cj">おわった</span></button>
-    <button class="cc" onclick="speak('てつだって','')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">🙋</span><span class="cj">てつだって</span></button>
-  </div></div>
-  <div class="comm-sec"><div class="sec-lbl">😊 きもち</div><div class="comm-grid">
-    <button class="cc yes" onclick="speak('うれしい','')"><span class="ce">😄</span><span class="cj">うれしい</span></button>
-    <button class="cc no" onclick="speak('かなしい','')"><span class="ce">😢</span><span class="cj">かなしい</span></button>
-    <button class="cc no" onclick="speak('おこった','')"><span class="ce">😠</span><span class="cj">おこった</span></button>
-    <button class="cc no" onclick="speak('こわい','')"><span class="ce">😨</span><span class="cj">こわい</span></button>
-    <button class="cc tired" onclick="speak('つかれた','')"><span class="ce">😴</span><span class="cj">つかれた</span></button>
-    <button class="cc wait" onclick="speak('いやだ','')"><span class="ce">🙅</span><span class="cj">いやだ</span></button>
-    <button class="cc hug" onclick="speak('すき','')"><span class="ce">❤️</span><span class="cj">すき</span></button>
-    <button class="cc" onclick="speak('びっくりした','')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">😲</span><span class="cj">びっくりした</span></button>
-    <button class="cc" onclick="speak('たのしい','')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">🎉</span><span class="cj">たのしい</span></button>
-  </div></div>
-  <div class="comm-sec"><div class="sec-lbl">🩺 からだ</div><div class="comm-grid">
-    <button class="cc" onclick="speak('いたい','')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤕</span><span class="cj">いたい</span></button>
-    <button class="cc" onclick="speak('あたまいたい','')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤯</span><span class="cj">あたまいたい</span></button>
-    <button class="cc" onclick="speak('おなかいたい','')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤢</span><span class="cj">おなかいたい</span></button>
-    <button class="cc toilet" onclick="speak('トイレ','')"><span class="ce">🚽</span><span class="cj">トイレ</span></button>
-    <button class="cc" onclick="speak('ねつがある','')" style="background:#FFEBEE;color:#C62828"><span class="ce">🌡️</span><span class="cj">ねつがある</span></button>
-    <button class="cc" onclick="speak('きもちわるい','')" style="background:var(--green-light);color:#1B5E20"><span class="ce">🤮</span><span class="cj">きもちわるい</span></button>
-  </div></div>
-  <div class="comm-sec"><div class="sec-lbl">🙏 ほしいもの</div><div class="comm-grid">
-    <button class="cc eat" onclick="speak('おなかすいた','')"><span class="ce">🍱</span><span class="cj">おなかすいた</span></button>
-    <button class="cc water" onclick="speak('みずがのみたい','')"><span class="ce">💧</span><span class="cj">みずがのみたい</span></button>
-    <button class="cc play" onclick="speak('あそびたい','')"><span class="ce">🎈</span><span class="cj">あそびたい</span></button>
-    <button class="cc hug" onclick="speak('だっこして','')"><span class="ce">🤗</span><span class="cj">だっこして</span></button>
-    <button class="cc" onclick="speak('おうちにかえりたい','')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🏠</span><span class="cj">おうちにかえりたい</span></button>
-    <button class="cc" onclick="speak('やすみたい','')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🛋️</span><span class="cj">やすみたい</span></button>
-    <button class="cc" onclick="speak('おやつたべたい','')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍪</span><span class="cj">おやつたべたい</span></button>
-    <button class="cc" onclick="speak('テレビみたい','')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">📺</span><span class="cj">テレビみたい</span></button>
-    <button class="cc" onclick="speak('おんがくききたい','')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">🎵</span><span class="cj">おんがくききたい</span></button>
-  </div></div>
-  <div class="comm-sec"><div class="sec-lbl">👋 あいさつ</div><div class="comm-grid">
-    <button class="cc yes" onclick="speak('こんにちは','')"><span class="ce">👋</span><span class="cj">こんにちは</span></button>
-    <button class="cc" onclick="speak('ありがとう','')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">🙏</span><span class="cj">ありがとう</span></button>
-    <button class="cc" onclick="speak('ごめんなさい','')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">😔</span><span class="cj">ごめんなさい</span></button>
-    <button class="cc" onclick="speak('いっしょにあそぼう','')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🤝</span><span class="cj">いっしょにあそぼう</span></button>
-    <button class="cc" onclick="speak('おやすみ','')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🌙</span><span class="cj">おやすみ</span></button>
-    <button class="cc" onclick="speak('いただきます','')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍽️</span><span class="cj">いただきます</span></button>
-  </div></div>
-</div>
+<div class="panel" id="panel-comm">
 
+  <!-- 기본 응답 -->
+  <div class="comm-sec"><div class="sec-lbl">✅ 基本のへんじ</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('はい')"><span class="ce">👍</span><span class="cj">はい</span></button>
+    <button class="cc no" onclick="speak('いいえ')"><span class="ce">👎</span><span class="cj">いいえ</span></button>
+    <button class="cc wait" onclick="speak('ちょっとまって')"><span class="ce">✋</span><span class="cj">ちょっとまって</span></button>
+    <button class="cc" style="background:var(--purple-light);color:var(--purple)" onclick="speak('もっと')"><span class="ce">➕</span><span class="cj">もっと</span></button>
+    <button class="cc" style="background:var(--orange-light);color:var(--orange)" onclick="speak('おわった')"><span class="ce">🏁</span><span class="cj">おわった</span></button>
+    <button class="cc" style="background:var(--sky);color:var(--blue-dark)" onclick="speak('てつだって')"><span class="ce">🙋</span><span class="cj">てつだって</span></button>
+    <button class="cc" style="background:var(--green-light);color:var(--green)" onclick="speak('わかった')"><span class="ce">💡</span><span class="cj">わかった</span></button>
+    <button class="cc" style="background:#FFEBEE;color:#C62828" onclick="speak('わからない')"><span class="ce">🤷</span><span class="cj">わからない</span></button>
+    <button class="cc" style="background:var(--yellow-light);color:#F57F17" onclick="speak('みてて')"><span class="ce">👀</span><span class="cj">みてて</span></button>
+  </div></div>
+
+  <!-- きもち -->
+  <div class="comm-sec"><div class="sec-lbl">😊 きもち</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('うれしい')"><span class="ce">😄</span><span class="cj">うれしい</span></button>
+    <button class="cc no" onclick="speak('かなしい')"><span class="ce">😢</span><span class="cj">かなしい</span></button>
+    <button class="cc no" onclick="speak('おこった')"><span class="ce">😠</span><span class="cj">おこった</span></button>
+    <button class="cc no" onclick="speak('こわい')"><span class="ce">😨</span><span class="cj">こわい</span></button>
+    <button class="cc tired" onclick="speak('つかれた')"><span class="ce">😴</span><span class="cj">つかれた</span></button>
+    <button class="cc wait" onclick="speak('いやだ')"><span class="ce">🙅</span><span class="cj">いやだ</span></button>
+    <button class="cc hug" onclick="speak('すき')"><span class="ce">❤️</span><span class="cj">すき</span></button>
+    <button class="cc" style="background:var(--yellow-light);color:#F57F17" onclick="speak('びっくりした')"><span class="ce">😲</span><span class="cj">びっくりした</span></button>
+    <button class="cc" style="background:var(--pink-light);color:var(--pink)" onclick="speak('たのしい')"><span class="ce">🎉</span><span class="cj">たのしい</span></button>
+    <button class="cc" style="background:var(--purple-light);color:var(--purple)" onclick="speak('はずかしい')"><span class="ce">😳</span><span class="cj">はずかしい</span></button>
+    <button class="cc" style="background:#E8EAF6;color:#3949AB" onclick="speak('さびしい')"><span class="ce">🥺</span><span class="cj">さびしい</span></button>
+    <button class="cc" style="background:var(--orange-light);color:var(--orange)" onclick="speak('いらいらする')"><span class="ce">😤</span><span class="cj">いらいらする</span></button>
+    <button class="cc" style="background:var(--sky);color:var(--blue-dark)" onclick="speak('しんぱい')"><span class="ce">😟</span><span class="cj">しんぱい</span></button>
+    <button class="cc" style="background:var(--green-light);color:var(--green)" onclick="speak('あんしんした')"><span class="ce">😌</span><span class="cj">あんしんした</span></button>
+    <button class="cc" style="background:var(--yellow-light);color:#F57F17" onclick="speak('わくわくする')"><span class="ce">🤩</span><span class="cj">わくわくする</span></button>
+    <button class="cc" style="background:#FCE4EC;color:#AD1457" onclick="speak('がっかりした')"><span class="ce">😞</span><span class="cj">がっかりした</span></button>
+    <button class="cc" style="background:var(--gray);color:var(--text-light)" onclick="speak('たいくつ')"><span class="ce">😑</span><span class="cj">たいくつ</span></button>
+    <button class="cc" style="background:var(--green-light);color:var(--green)" onclick="speak('うれしくない')"><span class="ce">😕</span><span class="cj">うれしくない</span></button>
+  </div></div>
+
+  <!-- からだ -->
+  <div class="comm-sec"><div class="sec-lbl">🩺 からだ</div><div class="comm-grid">
+    <button class="cc" style="background:var(--yellow-light);color:#E65100" onclick="speak('いたい')"><span class="ce">🤕</span><span class="cj">いたい</span></button>
+    <button class="cc" style="background:var(--yellow-light);color:#E65100" onclick="speak('あたまいたい')"><span class="ce">🤯</span><span class="cj">あたまいたい</span></button>
+    <button class="cc" style="background:var(--yellow-light);color:#E65100" onclick="speak('おなかいたい')"><span class="ce">🤢</span><span class="cj">おなかいたい</span></button>
+    <button class="cc toilet" onclick="speak('トイレ')"><span class="ce">🚽</span><span class="cj">トイレ</span></button>
+    <button class="cc" style="background:#FFEBEE;color:#C62828" onclick="speak('ねつがある')"><span class="ce">🌡️</span><span class="cj">ねつがある</span></button>
+    <button class="cc" style="background:var(--green-light);color:#1B5E20" onclick="speak('きもちわるい')"><span class="ce">🤮</span><span class="cj">きもちわるい</span></button>
+    <button class="cc" style="background:var(--yellow-light);color:#E65100" onclick="speak('のどがいたい')"><span class="ce">😮‍💨</span><span class="cj">のどがいたい</span></button>
+    <button class="cc" style="background:var(--sky);color:var(--blue-dark)" onclick="speak('はながでる')"><span class="ce">🤧</span><span class="cj">はながでる</span></button>
+    <button class="cc" style="background:#FFEBEE;color:#C62828" onclick="speak('せきがでる')"><span class="ce">😷</span><span class="cj">せきがでる</span></button>
+    <button class="cc" style="background:var(--purple-light);color:var(--purple)" onclick="speak('めがいたい')"><span class="ce">👁️</span><span class="cj">めがいたい</span></button>
+    <button class="cc" style="background:var(--yellow-light);color:#E65100" onclick="speak('あしがいたい')"><span class="ce">🦶</span><span class="cj">あしがいたい</span></button>
+    <button class="cc" style="background:var(--orange-light);color:var(--orange)" onclick="speak('おなかがすいた')"><span class="ce">🍱</span><span class="cj">おなかがすいた</span></button>
+  </div></div>
+
+  <!-- ほしいもの -->
+  <div class="comm-sec"><div class="sec-lbl">🙏 ほしいもの</div><div class="comm-grid">
+    <button class="cc eat" onclick="speak('おなかすいた')"><span class="ce">🍱</span><span class="cj">おなかすいた</span></button>
+    <button class="cc water" onclick="speak('みずがのみたい')"><span class="ce">💧</span><span class="cj">みずがのみたい</span></button>
+    <button class="cc play" onclick="speak('あそびたい')"><span class="ce">🎈</span><span class="cj">あそびたい</span></button>
+    <button class="cc hug" onclick="speak('だっこして')"><span class="ce">🤗</span><span class="cj">だっこして</span></button>
+    <button class="cc" style="background:var(--green-light);color:#2E7D32" onclick="speak('おうちにかえりたい')"><span class="ce">🏠</span><span class="cj">おうちにかえりたい</span></button>
+    <button class="cc" style="background:#E8EAF6;color:#3949AB" onclick="speak('やすみたい')"><span class="ce">🛋️</span><span class="cj">やすみたい</span></button>
+    <button class="cc" style="background:var(--orange-light);color:var(--orange)" onclick="speak('おやつたべたい')"><span class="ce">🍪</span><span class="cj">おやつたべたい</span></button>
+    <button class="cc" style="background:var(--sky);color:var(--blue-dark)" onclick="speak('テレビみたい')"><span class="ce">📺</span><span class="cj">テレビみたい</span></button>
+    <button class="cc" style="background:var(--purple-light);color:var(--purple)" onclick="speak('おんがくききたい')"><span class="ce">🎵</span><span class="cj">おんがくききたい</span></button>
+    <button class="cc" style="background:var(--pink-light);color:var(--pink)" onclick="speak('ほんをよみたい')"><span class="ce">📖</span><span class="cj">ほんをよみたい</span></button>
+    <button class="cc" style="background:var(--yellow-light);color:#F57F17" onclick="speak('そとにでたい')"><span class="ce">🌳</span><span class="cj">そとにでたい</span></button>
+    <button class="cc" style="background:var(--green-light);color:var(--green)" onclick="speak('いっしょにいたい')"><span class="ce">👨‍👩‍👦</span><span class="cj">いっしょにいたい</span></button>
+    <button class="cc" style="background:var(--gray);color:var(--text-light)" onclick="speak('ひとりにしてほしい')"><span class="ce">🚶</span><span class="cj">ひとりにして</span></button>
+    <button class="cc" style="background:#FCE4EC;color:#AD1457" onclick="speak('あたたかくしてほしい')"><span class="ce">🧸</span><span class="cj">あたたかくして</span></button>
+    <button class="cc" style="background:var(--sky);color:var(--blue-dark)" onclick="speak('くつろぎたい')"><span class="ce">☕</span><span class="cj">くつろぎたい</span></button>
+  </div></div>
+
+  <!-- あいさつ -->
+  <div class="comm-sec"><div class="sec-lbl">👋 あいさつ</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('こんにちは')"><span class="ce">👋</span><span class="cj">こんにちは</span></button>
+    <button class="cc" style="background:var(--yellow-light);color:#F57F17" onclick="speak('ありがとう')"><span class="ce">🙏</span><span class="cj">ありがとう</span></button>
+    <button class="cc" style="background:var(--pink-light);color:var(--pink)" onclick="speak('ごめんなさい')"><span class="ce">😔</span><span class="cj">ごめんなさい</span></button>
+    <button class="cc" style="background:var(--green-light);color:#2E7D32" onclick="speak('いっしょにあそぼう')"><span class="ce">🤝</span><span class="cj">いっしょにあそぼう</span></button>
+    <button class="cc" style="background:#E8EAF6;color:#3949AB" onclick="speak('おやすみ')"><span class="ce">🌙</span><span class="cj">おやすみ</span></button>
+    <button class="cc" style="background:var(--orange-light);color:var(--orange)" onclick="speak('いただきます')"><span class="ce">🍽️</span><span class="cj">いただきます</span></button>
+    <button class="cc" style="background:var(--green-light);color:var(--green)" onclick="speak('おはよう')"><span class="ce">🌅</span><span class="cj">おはよう</span></button>
+    <button class="cc" style="background:var(--sky);color:var(--blue-dark)" onclick="speak('またね')"><span class="ce">✌️</span><span class="cj">またね</span></button>
+    <button class="cc" style="background:var(--yellow-light);color:#F57F17" onclick="speak('ごちそうさま')"><span class="ce">😋</span><span class="cj">ごちそうさま</span></button>
+    <button class="cc" style="background:var(--purple-light);color:var(--purple)" onclick="speak('おねがいします')"><span class="ce">🌸</span><span class="cj">おねがいします</span></button>
+    <button class="cc" style="background:var(--pink-light);color:var(--pink)" onclick="speak('だいすき')"><span class="ce">💕</span><span class="cj">だいすき</span></button>
+    <button class="cc" style="background:var(--green-light);color:#2E7D32" onclick="speak('がんばる')"><span class="ce">💪</span><span class="cj">がんばる</span></button>
+  </div></div>
+
+</div>
 <!-- STEP MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
@@ -392,7 +432,7 @@
       <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handleMainPhoto(event)">
     </div>
     <div class="chain-ed">
-      <div class="chain-ed-hdr"><span id="modal-step-lbl">↓ Stepをついか（なんこでも）</span><button class="add-chain-btn" id="modal-add-step" onclick="addChainEntry()">＋ Add Step</button></div>
+      <div class="chain-ed-hdr"><span id="modal-step-lbl">↓ Stepをついか（なんこでも）</span><button class="add-chain-btn" id="modal-add-step" onclick="addChainEntry()">＋ Step ついか</button></div>
       <div id="chainEntriesEditor"></div>
     </div>
     <div class="modal-actions">

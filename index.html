@@ -159,6 +159,12 @@
   .copyright-body{font-size:11px;font-weight:600;color:var(--text-light);line-height:1.8;}
   .copyright-body strong{display:block;margin-top:6px;margin-bottom:2px;font-size:12px;font-weight:800;color:var(--text);}
   .settings-note{background:var(--yellow-light);border-radius:14px;padding:12px 14px;font-size:12px;font-weight:600;color:#7B6000;line-height:1.6;}
+
+  /* LANG SELECTOR */
+  .lang-selector{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .lang-btn{padding:8px 14px;border:2px solid #E0E0E0;border-radius:12px;background:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
+  .lang-btn.active{border-color:var(--blue);background:var(--sky);color:var(--blue-dark);}
+  .lang-btn:active{transform:scale(0.96);}
   /* MYCARD */
   .mycard-section{margin-bottom:4px;}
   .add-mycard-btn{background:var(--green);color:white;border:none;border-radius:10px;padding:6px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
@@ -172,24 +178,24 @@
 <body>
 <header>
   <div class="header-title">
-    <div class="jp">📅 今日のスケジュール</div>
+    <div class="jp" id="hdr-title">📅 Today's Schedule</div>
   </div>
   <div class="date-badge" id="dateBadge"></div>
 </header>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('schedule')"><span class="ti">📋</span><span>スケジュール</span></button>
-  <button class="tab" onclick="switchTab('routine')"><span class="ti">🔁</span><span>ルーティン</span></button>
-  <button class="tab" onclick="switchTab('library')"><span class="ti">🗂️</span><span>カード</span></button>
-  <button class="tab" onclick="switchTab('comm')"><span class="ti">💬</span><span>きもち</span></button>
-  <button class="tab" onclick="switchTab('settings')"><span class="ti">⚙️</span><span>せってい</span></button>
+  <button class="tab active" onclick="switchTab('schedule')"><span class="ti">📋</span><span id="tab-schedule">Schedule</span></button>
+  <button class="tab" onclick="switchTab('routine')"><span class="ti">🔁</span><span id="tab-routine">Routine</span></button>
+  <button class="tab" onclick="switchTab('library')"><span class="ti">🗂️</span><span id="tab-library">Cards</span></button>
+  <button class="tab" onclick="switchTab('comm')"><span class="ti">💬</span><span id="tab-comm">Feelings</span></button>
+  <button class="tab" onclick="switchTab('settings')"><span class="ti">⚙️</span><span id="tab-settings">Settings</span></button>
 </div>
 
 <!-- SCHEDULE -->
 <div class="panel active" id="panel-schedule">
   <div class="sch-hdr">
-    <span class="sch-title">今日すること</span>
-    <button class="add-btn" onclick="openAddModal()">➕ ついか</button>
+    <span class="sch-title" id="sch-title">Today's Tasks</span>
+    <button class="add-btn" id="add-btn" onclick="openAddModal()">➕ Add</button>
   </div>
   <div id="stepList"></div>
 </div>
@@ -203,7 +209,7 @@
       <div class="tlb-title" id="todayLoadTitle">🗓️ 今日のルーティンをよみこむ</div>
       <div class="tlb-sub" id="todayLoadSub">ルーティンがあれば読み込めます</div>
     </div>
-    <button class="tlb-btn">よみこむ</button>
+    <button class="tlb-btn" id="tlb-btn">Load</button>
   </div>
 
   
@@ -229,54 +235,54 @@
   <!-- マイカード -->
   <div class="mycard-section">
     <div class="sec-lbl" style="justify-content:space-between">
-      <span>⭐ マイカード</span>
-      <button class="add-mycard-btn" onclick="openMycardModal()">＋ カードをついか</button>
+      <span id="lib-mycard-lbl">⭐ My Cards</span>
+      <button class="add-mycard-btn" id="lib-add-mycard" onclick="openMycardModal()">＋ Add Card</button>
     </div>
     <div class="card-grid" id="lib-mycard">
       <div class="mycard-empty">まだカードがありません</div>
     </div>
   </div>
-  <div class="sec-lbl">🚗 いどう</div><div class="card-grid" id="lib-move"></div>
-  <div class="sec-lbl">🏫 ばしょ</div><div class="card-grid" id="lib-place"></div>
-  <div class="sec-lbl">🎮 かつどう</div><div class="card-grid" id="lib-activity"></div>
-  <div class="sec-lbl">🍎 たべもの</div><div class="card-grid" id="lib-food"></div>
-  <div class="sec-lbl">👨‍👩‍👦 ひと</div><div class="card-grid" id="lib-person"></div>
+  <div class="sec-lbl" id="lib-move-lbl">🚗 Transport</div><div class="card-grid" id="lib-move"></div>
+  <div class="sec-lbl" id="lib-place-lbl">🏫 Places</div><div class="card-grid" id="lib-place"></div>
+  <div class="sec-lbl" id="lib-activity-lbl">🎮 Activities</div><div class="card-grid" id="lib-activity"></div>
+  <div class="sec-lbl" id="lib-food-lbl">🍎 Food</div><div class="card-grid" id="lib-food"></div>
+  <div class="sec-lbl" id="lib-person-lbl">👨‍👩‍👦 People</div><div class="card-grid" id="lib-person"></div>
 </div>
 
 <!-- SETTINGS -->
 <div class="panel" id="panel-settings">
-  <div class="sec-lbl">💾 バックアップ・ふっきゅう</div>
+  <div class="sec-lbl" id="set-lang-lbl">🌐 Language / 언어 / 言語</div>
+  <div class="lang-selector" id="langSelector"></div>
+  <div class="sec-lbl" id="set-backup-lbl">💾 Backup & Restore</div>
 
   <!-- バックアップ -->
   <div class="settings-card">
     <div class="settings-icon">📤</div>
     <div class="settings-info">
-      <div class="settings-title">データをバックアップ</div>
-      <div class="settings-desc">スケジュール・ルーティン・マイカードをぜんぶほぞん<br>写真もふくまれます</div>
+      <div class="settings-title" id="set-backup-title">Backup Data</div>
+      <div class="settings-desc" id="set-backup-desc">Save all schedules, routines, and cards including photos</div>
     </div>
-    <button class="settings-btn green" onclick="exportBackup()">バックアップ</button>
+    <button class="settings-btn green" id="set-backup-btn" onclick="exportBackup()">Backup</button>
   </div>
 
   <!-- ふっきゅう -->
   <div class="settings-card">
     <div class="settings-icon">📥</div>
     <div class="settings-info">
-      <div class="settings-title">データをふっきゅう</div>
-      <div class="settings-desc">バックアップファイルからデータをよみこみます<br>いまのデータはうわがきされます</div>
+      <div class="settings-title" id="set-restore-title">Restore Data</div>
+      <div class="settings-desc" id="set-restore-desc">Load data from a backup file. Current data will be overwritten.</div>
     </div>
-    <button class="settings-btn blue" onclick="document.getElementById('importInput').click()">ふっきゅう</button>
+    <button class="settings-btn blue" id="set-restore-btn" onclick="document.getElementById('importInput').click()">Restore</button>
     <input type="file" id="importInput" accept=".json" style="display:none" onchange="importBackup(event)">
   </div>
 
-  <div class="settings-note">
-    💡 ヒント：スマホをかえるときや、アプリをさいインストールするまえにバックアップをとっておきましょう！
-  </div>
+  <div class="settings-note" id="set-note">💡 Tip: Make a backup before changing phones or reinstalling the app!</div>
 
-  <div class="sec-lbl" style="margin-top:20px">ℹ️ アプリじょうほう</div>
+  <div class="sec-lbl" style="margin-top:20px" id="set-info-lbl">ℹ️ App Info</div>
   <div class="settings-card">
     <div class="settings-icon">📱</div>
     <div class="settings-info">
-      <div class="settings-title">スケジュールアプリ</div>
+      <div class="settings-title">Schedule App</div>
       <div class="settings-desc" id="dataStats">よみこみちゅう...</div>
     </div>
   </div>
@@ -298,7 +304,7 @@
       본 앱은 발달장애 아동의 의사소통 지원을 위해 제작되었으며, 개인·가정 내 비영리 목적에 한하여 무료로 사용할 수 있습니다.<br>
       무단 복제, 상업적 이용, 코드 도용 및 유사 서비스 제작·배포는 엄격히 금지합니다.<br>
       저작권법에 의해 보호되며, 위반 시 법적 조치를 취할 수 있습니다.<br><br>
-      お問い合わせ / 문의: <span style="color:var(--blue-dark);font-weight:700">kumamongmong@gmail.com</span>
+      お問い合わせ / 문의: <span style="color:var(--blue-dark);font-weight:700"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6b001e060a0604050c0604050c2b0c060a020745080406">[email&#160;protected]</a></span>
     </div>
   </div>
 </div>
@@ -306,26 +312,26 @@
 <!-- MYCARD MODAL -->
 <div class="modal-overlay" id="mycardOverlay">
   <div class="modal">
-    <div class="modal-title" id="mcModalTitle">⭐ マイカードをついか</div>
-    <div class="fg"><label class="fl">なまえ（日本語）</label><input class="fi" id="mcInputJp" placeholder="例: リオのがっこう" maxlength="30"></div>
+    <div class="modal-title" id="mcModalTitle">⭐ Add My Card</div>
+    <div class="fg"><label class="fl" id="modal-name-lbl">Name</label><input class="fi" id="mcInputJp" placeholder="例: リオのがっこう" maxlength="30"></div>
     <div class="fg">
-      <label class="fl">写真（タップしてついか）</label>
+      <label class="fl" id="mc-photo-lbl">Photo (tap to add)</label>
       <div class="pu" id="mcPhotoArea" onclick="document.getElementById('mcPhotoInput').click()" style="height:180px">
         <span style="font-size:40px">📷</span>
-        <span>タップして写真をついか</span>
+        <span id="modal-photo-hint">Tap to add photo</span>
       </div>
       <input type="file" id="mcPhotoInput" accept="image/*" style="display:none" onchange="handleMcPhoto(event)">
     </div>
-    <div class="fg"><label class="fl">アイコン（写真がないときにひょうじ）</label><div class="ep" id="mcEmojiPicker"></div></div>
+    <div class="fg"><label class="fl" id="mc-icon-lbl">Icon (shown when no photo)</label><div class="ep" id="mcEmojiPicker"></div></div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeMycardModal()">やめる</button>
-      <button class="btn-save" onclick="saveMycard()">ほぞん</button>
+      <button class="btn-cancel" id="mc-cancel" onclick="closeMycardModal()">Cancel</button>
+      <button class="btn-save" id="mc-save" onclick="saveMycard()">Save</button>
     </div>
   </div>
 </div>
 
 <!-- COMM -->
-<div class="panel" id="panel-comm">
+<div class="panel" id="panel-comm" data-rendered="false">
   <div class="comm-sec"><div class="sec-lbl">✅ 基本のへんじ</div><div class="comm-grid">
     <button class="cc yes" onclick="speak('はい','')"><span class="ce">👍</span><span class="cj">はい</span></button>
     <button class="cc no" onclick="speak('いいえ','')"><span class="ce">👎</span><span class="cj">いいえ</span></button>
@@ -377,28 +383,28 @@
 <!-- STEP MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <div class="modal-title" id="modalTitle">新しいステップをついか</div>
-    <div class="fg"><label class="fl">なまえ（日本語）</label><input class="fi" id="inputJp" placeholder="例: がっこうにいく" maxlength="30"></div>
-    <div class="fg"><label class="fl">アイコン</label><div class="ep" id="emojiPicker"></div></div>
+    <div class="modal-title" id="modalTitle">Add Step</div>
+    <div class="fg"><label class="fl" id="modal-name-lbl">Name</label><input class="fi" id="inputJp" placeholder="例: がっこうにいく" maxlength="30"></div>
+    <div class="fg"><label class="fl" id="modal-icon-lbl">Icon</label><div class="ep" id="emojiPicker"></div></div>
     <div class="fg">
-      <label class="fl">写真</label>
-      <div class="pu" id="photoUploadArea" onclick="triggerPhotoUpload()"><span style="font-size:32px">📷</span><span>タップして写真をついか</span></div>
+      <label class="fl" id="modal-photo-lbl">Photo</label>
+      <div class="pu" id="photoUploadArea" onclick="triggerPhotoUpload()"><span style="font-size:32px">📷</span><span id="modal-photo-hint">Tap to add photo</span></div>
       <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handleMainPhoto(event)">
     </div>
     <div class="chain-ed">
-      <div class="chain-ed-hdr"><span>↓ Stepをついか（なんこでも）</span><button class="add-chain-btn" onclick="addChainEntry()">＋ Step ついか</button></div>
+      <div class="chain-ed-hdr"><span id="modal-step-lbl">↓ Add Steps (unlimited)</span><button class="add-chain-btn" id="modal-add-step" onclick="addChainEntry()">＋ Add Step</button></div>
       <div id="chainEntriesEditor"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">やめる</button>
-      <button class="btn-save" onclick="saveStep()">ほぞん</button>
+      <button class="btn-cancel" id="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" id="modal-save" onclick="saveStep()">Save</button>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const EMOJIS=['🚗','🏫','🏠','🎮','🍱','🛁','😴','🏃','🛒','🌳','🎈','🎨','📚','🎵','🐶','🏊','⚽','🧸','👨‍👩‍👦','🚌','🏥','🍜','🎪','🌸','🚂','✂️','🖍️','🧩','📌'];
 const DAY_JP=['日','月','火','水','木','金','土'];
 const DAY_KO=['にち','げつ','か','すい','もく','きん','ど'];
@@ -476,7 +482,8 @@ function switchTab(name){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+name).classList.add('active');
   if(name==='routine'){renderRoutineTab();updateTodayBanner();}
-  if(name==='settings'){updateDataStats();}
+  if(name==='settings'){updateDataStats();renderLangSelector();}
+  if(name==='comm'){renderCommPanel();}
 }
 
 // ── RENDER STEPS ──
@@ -491,7 +498,7 @@ function render(){
       <div class="step-num c${(i%8)+1}">${i+1}</div>
       <div class="step-done ${s.done?'done':''}" onclick="toggleDone(${i})">${s.done?'✅':'○'}</div>
       <div class="step-photo" onclick="triggerStepPhoto(${i})">
-        ${s.photo?`<img src="${s.photo}" alt="">`:`<div class="step-photo-ph"><span class="big">${s.emoji}</span><span>タップして写真をついか</span></div>`}
+        ${s.photo?`<img src="${s.photo}" alt="">`:`<div class="step-photo-ph"><span class="big">${s.emoji}</span><span id="modal-photo-hint">Tap to add photo</span></div>`}
       </div>
       <div class="step-body">
         <div class="step-jp">${s.emoji} ${s.jp}</div>
@@ -529,15 +536,15 @@ function render(){
   `).join('');
 }
 
-function toggleDone(i){steps[i].done=!steps[i].done;saveAll();render();if(steps[i].done)showToast('✅ できた！');}
+function toggleDone(i){steps[i].done=!steps[i].done;saveAll();render();if(steps[i].done)showToast(t('toastDone'));}
 function toggleChainDone(i,ci){
   if(!steps[i].chain[ci]) return;
   steps[i].chain[ci].done=!steps[i].chain[ci].done;
   saveAll();render();
-  if(steps[i].chain[ci].done) showToast('✅ できた！');
+  if(steps[i].chain[ci].done) showToast(t('toastDone'));
 }
 function moveStep(i,dir){const j=i+dir;if(j<0||j>=steps.length)return;[steps[i],steps[j]]=[steps[j],steps[i]];saveAll();render();}
-function deleteStep(i){if(confirm('さくじょしますか？')){steps.splice(i,1);saveAll();render();}}
+function deleteStep(i){if(confirm(t('confirmDelete'))){steps.splice(i,1);saveAll();render();}}
 function triggerStepPhoto(i){document.getElementById(`sp${i}`).click();}
 function handleStepPhoto(e,i){const f=e.target.files[0];if(!f)return;compressImage(f,(c,ratio)=>{steps[i].photo=c;steps[i].photoRatio=ratio;saveAll();render();});}
 function triggerChainPhoto(i,ci){document.getElementById(`cp${i}_${ci}`).click();}
@@ -550,22 +557,22 @@ function updateTodayBanner(){
   const el=document.getElementById('todayLoadTitle');
   const sub=document.getElementById('todayLoadSub');
   if(el){
-    el.textContent=`🗓️ ${DAY_JP[today]}曜日のルーティン`;
-    sub.textContent=dr?`「${dr.name}」 → よみこめます`:'ルーティンがまだせっていされていません';
+    el.textContent=t('routineLoadTitle').replace('{day}',LANGS[currentLang].days[today]);
+    sub.textContent=dr?`「${dr.name}」 → ${t('routineLoadBtn')}`:'---';
   }
 }
 
 function loadTodayDayRoutine(){
   const today=new Date().getDay();
   const dr=dayRoutines[today];
-  if(!dr){showToast('今日のルーティンがありません');return;}
+  if(!dr){showToast(t('noRoutineToday'));return;}
   const tpl=routines.find(r=>r.id===dr.routineId);
-  if(!tpl){showToast('ルーティンがみつかりません');return;}
-  if(confirm(`「${tpl.name}」をよみこみますか？\nいまのスケジュールはそのままです。`)){
+  if(!tpl){showToast(t('routineNotFound'));return;}
+  if(confirm(`「${tpl.name}」${t('confirmLoadRoutine')}`)){
     const fresh=JSON.parse(JSON.stringify(tpl.steps)).map(s=>({...s,done:false}));
     steps=[...fresh];
     saveAll();render();switchTab('schedule');
-    showToast(`✅ ${tpl.name} をよみこみました`);
+    showToast(`✅ ${tpl.name} ${t('toastLoaded')}`);
   }
 }
 
@@ -645,8 +652,8 @@ function clearDayRoutine(dayIdx){
 
 function saveCurrentAsRoutine(){
   const name=document.getElementById('routineNameInput').value.trim();
-  if(!name){showToast('ルーティン名をにゅうりょくしてください');return;}
-  if(!steps.length){showToast('ほぞんするスケジュールがありません');return;}
+  if(!name){showToast(t('routineNameRequired'));return;}
+  if(!steps.length){showToast(t('noStepsToSave'));return;}
   const id='r_'+Date.now();
   const now=new Date();
   const savedAt=`${now.getMonth()+1}/${now.getDate()}`;
@@ -660,10 +667,10 @@ function saveCurrentAsRoutine(){
 
 function loadRoutine(i){
   const r=routines[i];
-  if(confirm(`「${r.name}」をよみこみますか？\nいまのスケジュールがかわります。`)){
+  if(confirm(`「${r.name}」${t('confirmLoad')}`)){
     steps=JSON.parse(JSON.stringify(r.steps)).map(s=>({...s,done:false}));
     saveAll();render();switchTab('schedule');
-    showToast(`✅ 「${r.name}」 をよみこみました`);
+    showToast(`✅ 「${r.name}」 ${t('toastLoaded')}`);
   }
 }
 
@@ -722,7 +729,7 @@ function openAddModal(){
   editingIdx=null;selectedEmoji='📌';mainPhotoData=null;mainPhotoRatio=null;chainDraft=[];
   document.getElementById('modalTitle').textContent='新しいステップをついか';
   document.getElementById('inputJp').value='';
-  document.getElementById('photoUploadArea').innerHTML='<span style="font-size:32px">📷</span><span>タップして写真をついか</span>';
+  document.getElementById('photoUploadArea').innerHTML='<span style="font-size:32px">📷</span><span id="modal-photo-hint">Tap to add photo</span>';
   renderChainEditor();buildEmojiPicker();document.getElementById('modalOverlay').classList.add('open');
 }
 function openEditModal(i){
@@ -730,7 +737,7 @@ function openEditModal(i){
   document.getElementById('modalTitle').textContent='へんしゅう';
   document.getElementById('inputJp').value=s.jp||'';
   const pa=document.getElementById('photoUploadArea');
-  if(mainPhotoData){pa.style.height='auto';pa.style.minHeight='100px';pa.innerHTML=`<img src="${mainPhotoData}">`;}else{pa.style.height='160px';pa.style.minHeight='160px';pa.innerHTML='<span style="font-size:32px">📷</span><span>タップして写真をついか</span>';}
+  if(mainPhotoData){pa.style.height='auto';pa.style.minHeight='100px';pa.innerHTML=`<img src="${mainPhotoData}">`;}else{pa.style.height='160px';pa.style.minHeight='160px';pa.innerHTML='<span style="font-size:32px">📷</span><span id="modal-photo-hint">Tap to add photo</span>';}
   renderChainEditor();buildEmojiPicker();document.getElementById('modalOverlay').classList.add('open');
 }
 function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
@@ -746,13 +753,13 @@ function handleMainPhoto(e){
 }
 function saveStep(){
   const jp=document.getElementById('inputJp').value.trim();
-  if(!jp){showToast('なまえをにゅうりょくしてください');return;}
+  if(!jp){showToast(t('nameRequired'));return;}
   chainDraft.forEach((c,ci)=>{const j=document.getElementById(`cjp${ci}`);if(j)c.jp=j.value.trim();});
   const validChain=chainDraft.filter(c=>c.jp).map(c=>({jp:c.jp,ko:c.jp,photo:c.photo,photoRatio:c.photoRatio||null,emoji:c.emoji||'📍',done:false}));
   const step={jp,ko:jp,emoji:selectedEmoji,photo:mainPhotoData,done:false,chain:validChain};
   if(editingIdx!==null){step.done=steps[editingIdx].done;steps[editingIdx]=step;}else{steps.push(step);}
   saveAll();render();closeModal();
-  showToast(editingIdx!==null?'✏️ へんしゅうしました':'✅ ついかしました');
+  showToast(editingIdx!==null?t('toastEdited'):t('toastAdded'));
 }
 
 // ── LIBRARY ──
@@ -780,7 +787,7 @@ function openMycardModal(editId){
   document.getElementById('mcModalTitle').textContent = existing ? '✏️ カードをへんしゅう' : '⭐ マイカードをついか';
   document.getElementById('mcInputJp').value = existing ? existing.jp : '';
   const pa = document.getElementById('mcPhotoArea');
-  if(mcPhotoData){pa.style.height='auto';pa.style.minHeight='100px';pa.innerHTML=`<img src="${mcPhotoData}" style="width:100%;height:auto;object-fit:contain;border-radius:11px">`;}else{pa.style.height='180px';pa.style.minHeight='180px';pa.innerHTML='<span style="font-size:40px">📷</span><span>タップして写真をついか</span>';}
+  if(mcPhotoData){pa.style.height='auto';pa.style.minHeight='100px';pa.innerHTML=`<img src="${mcPhotoData}" style="width:100%;height:auto;object-fit:contain;border-radius:11px">`;}else{pa.style.height='180px';pa.style.minHeight='180px';pa.innerHTML='<span style="font-size:40px">📷</span><span id="modal-photo-hint">Tap to add photo</span>';}
   document.getElementById('mcEmojiPicker').innerHTML =
     EMOJIS.map(e=>`<div class="eo ${e===mcSelectedEmoji?'sel':''}" onclick="selMcEmoji('${e}')">${e}</div>`).join('');
   document.getElementById('mycardOverlay').classList.add('open');
@@ -801,7 +808,7 @@ function handleMcPhoto(e){
 }
 function saveMycard(){
   const jp=document.getElementById('mcInputJp').value.trim();
-  if(!jp){showToast('なまえをにゅうりょくしてください');return;}
+  if(!jp){showToast(t('nameRequired'));return;}
   if(mcEditingId){
     const idx=myCards.findIndex(c=>c.id===mcEditingId);
     if(idx!==-1) myCards[idx]={...myCards[idx],jp,ko:jp,emoji:mcSelectedEmoji,photo:mcPhotoData,photoRatio:mcPhotoRatio};
@@ -809,7 +816,7 @@ function saveMycard(){
     myCards.push({id:'mc_'+Date.now(),jp,ko:jp,emoji:mcSelectedEmoji,photo:mcPhotoData,photoRatio:mcPhotoRatio});
   }
   saveAll();renderMyCards();closeMycardModal();
-  showToast(`⭐ ${jp} をほぞんしました`);
+  showToast(`⭐ ${jp} ${t('toastSaved')}`);
 }
 function deleteMycard(id){
   if(confirm('このカードをさくじょしますか？')){
@@ -886,7 +893,10 @@ async function importBackup(e){
     dayRoutines = data.dayRoutines||{};
     myCards = data.myCards||[];
     await saveAll();
-    render(); renderRoutineTab(); updateTodayBanner(); renderMyCards(); updateDataStats(); updateDataStats();
+    const savedLang = await dbGet('lang');
+  if(savedLang && LANGS[savedLang]) currentLang = savedLang;
+  render(); renderRoutineTab(); updateTodayBanner(); renderMyCards(); updateDataStats();
+  renderLangSelector(); renderCommPanel(); applyLang(); updateDataStats();
     showToast('✅ データをふっきゅうしました！');
   } catch(err) {
     showToast('ファイルがただしくありません');
@@ -900,16 +910,501 @@ function updateDataStats(){
   el.textContent = `スケジュール ${steps.length}こ・ルーティン ${routines.length}こ・マイカード ${myCards.length}まい`;
 }
 
+// ══════════════════════════════════════════
+// 🌐 i18n — 6 Language Support
+// ══════════════════════════════════════════
+const LANGS = {
+  ja: {
+    code:'ja', flag:'🇯🇵', name:'日本語', tts:'ja-JP',
+    hdrTitle:'📅 今日のスケジュール',
+    tabSchedule:'スケジュール', tabRoutine:'ルーティン', tabLibrary:'カード', tabComm:'きもち', tabSettings:'せってい',
+    schTitle:'今日すること', addBtn:'➕ ついか',
+    emptyTitle:'まだスケジュールがありません',
+    setBakLbl:'💾 バックアップ・ふっきゅう', setBakTitle:'データをバックアップ',
+    setBakDesc:'スケジュール・ルーティン・マイカードをぜんぶほぞん。写真もふくまれます',
+    setBakBtn:'バックアップ', setRestTitle:'データをふっきゅう',
+    setRestDesc:'バックアップファイルからデータをよみこみます。いまのデータはうわがきされます',
+    setRestBtn:'ふっきゅう', setNote:'💡 ヒント：スマホをかえるときや、アプリをさいインストールするまえにバックアップをとっておきましょう！',
+    setInfoLbl:'ℹ️ アプリじょうほう', setLangLbl:'🌐 げんごせってい',
+    modalAdd:'新しいステップをついか', modalEdit:'へんしゅう',
+    modalNameLbl:'なまえ', modalIconLbl:'アイコン', modalPhotoLbl:'写真',
+    modalPhotoHint:'タップして写真をついか', modalStepLbl:'↓ Stepをついか（なんこでも）',
+    modalAddStep:'＋ Step ついか', modalCancel:'やめる', modalSave:'ほぞん',
+    mcAdd:'⭐ マイカードをついか', mcEdit:'✏️ カードをへんしゅう',
+    mcNameLbl:'なまえ', mcPhotoLbl:'写真（タップしてついか）', mcPhotoHint:'タップして写真をついか',
+    mcIconLbl:'アイコン（写真がないときにひょうじ）', mcCancel:'やめる', mcSave:'ほぞん',
+    libMycardLbl:'⭐ マイカード', libAddMycard:'＋ カードをついか',
+    libMove:'🚗 いどう', libPlace:'🏫 ばしょ', libActivity:'🎮 かつどう', libFood:'🍎 たべもの', libPerson:'👨‍👩‍👦 ひと',
+    mycardEmpty:'まだカードがありません
+カードをついかしてみよう！',
+    routineLoadTitle:'🗓️ {day}曜日のルーティン', routineLoadSub:'ルーティンがあれば読み込めます',
+    routineLoadBtn:'よみこむ', routineTemplateLbl:'💾 ルーティンテンプレート',
+    routinePlaceholder:'ルーティン名をにゅうりょく（例：がっこうのひ）',
+    routineSaveBtn:'今のスケジュールをほぞん', routineDayLbl:'📅 曜日ルーティン',
+    routineSetBtn:'ルーティンをせってい', routineClearBtn:'このルーティンをかいじょ',
+    routineNoDayRoutine:'ルーティンがまだありません
+「ルーティンをせってい」をおしてください',
+    toastDone:'✅ できた！', toastAdded:'✅ ついかしました', toastEdited:'✏️ へんしゅうしました',
+    toastSaved:'💾 をほぞんしました', toastLoaded:'✅ をよみこみました',
+    confirmDelete:'さくじょしますか？', confirmLoad:'をよみこみますか？
+いまのスケジュールがかわります。',
+    confirmLoadRoutine:'をよみこみますか？
+いまのスケジュールはそのままです。',
+    promptSelectRoutine:'にてきようするルーティンをえらんでください：
+
+{options}
+
+ばんごうをにゅうりょくしてください：',
+    confirmClearDay:'のルーティンをかいじょしますか？',
+    nameRequired:'なまえをにゅうりょくしてください',
+    noRoutineToday:'今日のルーティンがありません',
+    routineNotFound:'ルーティンがみつかりません',
+    noStepsToSave:'ほぞんするスケジュールがありません',
+    routineNameRequired:'ルーティン名をにゅうりょくしてください',
+    days:['日','月','火','水','木','金','土'],
+    comm:{
+      sec1:'✅ 基本のへんじ', sec2:'😊 きもち', sec3:'🩺 からだ', sec4:'🙏 ほしいもの', sec5:'👋 あいさつ',
+      yes:'はい', no:'いいえ', wait:'ちょっとまって', more:'もっと', done:'おわった', help:'てつだって',
+      happy:'うれしい', sad:'かなしい', angry:'おこった', scared:'こわい', tired:'つかれた',
+      dislike:'いやだ', love:'すき', surprised:'びっくりした', fun:'たのしい',
+      hurt:'いたい', headache:'あたまいたい', stomachache:'おなかいたい', toilet:'トイレ',
+      fever:'ねつがある', nausea:'きもちわるい',
+      hungry:'おなかすいた', thirsty:'みずがのみたい', play:'あそびたい', hug:'だっこして',
+      goHome:'おうちにかえりたい', rest:'やすみたい', snack:'おやつたべたい', tv:'テレビみたい', music:'おんがくききたい',
+      hello:'こんにちは', thanks:'ありがとう', sorry:'ごめんなさい', together:'いっしょにあそぼう',
+      goodnight:'おやすみ', letsdine:'いただきます'
+    }
+  },
+  ko: {
+    code:'ko', flag:'🇰🇷', name:'한국어', tts:'ko-KR',
+    hdrTitle:'📅 오늘의 일정',
+    tabSchedule:'일정', tabRoutine:'루틴', tabLibrary:'카드', tabComm:'소통', tabSettings:'설정',
+    schTitle:'오늘 할 일', addBtn:'➕ 추가',
+    emptyTitle:'아직 일정이 없어요',
+    setBakLbl:'💾 백업 · 복원', setBakTitle:'데이터 백업',
+    setBakDesc:'일정·루틴·마이카드를 전부 저장합니다. 사진도 포함됩니다',
+    setBakBtn:'백업', setRestTitle:'데이터 복원',
+    setRestDesc:'백업 파일에서 데이터를 불러옵니다. 현재 데이터는 덮어써집니다',
+    setRestBtn:'복원', setNote:'💡 팁: 폰을 바꾸거나 앱을 재설치하기 전에 백업해두세요!',
+    setInfoLbl:'ℹ️ 앱 정보', setLangLbl:'🌐 언어 설정',
+    modalAdd:'새 일정 추가', modalEdit:'일정 편집',
+    modalNameLbl:'이름', modalIconLbl:'아이콘', modalPhotoLbl:'사진',
+    modalPhotoHint:'터치하여 사진 추가', modalStepLbl:'↓ 단계 추가 (무제한)',
+    modalAddStep:'＋ 단계 추가', modalCancel:'취소', modalSave:'저장',
+    mcAdd:'⭐ 마이카드 추가', mcEdit:'✏️ 카드 편집',
+    mcNameLbl:'이름', mcPhotoLbl:'사진 (터치하여 추가)', mcPhotoHint:'터치하여 사진 추가',
+    mcIconLbl:'아이콘 (사진 없을 때 표시)', mcCancel:'취소', mcSave:'저장',
+    libMycardLbl:'⭐ 마이카드', libAddMycard:'＋ 카드 추가',
+    libMove:'🚗 이동', libPlace:'🏫 장소', libActivity:'🎮 활동', libFood:'🍎 음식', libPerson:'👨‍👩‍👦 사람',
+    mycardEmpty:'아직 카드가 없어요
+카드를 추가해보세요!',
+    routineLoadTitle:'🗓️ {day}요일 루틴', routineLoadSub:'루틴이 있으면 불러올 수 있어요',
+    routineLoadBtn:'불러오기', routineTemplateLbl:'💾 루틴 템플릿',
+    routinePlaceholder:'루틴 이름 입력 (예: 학교 가는 날)',
+    routineSaveBtn:'현재 일정 저장', routineDayLbl:'📅 요일별 루틴',
+    routineSetBtn:'루틴 설정', routineClearBtn:'이 요일 루틴 해제',
+    routineNoDayRoutine:'설정된 루틴이 없어요
+「루틴 설정」을 눌러 지정해보세요',
+    toastDone:'✅ 완료!', toastAdded:'✅ 추가했어요', toastEdited:'✏️ 수정했어요',
+    toastSaved:'💾 저장했어요', toastLoaded:'✅ 불러왔어요',
+    confirmDelete:'삭제할까요?', confirmLoad:'을 현재 일정으로 불러올까요?
+현재 일정이 바뀝니다.',
+    confirmLoadRoutine:'을 오늘 일정으로 불러올까요?
+현재 일정은 유지됩니다.',
+    promptSelectRoutine:'{options}
+
+번호를 입력하세요:',
+    confirmClearDay:'의 루틴 설정을 해제할까요?',
+    nameRequired:'이름을 입력해주세요',
+    noRoutineToday:'오늘 요일 루틴이 없어요',
+    routineNotFound:'루틴을 찾을 수 없어요',
+    noStepsToSave:'저장할 일정이 없어요',
+    routineNameRequired:'루틴 이름을 입력해주세요',
+    days:['일','월','화','수','목','금','토'],
+    comm:{
+      sec1:'✅ 기본 응답', sec2:'😊 감정', sec3:'🩺 몸', sec4:'🙏 필요한 것', sec5:'👋 인사',
+      yes:'네', no:'아니요', wait:'잠깐만요', more:'더 해요', done:'끝났어요', help:'도와주세요',
+      happy:'기뻐요', sad:'슬퍼요', angry:'화났어요', scared:'무서워요', tired:'피곤해요',
+      dislike:'싫어요', love:'좋아요', surprised:'깜짝 놀랐어요', fun:'재미있어요',
+      hurt:'아파요', headache:'머리 아파요', stomachache:'배 아파요', toilet:'화장실',
+      fever:'열이 나요', nausea:'토할 것 같아요',
+      hungry:'배고파요', thirsty:'물 마시고 싶어요', play:'놀고 싶어요', hug:'안아주세요',
+      goHome:'집에 가고 싶어요', rest:'쉬고 싶어요', snack:'간식 먹고 싶어요', tv:'TV 보고 싶어요', music:'음악 듣고 싶어요',
+      hello:'안녕하세요', thanks:'감사해요', sorry:'미안해요', together:'같이 놀아요',
+      goodnight:'잘 자요', letsdine:'잘 먹겠습니다'
+    }
+  },
+  en: {
+    code:'en', flag:'🇺🇸', name:'English', tts:'en-US',
+    hdrTitle:'📅 Today's Schedule',
+    tabSchedule:'Schedule', tabRoutine:'Routine', tabLibrary:'Cards', tabComm:'Feelings', tabSettings:'Settings',
+    schTitle:'Today's Tasks', addBtn:'➕ Add',
+    emptyTitle:'No schedule yet',
+    setBakLbl:'💾 Backup & Restore', setBakTitle:'Backup Data',
+    setBakDesc:'Save all schedules, routines, and cards including photos',
+    setBakBtn:'Backup', setRestTitle:'Restore Data',
+    setRestDesc:'Load data from a backup file. Current data will be overwritten.',
+    setRestBtn:'Restore', setNote:'💡 Tip: Make a backup before changing phones or reinstalling the app!',
+    setInfoLbl:'ℹ️ App Info', setLangLbl:'🌐 Language',
+    modalAdd:'Add New Step', modalEdit:'Edit Step',
+    modalNameLbl:'Name', modalIconLbl:'Icon', modalPhotoLbl:'Photo',
+    modalPhotoHint:'Tap to add photo', modalStepLbl:'↓ Add Steps (unlimited)',
+    modalAddStep:'＋ Add Step', modalCancel:'Cancel', modalSave:'Save',
+    mcAdd:'⭐ Add My Card', mcEdit:'✏️ Edit Card',
+    mcNameLbl:'Name', mcPhotoLbl:'Photo (tap to add)', mcPhotoHint:'Tap to add photo',
+    mcIconLbl:'Icon (shown when no photo)', mcCancel:'Cancel', mcSave:'Save',
+    libMycardLbl:'⭐ My Cards', libAddMycard:'＋ Add Card',
+    libMove:'🚗 Transport', libPlace:'🏫 Places', libActivity:'🎮 Activities', libFood:'🍎 Food', libPerson:'👨‍👩‍👦 People',
+    mycardEmpty:'No cards yet
+Tap Add Card to get started!',
+    routineLoadTitle:'🗓️ {day} Routine', routineLoadSub:'Tap to load today's routine',
+    routineLoadBtn:'Load', routineTemplateLbl:'💾 Routine Templates',
+    routinePlaceholder:'Enter routine name (e.g. School day)',
+    routineSaveBtn:'Save Current Schedule', routineDayLbl:'📅 Day Routines',
+    routineSetBtn:'Set Routine', routineClearBtn:'Clear This Routine',
+    routineNoDayRoutine:'No routine set
+Tap Set Routine to configure',
+    toastDone:'✅ Done!', toastAdded:'✅ Added', toastEdited:'✏️ Updated',
+    toastSaved:'💾 Saved', toastLoaded:'✅ Loaded',
+    confirmDelete:'Delete this?', confirmLoad:' — load as today's schedule?
+Current schedule will change.',
+    confirmLoadRoutine:' — load as today's schedule?
+Current schedule stays.',
+    promptSelectRoutine:'{options}
+
+Enter number:',
+    confirmClearDay:'Clear routine for this day?',
+    nameRequired:'Please enter a name',
+    noRoutineToday:'No routine for today',
+    routineNotFound:'Routine not found',
+    noStepsToSave:'No schedule to save',
+    routineNameRequired:'Please enter a routine name',
+    days:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    comm:{
+      sec1:'✅ Basic Responses', sec2:'😊 Feelings', sec3:'🩺 Body', sec4:'🙏 I Want', sec5:'👋 Greetings',
+      yes:'Yes', no:'No', wait:'Wait', more:'More', done:'Done', help:'Help me',
+      happy:'Happy', sad:'Sad', angry:'Angry', scared:'Scared', tired:'Tired',
+      dislike:'Don't want', love:'I like it', surprised:'Surprised', fun:'Fun',
+      hurt:'It hurts', headache:'Headache', stomachache:'Stomachache', toilet:'Toilet',
+      fever:'I have a fever', nausea:'Feel sick',
+      hungry:'Hungry', thirsty:'Thirsty', play:'Want to play', hug:'Hug me',
+      goHome:'Want to go home', rest:'Want to rest', snack:'Want a snack', tv:'Want to watch TV', music:'Want music',
+      hello:'Hello', thanks:'Thank you', sorry:'Sorry', together:'Let's play together',
+      goodnight:'Good night', letsdine:'Let's eat'
+    }
+  },
+  zh: {
+    code:'zh', flag:'🇨🇳', name:'中文', tts:'zh-CN',
+    hdrTitle:'📅 今日日程',
+    tabSchedule:'日程', tabRoutine:'常规', tabLibrary:'卡片', tabComm:'表达', tabSettings:'设置',
+    schTitle:'今天要做的事', addBtn:'➕ 添加',
+    emptyTitle:'还没有日程',
+    setBakLbl:'💾 备份・恢复', setBakTitle:'备份数据',
+    setBakDesc:'保存所有日程、常规和卡片（含照片）',
+    setBakBtn:'备份', setRestTitle:'恢复数据',
+    setRestDesc:'从备份文件读取数据，当前数据将被覆盖',
+    setRestBtn:'恢复', setNote:'💡 提示：换手机或重新安装前请备份！',
+    setInfoLbl:'ℹ️ 应用信息', setLangLbl:'🌐 语言设置',
+    modalAdd:'添加新步骤', modalEdit:'编辑步骤',
+    modalNameLbl:'名称', modalIconLbl:'图标', modalPhotoLbl:'照片',
+    modalPhotoHint:'点击添加照片', modalStepLbl:'↓ 添加步骤（无限制）',
+    modalAddStep:'＋ 添加步骤', modalCancel:'取消', modalSave:'保存',
+    mcAdd:'⭐ 添加我的卡片', mcEdit:'✏️ 编辑卡片',
+    mcNameLbl:'名称', mcPhotoLbl:'照片（点击添加）', mcPhotoHint:'点击添加照片',
+    mcIconLbl:'图标（没有照片时显示）', mcCancel:'取消', mcSave:'保存',
+    libMycardLbl:'⭐ 我的卡片', libAddMycard:'＋ 添加卡片',
+    libMove:'🚗 交通', libPlace:'🏫 场所', libActivity:'🎮 活动', libFood:'🍎 食物', libPerson:'👨‍👩‍👦 人物',
+    mycardEmpty:'还没有卡片
+点击添加卡片开始吧！',
+    routineLoadTitle:'🗓️ 周{day}日程', routineLoadSub:'如果有常规可以加载',
+    routineLoadBtn:'加载', routineTemplateLbl:'💾 常规模板',
+    routinePlaceholder:'输入常规名称（例：上学日）',
+    routineSaveBtn:'保存当前日程', routineDayLbl:'📅 按星期设置常规',
+    routineSetBtn:'设置常规', routineClearBtn:'清除此常规',
+    routineNoDayRoutine:'没有设置常规
+请点击「设置常规」',
+    toastDone:'✅ 完成！', toastAdded:'✅ 已添加', toastEdited:'✏️ 已更新',
+    toastSaved:'💾 已保存', toastLoaded:'✅ 已加载',
+    confirmDelete:'确定删除？', confirmLoad:'加载为今日日程？
+当前日程将改变。',
+    confirmLoadRoutine:'加载为今日日程？
+当前日程保持不变。',
+    promptSelectRoutine:'{options}
+
+请输入编号：',
+    confirmClearDay:'清除此星期的常规？',
+    nameRequired:'请输入名称',
+    noRoutineToday:'今天没有常规',
+    routineNotFound:'找不到常规',
+    noStepsToSave:'没有可保存的日程',
+    routineNameRequired:'请输入常规名称',
+    days:['日','一','二','三','四','五','六'],
+    comm:{
+      sec1:'✅ 基本回应', sec2:'😊 情绪', sec3:'🩺 身体', sec4:'🙏 需求', sec5:'👋 问候',
+      yes:'是', no:'不是', wait:'等一下', more:'更多', done:'完成了', help:'帮帮我',
+      happy:'开心', sad:'难过', angry:'生气', scared:'害怕', tired:'累了',
+      dislike:'不想要', love:'喜欢', surprised:'惊讶', fun:'好玩',
+      hurt:'痛', headache:'头痛', stomachache:'肚子痛', toilet:'厕所',
+      fever:'发烧了', nausea:'想吐',
+      hungry:'饿了', thirsty:'想喝水', play:'想玩', hug:'抱抱我',
+      goHome:'想回家', rest:'想休息', snack:'想吃零食', tv:'想看电视', music:'想听音乐',
+      hello:'你好', thanks:'谢谢', sorry:'对不起', together:'一起玩吧',
+      goodnight:'晚安', letsdine:'我要吃饭了'
+    }
+  },
+  es: {
+    code:'es', flag:'🇪🇸', name:'Español', tts:'es-ES',
+    hdrTitle:'📅 Horario de Hoy',
+    tabSchedule:'Horario', tabRoutine:'Rutina', tabLibrary:'Tarjetas', tabComm:'Sentimientos', tabSettings:'Ajustes',
+    schTitle:'Tareas de Hoy', addBtn:'➕ Añadir',
+    emptyTitle:'Sin horario todavía',
+    setBakLbl:'💾 Copia de Seguridad', setBakTitle:'Guardar Datos',
+    setBakDesc:'Guarda todos los horarios, rutinas y tarjetas incluyendo fotos',
+    setBakBtn:'Guardar', setRestTitle:'Restaurar Datos',
+    setRestDesc:'Carga datos desde un archivo de copia. Los datos actuales serán reemplazados.',
+    setRestBtn:'Restaurar', setNote:'💡 Consejo: Haz una copia antes de cambiar de teléfono o reinstalar la app.',
+    setInfoLbl:'ℹ️ Info de la App', setLangLbl:'🌐 Idioma',
+    modalAdd:'Añadir Nuevo Paso', modalEdit:'Editar Paso',
+    modalNameLbl:'Nombre', modalIconLbl:'Icono', modalPhotoLbl:'Foto',
+    modalPhotoHint:'Toca para añadir foto', modalStepLbl:'↓ Añadir Pasos (ilimitado)',
+    modalAddStep:'＋ Añadir Paso', modalCancel:'Cancelar', modalSave:'Guardar',
+    mcAdd:'⭐ Añadir Mi Tarjeta', mcEdit:'✏️ Editar Tarjeta',
+    mcNameLbl:'Nombre', mcPhotoLbl:'Foto (toca para añadir)', mcPhotoHint:'Toca para añadir foto',
+    mcIconLbl:'Icono (se muestra sin foto)', mcCancel:'Cancelar', mcSave:'Guardar',
+    libMycardLbl:'⭐ Mis Tarjetas', libAddMycard:'＋ Añadir Tarjeta',
+    libMove:'🚗 Transporte', libPlace:'🏫 Lugares', libActivity:'🎮 Actividades', libFood:'🍎 Comida', libPerson:'👨‍👩‍👦 Personas',
+    mycardEmpty:'No hay tarjetas todavía
+¡Añade una tarjeta para empezar!',
+    routineLoadTitle:'🗓️ Rutina del {day}', routineLoadSub:'Toca para cargar la rutina de hoy',
+    routineLoadBtn:'Cargar', routineTemplateLbl:'💾 Plantillas de Rutina',
+    routinePlaceholder:'Nombre de rutina (ej: Día de escuela)',
+    routineSaveBtn:'Guardar Horario Actual', routineDayLbl:'📅 Rutinas por Día',
+    routineSetBtn:'Establecer Rutina', routineClearBtn:'Quitar Esta Rutina',
+    routineNoDayRoutine:'Sin rutina configurada
+Toca Establecer Rutina',
+    toastDone:'✅ ¡Hecho!', toastAdded:'✅ Añadido', toastEdited:'✏️ Actualizado',
+    toastSaved:'💾 Guardado', toastLoaded:'✅ Cargado',
+    confirmDelete:'¿Eliminar?', confirmLoad:' ¿Cargar como horario de hoy?
+El horario actual cambiará.',
+    confirmLoadRoutine:' ¿Cargar como horario de hoy?
+El horario actual se mantiene.',
+    promptSelectRoutine:'{options}
+
+Ingresa el número:',
+    confirmClearDay:'¿Quitar la rutina de este día?',
+    nameRequired:'Por favor ingresa un nombre',
+    noRoutineToday:'Sin rutina para hoy',
+    routineNotFound:'Rutina no encontrada',
+    noStepsToSave:'Sin horario para guardar',
+    routineNameRequired:'Por favor ingresa un nombre de rutina',
+    days:['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'],
+    comm:{
+      sec1:'✅ Respuestas Básicas', sec2:'😊 Sentimientos', sec3:'🩺 Cuerpo', sec4:'🙏 Necesito', sec5:'👋 Saludos',
+      yes:'Sí', no:'No', wait:'Espera', more:'Más', done:'Terminé', help:'Ayúdame',
+      happy:'Feliz', sad:'Triste', angry:'Enojado', scared:'Asustado', tired:'Cansado',
+      dislike:'No quiero', love:'Me gusta', surprised:'Sorprendido', fun:'Divertido',
+      hurt:'Me duele', headache:'Dolor de cabeza', stomachache:'Dolor de barriga', toilet:'Baño',
+      fever:'Tengo fiebre', nausea:'Náuseas',
+      hungry:'Tengo hambre', thirsty:'Tengo sed', play:'Quiero jugar', hug:'Abrázame',
+      goHome:'Quiero ir a casa', rest:'Quiero descansar', snack:'Quiero un snack', tv:'Quiero ver TV', music:'Quiero música',
+      hello:'Hola', thanks:'Gracias', sorry:'Lo siento', together:'Juguemos juntos',
+      goodnight:'Buenas noches', letsdine:'¡Buen provecho!'
+    }
+  },
+  fr: {
+    code:'fr', flag:'🇫🇷', name:'Français', tts:'fr-FR',
+    hdrTitle:'📅 Programme du Jour',
+    tabSchedule:'Programme', tabRoutine:'Routine', tabLibrary:'Cartes', tabComm:'Émotions', tabSettings:'Réglages',
+    schTitle:"Activités d'aujourd'hui", addBtn:'➕ Ajouter',
+    emptyTitle:'Pas de programme encore',
+    setBakLbl:'💾 Sauvegarde', setBakTitle:'Sauvegarder les données',
+    setBakDesc:'Enregistre tous les programmes, routines et cartes avec les photos',
+    setBakBtn:'Sauvegarder', setRestTitle:'Restaurer les données',
+    setRestDesc:'Charge les données depuis une sauvegarde. Les données actuelles seront remplacées.',
+    setRestBtn:'Restaurer', setNote:'💡 Conseil : Faites une sauvegarde avant de changer de téléphone !',
+    setInfoLbl:"ℹ️ Infos de l'App", setLangLbl:'🌐 Langue',
+    modalAdd:'Ajouter une étape', modalEdit:'Modifier une étape',
+    modalNameLbl:'Nom', modalIconLbl:'Icône', modalPhotoLbl:'Photo',
+    modalPhotoHint:'Appuyer pour ajouter une photo', modalStepLbl:'↓ Ajouter des étapes (illimité)',
+    modalAddStep:'＋ Ajouter étape', modalCancel:'Annuler', modalSave:'Enregistrer',
+    mcAdd:'⭐ Ajouter une carte', mcEdit:'✏️ Modifier la carte',
+    mcNameLbl:'Nom', mcPhotoLbl:'Photo (appuyer pour ajouter)', mcPhotoHint:'Appuyer pour ajouter une photo',
+    mcIconLbl:'Icône (affichée sans photo)', mcCancel:'Annuler', mcSave:'Enregistrer',
+    libMycardLbl:'⭐ Mes Cartes', libAddMycard:'＋ Ajouter une carte',
+    libMove:'🚗 Transport', libPlace:'🏫 Lieux', libActivity:'🎮 Activités', libFood:'🍎 Nourriture', libPerson:'👨‍👩‍👦 Personnes',
+    mycardEmpty:"Pas de cartes encore
+Appuyer pour en ajouter !",
+    routineLoadTitle:'🗓️ Routine du {day}', routineLoadSub:"Appuyer pour charger la routine d'aujourd'hui",
+    routineLoadBtn:'Charger', routineTemplateLbl:'💾 Modèles de Routine',
+    routinePlaceholder:'Nom de routine (ex: Jour d'école)',
+    routineSaveBtn:'Sauvegarder le programme actuel', routineDayLbl:'📅 Routines par Jour',
+    routineSetBtn:'Définir la Routine', routineClearBtn:'Effacer cette Routine',
+    routineNoDayRoutine:"Pas de routine définie
+Appuyer sur Définir la Routine",
+    toastDone:'✅ Terminé !', toastAdded:'✅ Ajouté', toastEdited:'✏️ Modifié',
+    toastSaved:'💾 Sauvegardé', toastLoaded:'✅ Chargé',
+    confirmDelete:'Supprimer ?', confirmLoad:' Charger comme programme du jour ?
+Le programme actuel sera remplacé.',
+    confirmLoadRoutine:' Charger comme programme du jour ?
+Le programme actuel reste.',
+    promptSelectRoutine:'{options}
+
+Entrez le numéro :',
+    confirmClearDay:'Effacer la routine de ce jour ?',
+    nameRequired:'Veuillez entrer un nom',
+    noRoutineToday:"Pas de routine pour aujourd'hui",
+    routineNotFound:'Routine introuvable',
+    noStepsToSave:'Pas de programme à sauvegarder',
+    routineNameRequired:'Veuillez entrer un nom de routine',
+    days:['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'],
+    comm:{
+      sec1:'✅ Réponses de base', sec2:'😊 Émotions', sec3:'🩺 Corps', sec4:'🙏 Je veux', sec5:'👋 Salutations',
+      yes:'Oui', no:'Non', wait:'Attends', more:'Encore', done:'Fini', help:'Aide-moi',
+      happy:'Content', sad:'Triste', angry:'En colère', scared:'Peur', tired:'Fatigué',
+      dislike:'Je veux pas', love:"J'aime", surprised:'Surpris', fun:'Amusant',
+      hurt:'Mal', headache:'Mal à la tête', stomachache:'Mal au ventre', toilet:'Toilettes',
+      fever:'Fièvre', nausea:'Envie de vomir',
+      hungry:'Faim', thirsty:'Soif', play:'Jouer', hug:'Câlin',
+      goHome:'Rentrer à la maison', rest:'Se reposer', snack:'Un goûter', tv:'Voir la TV', music:'Musique',
+      hello:'Bonjour', thanks:'Merci', sorry:'Pardon', together:'Jouons ensemble',
+      goodnight:'Bonne nuit', letsdine:'Bon appétit'
+    }
+  }
+};
+
+let currentLang = 'ja';
+
+function t(key){ return LANGS[currentLang][key] || LANGS['en'][key] || key; }
+function tc(key){ return LANGS[currentLang].comm[key] || key; }
+
+function setLang(code){
+  currentLang = code;
+  dbSet('lang', code);
+  applyLang();
+  renderCommPanel();
+  renderRoutineTab();
+  updateTodayBanner();
+  renderMyCards();
+  buildLibraryLabels();
+}
+
+function applyLang(){
+  const L = LANGS[currentLang];
+  const d = new Date();
+  const days = L.days;
+  document.getElementById('dateBadge').textContent = `${d.getMonth()+1}/${d.getDate()}(${days[d.getDay()]})`;
+  document.getElementById('hdr-title').textContent = L.hdrTitle;
+  document.getElementById('tab-schedule').textContent = L.tabSchedule;
+  document.getElementById('tab-routine').textContent = L.tabRoutine;
+  document.getElementById('tab-library').textContent = L.tabLibrary;
+  document.getElementById('tab-comm').textContent = L.tabComm;
+  document.getElementById('tab-settings').textContent = L.tabSettings;
+  document.getElementById('sch-title').textContent = L.schTitle;
+  document.getElementById('add-btn').textContent = L.addBtn;
+  // settings
+  const ids = {
+    'set-lang-lbl':L.setLangLbl, 'set-backup-lbl':L.setBakLbl,
+    'set-backup-title':L.setBakTitle, 'set-backup-desc':L.setBakDesc,
+    'set-backup-btn':L.setBakBtn, 'set-restore-title':L.setRestTitle,
+    'set-restore-desc':L.setRestDesc, 'set-restore-btn':L.setRestBtn,
+    'set-note':L.setNote, 'set-info-lbl':L.setInfoLbl,
+    // modal
+    'modal-name-lbl':L.modalNameLbl, 'modal-icon-lbl':L.modalIconLbl,
+    'modal-photo-lbl':L.modalPhotoLbl, 'modal-photo-hint':L.modalPhotoHint,
+    'modal-step-lbl':L.modalStepLbl, 'modal-add-step':L.modalAddStep,
+    'modal-cancel':L.modalCancel, 'modal-save':L.modalSave,
+    // mc modal
+    'mc-name-lbl':L.mcNameLbl, 'mc-photo-lbl':L.mcPhotoLbl,
+    'mc-photo-hint':L.mcPhotoHint, 'mc-icon-lbl':L.mcIconLbl,
+    'mc-cancel':L.mcCancel, 'mc-save':L.mcSave,
+    // library
+    'lib-mycard-lbl':L.libMycardLbl, 'lib-add-mycard':L.libAddMycard,
+  };
+  Object.entries(ids).forEach(([id, val])=>{ const el=document.getElementById(id); if(el) el.textContent=val; });
+  // library section labels (rendered dynamically)
+  buildLibraryLabels();
+  // lang selector highlight
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.lang === currentLang);
+  });
+  // re-render step list for empty text
+  if(!steps.length) render();
+}
+
+function buildLibraryLabels(){
+  const L = LANGS[currentLang];
+  const map = {'lib-move-lbl':L.libMove,'lib-place-lbl':L.libPlace,'lib-activity-lbl':L.libActivity,'lib-food-lbl':L.libFood,'lib-person-lbl':L.libPerson};
+  Object.entries(map).forEach(([id,val])=>{ const el=document.getElementById(id); if(el) el.textContent=val; });
+}
+
+function renderLangSelector(){
+  const el = document.getElementById('langSelector');
+  if(!el) return;
+  el.innerHTML = Object.values(LANGS).map(l=>`
+    <button class="lang-btn ${l.code===currentLang?'active':''}" data-lang="${l.code}" onclick="setLang('${l.code}')">
+      ${l.flag} ${l.name}
+    </button>
+  `).join('');
+}
+
+function renderCommPanel(){
+  const L = LANGS[currentLang];
+  const C = L.comm;
+  const styles = {
+    yes:'background:var(--green-light);color:var(--green)',
+    no:'background:#FFEBEE;color:#E53935',
+    wait:'background:var(--yellow-light);color:#F57F17',
+    purple:'background:var(--purple-light);color:var(--purple)',
+    orange:'background:var(--orange-light);color:var(--orange)',
+    sky:'background:var(--sky);color:var(--blue-dark)',
+    tired:'background:#E8EAF6;color:#3949AB',
+    hug:'background:#FCE4EC;color:#AD1457',
+    water:'background:#E1F5FE;color:#0277BD',
+    yellow:'background:var(--yellow-light);color:#E65100',
+    red:'background:#FFEBEE;color:#C62828',
+    greenl:'background:var(--green-light);color:#1B5E20',
+    eat:'background:var(--orange-light);color:var(--orange)',
+    play:'background:var(--pink-light);color:var(--pink)',
+    green2:'background:var(--green-light);color:#2E7D32',
+    indigo:'background:#E8EAF6;color:#3949AB',
+    orng2:'background:var(--orange-light);color:var(--orange)',
+    purp2:'background:var(--purple-light);color:var(--purple)',
+    pink2:'background:var(--pink-light);color:var(--pink)',
+    yllw2:'background:var(--yellow-light);color:#F57F17',
+  };
+  const btn=(text,style,emoji)=>`<button class="cc" style="${style}" onclick="speak('${text.replace(/'/g,"\'")}')"><span class="ce">${emoji}</span><span class="cj">${text}</span></button>`;
+  document.getElementById('panel-comm').innerHTML = `
+    <div class="comm-sec"><div class="sec-lbl">${C.sec1}</div><div class="comm-grid">
+      ${btn(C.yes,styles.yes,'👍')}${btn(C.no,styles.no,'👎')}${btn(C.wait,styles.wait,'✋')}
+      ${btn(C.more,styles.purple,'➕')}${btn(C.done,styles.orange,'🏁')}${btn(C.help,styles.sky,'🙋')}
+    </div></div>
+    <div class="comm-sec"><div class="sec-lbl">${C.sec2}</div><div class="comm-grid">
+      ${btn(C.happy,styles.yes,'😄')}${btn(C.sad,styles.no,'😢')}${btn(C.angry,styles.no,'😠')}
+      ${btn(C.scared,styles.no,'😨')}${btn(C.tired,styles.tired,'😴')}${btn(C.dislike,styles.wait,'🙅')}
+      ${btn(C.love,styles.hug,'❤️')}${btn(C.surprised,styles.yllw2,'😲')}${btn(C.fun,styles.pink2,'🎉')}
+    </div></div>
+    <div class="comm-sec"><div class="sec-lbl">${C.sec3}</div><div class="comm-grid">
+      ${btn(C.hurt,styles.yellow,'🤕')}${btn(C.headache,styles.yellow,'🤯')}${btn(C.stomachache,styles.yellow,'🤢')}
+      ${btn(C.toilet,styles.purple,'🚽')}${btn(C.fever,styles.red,'🌡️')}${btn(C.nausea,styles.greenl,'🤮')}
+    </div></div>
+    <div class="comm-sec"><div class="sec-lbl">${C.sec4}</div><div class="comm-grid">
+      ${btn(C.hungry,styles.eat,'🍱')}${btn(C.thirsty,styles.water,'💧')}${btn(C.play,styles.play,'🎈')}
+      ${btn(C.hug,styles.hug,'🤗')}${btn(C.goHome,styles.green2,'🏠')}${btn(C.rest,styles.indigo,'🛋️')}
+      ${btn(C.snack,styles.orng2,'🍪')}${btn(C.tv,styles.sky,'📺')}${btn(C.music,styles.purp2,'🎵')}
+    </div></div>
+    <div class="comm-sec"><div class="sec-lbl">${C.sec5}</div><div class="comm-grid">
+      ${btn(C.hello,styles.yes,'👋')}${btn(C.thanks,styles.yllw2,'🙏')}${btn(C.sorry,styles.pink2,'😔')}
+      ${btn(C.together,styles.green2,'🤝')}${btn(C.goodnight,styles.indigo,'🌙')}${btn(C.letsdine,styles.orng2,'🍽️')}
+    </div></div>
+  `;
+}
+
 function buildLibrary(){Object.entries(library).forEach(([key,items])=>{const el=document.getElementById(`lib-${key}`);if(!el)return;el.innerHTML=items.map(item=>`<div class="lib-card" onclick="addFromLibrary('${item.emoji}','${item.jp}','${item.ko}')"><span class="ce">${item.emoji}</span><span class="cj">${item.jp}</span></div>`).join('');});}
-function addFromLibrary(emoji,jp,ko,photo,photoRatio){steps.push({jp,ko,emoji,photo:photo||null,photoRatio:photoRatio||null,done:false,chain:[]});saveAll();render();switchTab('schedule');showToast(`${emoji} ${jp} ついかしました`);}
+function addFromLibrary(emoji,jp,ko,photo,photoRatio){steps.push({jp,ko,emoji,photo:photo||null,photoRatio:photoRatio||null,done:false,chain:[]});saveAll();render();switchTab('schedule');showToast(`${emoji} ${jp} ${t('toastAdded')}`);}
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
-function speak(jp,ko){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(jp);u.lang='ja-JP';window.speechSynthesis.speak(u);}showToast(jp);}
+function speak(text){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=LANGS[currentLang].tts;window.speechSynthesis.speak(u);}showToast(text);}
 
 buildLibrary();
 openDB().then(loadAll);
-console.log('%c© 2025 OCW-1027. All Rights Reserved.', 'color:#2C6FAC;font-weight:bold;font-size:14px;');
-console.log('%c무단 복제 및 상업적 이용을 금지합니다. 저작권법에 의해 보호됩니다.', 'color:#888;font-size:12px;');
-</script>
-</body>
-</html>
+console.log('%c© 2025 OCW-1027. All Rights

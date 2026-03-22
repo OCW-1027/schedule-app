@@ -172,6 +172,54 @@
   .lib-card .cdel{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:#FFEBEE;color:#C62828;border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
   .lib-card .cedit{position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
   .lib-card{position:relative;}
+
+  /* VIEW MODE SWITCHER */
+  .view-switcher{display:flex;gap:4px;margin-bottom:10px;background:white;border-radius:12px;padding:3px;box-shadow:var(--shadow);}
+  .view-btn{flex:1;padding:7px 4px;border:none;background:transparent;border-radius:9px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;color:var(--text-light);cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .view-btn.active{background:var(--blue);color:white;}
+  .view-btn .vi{font-size:16px;}
+
+  /* ── VIEW A: 시계 + 카드 ── */
+  .clock-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:white;border-radius:14px;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,0.08);position:relative;}
+  .clock-row.completed{opacity:0.55;background:#f0faf0;}
+  .clock-row.current{border:2px solid var(--orange);background:#fffbf5;}
+  .clock-face{width:52px;height:52px;border-radius:50%;background:white;border:2.5px solid var(--blue);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;position:relative;}
+  .clock-face.no-time{border-color:#ddd;}
+  .clock-time-text{font-size:11px;font-weight:900;color:var(--blue-dark);line-height:1;}
+  .clock-ampm{font-size:9px;font-weight:700;color:var(--text-light);}
+  .clock-no-time{font-size:18px;}
+  .clock-activity{flex:1;min-width:0;}
+  .clock-name{font-size:15px;font-weight:900;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .clock-chain-names{font-size:11px;color:var(--blue);margin-top:2px;}
+  .clock-done-btn{width:34px;height:34px;border-radius:50%;border:2.5px solid #ddd;background:white;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;flex-shrink:0;}
+  .clock-done-btn.done{background:var(--green);border-color:var(--green);color:white;}
+  .clock-edit-btn{width:28px;height:28px;border-radius:50%;border:none;background:var(--sky);color:var(--blue-dark);font-size:12px;cursor:pointer;flex-shrink:0;}
+
+  /* 시간 입력 팝업 */
+  .time-input-popup{position:absolute;top:60px;left:4px;background:white;border-radius:14px;padding:12px;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:50;min-width:160px;}
+  .time-input-popup input[type=time]{width:100%;padding:8px;border:2px solid var(--blue);border-radius:10px;font-size:16px;font-family:'Nunito',sans-serif;font-weight:700;outline:none;}
+  .time-popup-btns{display:flex;gap:6px;margin-top:8px;}
+  .time-popup-btns button{flex:1;padding:7px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+  .time-ok-btn{background:var(--blue);color:white;}
+  .time-clear-btn{background:var(--gray);color:var(--text-light);}
+
+  /* ── VIEW B: 미니카드 그리드 ── */
+  .mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .mini-card{background:white;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);position:relative;}
+  .mini-card.completed{opacity:0.55;}
+  .mini-card.current{border:2.5px solid var(--orange);}
+  .mini-num-badge{position:absolute;top:6px;left:6px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:white;z-index:2;}
+  .mini-done-badge{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:2px solid rgba(255,255,255,0.8);background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;z-index:2;}
+  .mini-done-badge.done{background:var(--green);border-color:var(--green);color:white;}
+  .mini-photo-area{width:100%;height:100px;background:var(--gray);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+  .mini-photo-area img{width:100%;height:100%;object-fit:cover;}
+  .mini-photo-area.completed::after{content:'✅';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(92,184,92,0.5);display:flex;align-items:center;justify-content:center;font-size:36px;}
+  .mini-info{padding:6px 8px 8px;}
+  .mini-name{font-size:13px;font-weight:900;color:var(--text);}
+  .mini-sub-chain{font-size:10px;color:var(--blue);margin-top:2px;}
+  .mini-actions{display:flex;gap:4px;padding:0 6px 6px;}
+  .mini-edit-btn{flex:1;padding:5px;border:none;border-radius:8px;background:var(--sky);color:var(--blue-dark);font-size:11px;font-weight:700;cursor:pointer;}
+  .mini-del-btn{padding:5px 8px;border:none;border-radius:8px;background:#FFEBEE;color:#C62828;font-size:11px;font-weight:700;cursor:pointer;}
   .c1{background:#4A90D9}.c2{background:#5CB85C}.c3{background:#FF8C42}.c4{background:#F06292}.c5{background:#9C6FD6}.c6{background:#26B5A0}.c7{background:#FFB300}.c8{background:#EF5350}
 </style>
 </head>
@@ -196,6 +244,17 @@
   <div class="sch-hdr">
     <span class="sch-title" id="sch-title">今日すること</span>
     <button class="add-btn" id="add-btn" onclick="openAddModal()">➕ ついか</button>
+  </div>
+  <div class="view-switcher">
+    <button class="view-btn active" id="vbtn-card" onclick="setView('card')">
+      <span class="vi">📋</span><span>カード</span>
+    </button>
+    <button class="view-btn" id="vbtn-clock" onclick="setView('clock')">
+      <span class="vi">🕐</span><span>じかん</span>
+    </button>
+    <button class="view-btn" id="vbtn-grid" onclick="setView('grid')">
+      <span class="vi">⊞</span><span>グリッド</span>
+    </button>
   </div>
   <div id="stepList"></div>
 </div>
@@ -451,6 +510,8 @@ const DAY_JP=['日','月','火','水','木','金','土'];
 const DAY_KO=['にち','げつ','か','すい','もく','きん','ど'];
 
 let steps=[], routines=[], dayRoutines={}, selectedDayIdx=new Date().getDay();
+let viewMode='card'; // card | clock | grid
+let openTimePopup=null;
 let editingIdx=null, selectedEmoji='📌', mainPhotoData=null, mainPhotoRatio=null, chainDraft=[];
 
 const d=new Date();
@@ -527,8 +588,19 @@ function switchTab(name){
   if(name==='comm'){renderCommPanel();}
 }
 
-// ── RENDER STEPS ──
-function render(){
+
+// ── VIEW MODE ──
+function setView(mode){
+  viewMode=mode;
+  ['card','clock','grid'].forEach(m=>{
+    const btn=document.getElementById('vbtn-'+m);
+    if(btn) btn.classList.toggle('active', m===mode);
+  });
+  render();
+}
+
+// ── RENDER: カード (기존 큰 카드) ──
+function renderCard(){
   const list=document.getElementById('stepList');
   if(!steps.length){
     list.innerHTML=`<div class="empty"><div class="ee">📋</div><div class="ej">まだスケジュールがありません</div></div>`;
@@ -539,31 +611,25 @@ function render(){
       <div class="step-num c${(i%8)+1}">${i+1}</div>
       <div class="step-done ${s.done?'done':''}" onclick="toggleDone(${i})">${s.done?'✅':'○'}</div>
       <div class="step-photo" onclick="triggerStepPhoto(${i})">
-        ${s.photo?`<img src="${s.photo}" alt="">`:`<div class="step-photo-ph"><span class="big">${s.emoji}</span><span id="modal-photo-hint">タップして写真をついか</span></div>`}
+        ${s.photo?`<img src="${s.photo}" alt="">`:`<div class="step-photo-ph"><span class="big">${s.emoji}</span><span>タップして写真をついか</span></div>`}
       </div>
       <div class="step-body">
         <div class="step-jp">${s.emoji} ${s.jp}</div>
         ${(s.chain||[]).length?`
-          <div class="chain-list">
-            ${s.chain.map((c,ci)=>`
-              <div class="chain-item">
-                <div class="chain-arrow-row">↓</div>
-                <div class="chain-box ${c.done?'chain-done':''}">
-                  <div class="chain-step-label">Step ${ci+1}</div>
-                  <div class="chain-done-btn ${c.done?'done':''}" onclick="toggleChainDone(${i},${ci})">${c.done?'✅':'○'}</div>
-                  <div class="chain-photo" onclick="triggerChainPhoto(${i},${ci})">
-                    ${c.photo
-                      ?`<img src="${c.photo}">`
-                      :`<div class="chain-photo-ph" style="height:180px;width:100%;display:flex;align-items:center;justify-content:center;">${c.emoji||'📍'}</div>`}
-                  </div>
-                  <div class="chain-info">
-                    <div class="chain-texts"><div class="jp">${c.emoji||''} ${c.jp||''}</div></div>
-                  </div>
+          <div class="chain-list">${s.chain.map((c,ci)=>`
+            <div class="chain-item">
+              <div class="chain-arrow-row">↓</div>
+              <div class="chain-box ${c.done?'chain-done':''}">
+                <div class="chain-step-label">Step ${ci+1}</div>
+                <div class="chain-done-btn ${c.done?'done':''}" onclick="toggleChainDone(${i},${ci})">${c.done?'✅':'○'}</div>
+                <div class="chain-photo" onclick="triggerChainPhoto(${i},${ci})">
+                  ${c.photo?`<img src="${c.photo}">`:`<div class="chain-photo-ph" style="height:180px;width:100%;display:flex;align-items:center;justify-content:center;">${c.emoji||'📍'}</div>`}
                 </div>
+                <div class="chain-info"><div class="chain-texts"><div class="jp">${c.emoji||''} ${c.jp||''}</div></div></div>
               </div>
-              <input type="file" id="cp${i}_${ci}" accept="image/*" style="display:none" onchange="handleChainPhoto(event,${i},${ci})">
-            `).join('')}
-          </div>
+            </div>
+            <input type="file" id="cp${i}_${ci}" accept="image/*" style="display:none" onchange="handleChainPhoto(event,${i},${ci})">
+          `).join('')}</div>
         `:''}
         <div class="step-actions">
           ${i>0?`<button class="s-btn s-up" onclick="moveStep(${i},-1)">⬆️</button>`:''}
@@ -575,6 +641,109 @@ function render(){
     </div>
     <input type="file" id="sp${i}" accept="image/*" style="display:none" onchange="handleStepPhoto(event,${i})">
   `).join('');
+}
+
+// ── RENDER: じかん (시계+카드) ──
+function renderClock(){
+  const list=document.getElementById('stepList');
+  if(!steps.length){
+    list.innerHTML=`<div class="empty"><div class="ee">📋</div><div class="ej">まだスケジュールがありません</div></div>`;
+    return;
+  }
+  list.innerHTML=steps.map((s,i)=>{
+    const hasTime=s.time&&s.time!=='';
+    const chainNames=(s.chain||[]).map(c=>c.jp).filter(Boolean).join(' → ');
+    return `
+    <div class="clock-row ${s.done?'completed':''}" id="cr${i}">
+      <div class="clock-face ${hasTime?'':'no-time'}" onclick="toggleTimePopup(${i})" title="タップして時間をせってい">
+        ${hasTime
+          ? `<div class="clock-time-text">${s.time}</div>`
+          : `<div class="clock-no-time">🕐</div>`
+        }
+      </div>
+      <div id="tp${i}" style="display:none">
+        <div class="time-input-popup">
+          <input type="time" id="ti${i}" value="${s.time||''}" style="font-size:16px">
+          <div class="time-popup-btns">
+            <button class="time-ok-btn" onclick="saveTime(${i})">OK</button>
+            <button class="time-clear-btn" onclick="clearTime(${i})">けす</button>
+          </div>
+        </div>
+      </div>
+      <div class="clock-activity">
+        <div class="clock-name">${s.emoji} ${s.jp}</div>
+        ${chainNames?`<div class="clock-chain-names">↓ ${chainNames}</div>`:''}
+      </div>
+      <button class="clock-edit-btn" onclick="openEditModal(${i})">✏️</button>
+      <div class="clock-done-btn ${s.done?'done':''}" onclick="toggleDone(${i})">${s.done?'✅':'○'}</div>
+    </div>
+  `}).join('');
+}
+
+// ── RENDER: グリッド (미니카드 2열) ──
+function renderGrid(){
+  const list=document.getElementById('stepList');
+  if(!steps.length){
+    list.innerHTML=`<div class="empty"><div class="ee">📋</div><div class="ej">まだスケジュールがありません</div></div>`;
+    return;
+  }
+  list.innerHTML=`<div class="mini-grid">${steps.map((s,i)=>{
+    const chainNames=(s.chain||[]).map(c=>c.jp).filter(Boolean).join(' → ');
+    return `
+    <div class="mini-card ${s.done?'completed':''}">
+      <div class="mini-num-badge c${(i%8)+1}">${i+1}</div>
+      <div class="mini-done-badge ${s.done?'done':''}" onclick="toggleDone(${i})">${s.done?'✅':'○'}</div>
+      <div class="mini-photo-area ${s.done?'completed':''}">
+        ${s.photo?`<img src="${s.photo}">`:`<span style="font-size:44px">${s.emoji}</span>`}
+      </div>
+      <div class="mini-info">
+        <div class="mini-name">${s.emoji} ${s.jp}</div>
+        ${chainNames?`<div class="mini-sub-chain">↓ ${chainNames}</div>`:''}
+      </div>
+      <div class="mini-actions">
+        <button class="mini-edit-btn" onclick="openEditModal(${i})">✏️ へんしゅう</button>
+        <button class="mini-del-btn" onclick="deleteStep(${i})">🗑️</button>
+      </div>
+    </div>
+  `}).join('')}</div>`;
+}
+
+// 시간 팝업 토글
+function toggleTimePopup(i){
+  if(openTimePopup!==null && openTimePopup!==i){
+    const prev=document.getElementById('tp'+openTimePopup);
+    if(prev) prev.style.display='none';
+  }
+  const el=document.getElementById('tp'+i);
+  if(!el) return;
+  const showing=el.style.display==='block';
+  el.style.display=showing?'none':'block';
+  openTimePopup=showing?null:i;
+}
+function saveTime(i){
+  const el=document.getElementById('ti'+i);
+  if(!el) return;
+  steps[i].time=el.value;
+  saveAll();
+  const tp=document.getElementById('tp'+i);
+  if(tp) tp.style.display='none';
+  openTimePopup=null;
+  render();
+}
+function clearTime(i){
+  steps[i].time='';
+  saveAll();
+  const tp=document.getElementById('tp'+i);
+  if(tp) tp.style.display='none';
+  openTimePopup=null;
+  render();
+}
+
+// ── RENDER STEPS (dispatch) ──
+function render(){
+  if(viewMode==='clock'){ renderClock(); return; }
+  if(viewMode==='grid'){ renderGrid(); return; }
+  renderCard();
 }
 
 function toggleDone(i){steps[i].done=!steps[i].done;saveAll();render();if(steps[i].done)showToast('✅ できた！');}

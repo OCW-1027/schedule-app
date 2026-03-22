@@ -304,7 +304,7 @@
       본 앱은 발달장애 아동의 의사소통 지원을 위해 제작되었으며, 개인·가정 내 비영리 목적에 한하여 무료로 사용할 수 있습니다.<br>
       무단 복제, 상업적 이용, 코드 도용 및 유사 서비스 제작·배포는 엄격히 금지합니다.<br>
       저작권법에 의해 보호되며, 위반 시 법적 조치를 취할 수 있습니다.<br><br>
-      お問い合わせ / 문의: <span style="color:var(--blue-dark);font-weight:700">kumamongmong@gmail.com</span>
+      お問い合わせ / 문의: <span style="color:var(--blue-dark);font-weight:700"><span id="contact-email"></span></span>
     </div>
   </div>
 </div>
@@ -1213,3 +1213,8 @@ function speak(text){if('speechSynthesis' in window){window.speechSynthesis.canc
 
 buildLibrary();
 openDB().then(loadAll);
+// reconstruct email to avoid CF encoding
+(function(){
+  const el = document.getElementById('contact-email');
+  if(el) el.textContent = ['kumamongmong','gmail.com'].join('@');
+})();

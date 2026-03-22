@@ -178,23 +178,23 @@
 <body>
 <header>
   <div class="header-title">
-    <div class="jp" id="hdr-title">📅 Today's Schedule</div>
+    <div class="jp" id="hdr-title">📅 今日のスケジュール</div>
   </div>
   <div class="date-badge" id="dateBadge"></div>
 </header>
 
 <div class="tabs">
-  <button class="tab active" onclick="switchTab('schedule')"><span class="ti">📋</span><span id="tab-schedule">Schedule</span></button>
-  <button class="tab" onclick="switchTab('routine')"><span class="ti">🔁</span><span id="tab-routine">Routine</span></button>
-  <button class="tab" onclick="switchTab('library')"><span class="ti">🗂️</span><span id="tab-library">Cards</span></button>
-  <button class="tab" onclick="switchTab('comm')"><span class="ti">💬</span><span id="tab-comm">Feelings</span></button>
-  <button class="tab" onclick="switchTab('settings')"><span class="ti">⚙️</span><span id="tab-settings">Settings</span></button>
+  <button class="tab active" onclick="switchTab('schedule')"><span class="ti">📋</span><span id="tab-schedule">スケジュール</span></button>
+  <button class="tab" onclick="switchTab('routine')"><span class="ti">🔁</span><span id="tab-routine">ルーティン</span></button>
+  <button class="tab" onclick="switchTab('library')"><span class="ti">🗂️</span><span id="tab-library">カード</span></button>
+  <button class="tab" onclick="switchTab('comm')"><span class="ti">💬</span><span id="tab-comm">きもち</span></button>
+  <button class="tab" onclick="switchTab('settings')"><span class="ti">⚙️</span><span id="tab-settings">せってい</span></button>
 </div>
 
 <!-- SCHEDULE -->
 <div class="panel active" id="panel-schedule">
   <div class="sch-hdr">
-    <span class="sch-title" id="sch-title">Today's Tasks</span>
+    <span class="sch-title" id="sch-title">今日すること</span>
     <button class="add-btn" id="add-btn" onclick="openAddModal()">➕ Add</button>
   </div>
   <div id="stepList"></div>
@@ -304,7 +304,7 @@
       본 앱은 발달장애 아동의 의사소통 지원을 위해 제작되었으며, 개인·가정 내 비영리 목적에 한하여 무료로 사용할 수 있습니다.<br>
       무단 복제, 상업적 이용, 코드 도용 및 유사 서비스 제작·배포는 엄격히 금지합니다.<br>
       저작권법에 의해 보호되며, 위반 시 법적 조치를 취할 수 있습니다.<br><br>
-      お問い合わせ / 문의: <span style="color:var(--blue-dark);font-weight:700"><span id="contact-email"></span></span>
+      お問い合わせ / 문의: <span style="color:var(--blue-dark);font-weight:700">kumamongmong[at]gmail.com</span>
     </div>
   </div>
 </div>
@@ -312,7 +312,7 @@
 <!-- MYCARD MODAL -->
 <div class="modal-overlay" id="mycardOverlay">
   <div class="modal">
-    <div class="modal-title" id="mcModalTitle">⭐ Add My Card</div>
+    <div class="modal-title" id="mcModalTitle">⭐ マイカードをついか</div>
     <div class="fg"><label class="fl" id="modal-name-lbl">Name</label><input class="fi" id="mcInputJp" placeholder="例: リオのがっこう" maxlength="30"></div>
     <div class="fg">
       <label class="fl" id="mc-photo-lbl">Photo (tap to add)</label>
@@ -324,8 +324,8 @@
     </div>
     <div class="fg"><label class="fl" id="mc-icon-lbl">Icon (shown when no photo)</label><div class="ep" id="mcEmojiPicker"></div></div>
     <div class="modal-actions">
-      <button class="btn-cancel" id="mc-cancel" onclick="closeMycardModal()">Cancel</button>
-      <button class="btn-save" id="mc-save" onclick="saveMycard()">Save</button>
+      <button class="btn-cancel" id="mc-cancel" onclick="closeMycardModal()">やめる</button>
+      <button class="btn-save" id="mc-save" onclick="saveMycard()">ほぞん</button>
     </div>
   </div>
 </div>
@@ -383,7 +383,7 @@
 <!-- STEP MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <div class="modal-title" id="modalTitle">Add Step</div>
+    <div class="modal-title" id="modalTitle">新しいステップをついか</div>
     <div class="fg"><label class="fl" id="modal-name-lbl">Name</label><input class="fi" id="inputJp" placeholder="例: がっこうにいく" maxlength="30"></div>
     <div class="fg"><label class="fl" id="modal-icon-lbl">Icon</label><div class="ep" id="emojiPicker"></div></div>
     <div class="fg">
@@ -396,8 +396,928 @@
       <div id="chainEntriesEditor"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn-cancel" id="modal-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" id="modal-save" onclick="saveStep()">Save</button>
+      <button class="btn-cancel" id="modal-cancel" onclick="closeModal()">やめる</button>
+      <button class="btn-save" id="modal-save" onclick="saveStep()">ほぞん</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+const EMOJIS=['🚗','🏫','🏠','🎮','🍱','🛁','😴','🏃','🛒','🌳','🎈','🎨','📚','🎵','🐶','🏊','⚽','🧸','👨‍👩‍👦','🚌','🏥','🍜','🎪','🌸','🚂','✂️','🖍️','🧩','📌'];
+const DAY_JP=['日','月','火','水','木','金','土'];
+const DAY_KO=['にち','げつ','か','すい','もく','きん','ど'];
+
+let steps=[], routines=[], dayRoutines={}, selectedDayIdx=new Date().getDay();
+let editingIdx=null, selectedEmoji='📌', mainPhotoData=null, mainPhotoRatio=null, chainDraft=[];
+
+const d=new Date();
+document.getElementById('dateBadge').textContent=`${d.getMonth()+1}/${d.getDate()}(${DAY_JP[d.getDay()]})`;
+
+// ── IndexedDB ──
+let db;
+function openDB(){
+  return new Promise((res,rej)=>{
+    const req=indexedDB.open('scheduleAppDB',2);
+    req.onupgradeneeded=e=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains('data')) db.createObjectStore('data');
+    };
+    req.onsuccess=e=>{db=e.target.result;res(db);};
+    req.onerror=()=>rej('DB error');
+  });
+}
+function dbSet(k,v){return new Promise((res,rej)=>{const tx=db.transaction('data','readwrite');tx.objectStore('data').put(v,k);tx.oncomplete=res;tx.onerror=rej;});}
+function dbGet(k){return new Promise(res=>{const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get(k);req.onsuccess=()=>res(req.result);req.onerror=()=>res(null);});}
+
+async function saveAll(){
+  await dbSet('steps',JSON.stringify(steps));
+  await dbSet('routines',JSON.stringify(routines));
+  await dbSet('dayRoutines',JSON.stringify(dayRoutines));
+  await dbSet('myCards',JSON.stringify(myCards));
+}
+async function loadAll(){
+  // steps
+  let raw=await dbGet('steps');
+  if(!raw){const old=localStorage.getItem('scheduleSteps');if(old){raw=old;localStorage.removeItem('scheduleSteps');}}
+  if(raw) steps=JSON.parse(raw).map(s=>{if(s.sub&&!Array.isArray(s.chain)){s.chain=[s.sub];delete s.sub;}if(!s.chain)s.chain=[];return s;});
+  // routines
+  const rr=await dbGet('routines'); if(rr) routines=JSON.parse(rr);
+  // dayRoutines
+  const dr=await dbGet('dayRoutines'); if(dr) dayRoutines=JSON.parse(dr);
+  render(); renderRoutineTab(); updateTodayBanner();
+}
+
+// image compress
+function compressImage(file,cb){
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const img=new Image();
+    img.onload=()=>{
+      const c=document.createElement('canvas');
+      let w=img.width,h=img.height,mx=1200;
+      if(w>mx||h>mx){if(w>h){h=Math.round(h*mx/w);w=mx;}else{w=Math.round(w*mx/h);h=mx;}}
+      c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+      // 비율 정보도 같이 전달 (세로:가로 비율)
+      const ratio=h/w;
+      cb(c.toDataURL('image/jpeg',0.7), ratio);
+    };
+    img.src=ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// 사진 비율에 따라 높이 계산 (세로사진: 최대 400px, 가로사진: 220px)
+function calcPhotoHeight(ratio){
+  if(!ratio) return 220;
+  if(ratio>1.2) return Math.min(Math.round(window.innerWidth * ratio * 0.9), 420); // 세로
+  if(ratio>0.8) return 260; // 정사각형에 가까움
+  return 220; // 가로
+}
+
+// ── TABS ──
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['schedule','routine','library','comm','settings'][i]===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  if(name==='routine'){renderRoutineTab();updateTodayBanner();}
+  if(name==='settings'){updateDataStats();renderLangSelector();}
+  if(name==='comm'){renderCommPanel();}
+}
+
+// ── RENDER STEPS ──
+function render(){
+  const list=document.getElementById('stepList');
+  if(!steps.length){
+    list.innerHTML=`<div class="empty"><div class="ee">📋</div><div class="ej">まだスケジュールがありません</div></div>`;
+    return;
+  }
+  list.innerHTML=steps.map((s,i)=>`
+    <div class="step-card ${s.done?'completed':''}" id="sc${i}">
+      <div class="step-num c${(i%8)+1}">${i+1}</div>
+      <div class="step-done ${s.done?'done':''}" onclick="toggleDone(${i})">${s.done?'✅':'○'}</div>
+      <div class="step-photo" onclick="triggerStepPhoto(${i})">
+        ${s.photo?`<img src="${s.photo}" alt="">`:`<div class="step-photo-ph"><span class="big">${s.emoji}</span><span id="modal-photo-hint">Tap to add photo</span></div>`}
+      </div>
+      <div class="step-body">
+        <div class="step-jp">${s.emoji} ${s.jp}</div>
+        ${(s.chain||[]).length?`
+          <div class="chain-list">
+            ${s.chain.map((c,ci)=>`
+              <div class="chain-item">
+                <div class="chain-arrow-row">↓</div>
+                <div class="chain-box ${c.done?'chain-done':''}">
+                  <div class="chain-step-label">Step ${ci+1}</div>
+                  <div class="chain-done-btn ${c.done?'done':''}" onclick="toggleChainDone(${i},${ci})">${c.done?'✅':'○'}</div>
+                  <div class="chain-photo" onclick="triggerChainPhoto(${i},${ci})">
+                    ${c.photo
+                      ?`<img src="${c.photo}">`
+                      :`<div class="chain-photo-ph" style="height:180px;width:100%;display:flex;align-items:center;justify-content:center;">${c.emoji||'📍'}</div>`}
+                  </div>
+                  <div class="chain-info">
+                    <div class="chain-texts"><div class="jp">${c.emoji||''} ${c.jp||''}</div></div>
+                  </div>
+                </div>
+              </div>
+              <input type="file" id="cp${i}_${ci}" accept="image/*" style="display:none" onchange="handleChainPhoto(event,${i},${ci})">
+            `).join('')}
+          </div>
+        `:''}
+        <div class="step-actions">
+          ${i>0?`<button class="s-btn s-up" onclick="moveStep(${i},-1)">⬆️</button>`:''}
+          ${i<steps.length-1?`<button class="s-btn s-dn" onclick="moveStep(${i},1)">⬇️</button>`:''}
+          <button class="s-btn s-edit" onclick="openEditModal(${i})">✏️ へんしゅう</button>
+          <button class="s-btn s-del" onclick="deleteStep(${i})">🗑️</button>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="sp${i}" accept="image/*" style="display:none" onchange="handleStepPhoto(event,${i})">
+  `).join('');
+}
+
+function toggleDone(i){steps[i].done=!steps[i].done;saveAll();render();if(steps[i].done)showToast('✅ できた！');}
+function toggleChainDone(i,ci){
+  if(!steps[i].chain[ci]) return;
+  steps[i].chain[ci].done=!steps[i].chain[ci].done;
+  saveAll();render();
+  if(steps[i].chain[ci].done) showToast('✅ できた！');
+}
+function moveStep(i,dir){const j=i+dir;if(j<0||j>=steps.length)return;[steps[i],steps[j]]=[steps[j],steps[i]];saveAll();render();}
+function deleteStep(i){if(confirm('さくじょしますか？')){steps.splice(i,1);saveAll();render();}}
+function triggerStepPhoto(i){document.getElementById(`sp${i}`).click();}
+function handleStepPhoto(e,i){const f=e.target.files[0];if(!f)return;compressImage(f,(c,ratio)=>{steps[i].photo=c;steps[i].photoRatio=ratio;saveAll();render();});}
+function triggerChainPhoto(i,ci){document.getElementById(`cp${i}_${ci}`).click();}
+function handleChainPhoto(e,i,ci){const f=e.target.files[0];if(!f)return;compressImage(f,(c,ratio)=>{steps[i].chain[ci].photo=c;steps[i].chain[ci].photoRatio=ratio;saveAll();render();});}
+
+// ── ROUTINE TAB ──
+function updateTodayBanner(){
+  const today=new Date().getDay();
+  const dr=dayRoutines[today];
+  const el=document.getElementById('todayLoadTitle');
+  const sub=document.getElementById('todayLoadSub');
+  if(el){
+    el.textContent=t('routineLoadTitle').replace('{day}',['日','月','火','水','木','金','土'][today]);
+    sub.textContent=dr?`「${dr.name}」 → ${t('routineLoadBtn')}`:'---';
+  }
+}
+
+function loadTodayDayRoutine(){
+  const today=new Date().getDay();
+  const dr=dayRoutines[today];
+  if(!dr){showToast('今日のルーティンがありません');return;}
+  const tpl=routines.find(r=>r.id===dr.routineId);
+  if(!tpl){showToast('ルーティンがみつかりません');return;}
+  if(confirm(`「${tpl.name}」をよみこみますか？\nいまのスケジュールはそのままです。`)){
+    const fresh=JSON.parse(JSON.stringify(tpl.steps)).map(s=>({...s,done:false}));
+    steps=[...fresh];
+    saveAll();render();switchTab('schedule');
+    showToast('✅ よみこみました');
+  }
+}
+
+function renderRoutineTab(){
+  renderRoutineList();
+  renderDayBar();
+  renderDayRoutineContent();
+}
+
+function renderRoutineList(){
+  const el=document.getElementById('routineList');
+  if(!routines.length){el.innerHTML=`<div style="text-align:center;padding:20px;color:var(--text-light);font-size:13px;font-weight:600;">まだルーティンがありません<br>いまのスケジュールをほぞんしてみよう！</div>`;return;}
+  el.innerHTML=routines.map((r,i)=>`
+    <div class="routine-card">
+      <div class="routine-icon">${r.steps[0]?.emoji||'📋'}</div>
+      <div class="routine-info">
+        <div class="routine-name">${r.name}</div>
+        <div class="routine-meta">${r.steps.length}ステップ · ${r.savedAt}</div>
+      </div>
+      <div class="routine-actions">
+        <button class="r-load-btn" onclick="loadRoutine(${i})">よみこむ</button>
+        <button class="r-del-btn" onclick="deleteRoutine(${i})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderDayBar(){
+  const bar=document.getElementById('dayBar');
+  bar.innerHTML=DAY_JP.map((jp,i)=>{
+    const hasR=!!dayRoutines[i];
+    const isActive=i===selectedDayIdx;
+    return `<button class="day-btn ${isActive?'active':''} ${hasR&&!isActive?'has-routine':''}" onclick="selectDay(${i})">${jp}<br><small style="font-size:9px">${DAY_KO[i]}</small></button>`;
+  }).join('');
+}
+
+function selectDay(i){selectedDayIdx=i;renderDayBar();renderDayRoutineContent();}
+
+function renderDayRoutineContent(){
+  const el=document.getElementById('dayRoutineContent');
+  const dr=dayRoutines[selectedDayIdx];
+  const tpl=dr?routines.find(r=>r.id===dr.routineId):null;
+  let html=`<div class="day-routine-hdr">
+    <div class="day-routine-title">${DAY_JP[selectedDayIdx]}曜日のルーティン</div>
+    <button class="set-day-btn" onclick="openSetDayRoutine(${selectedDayIdx})">ルーティンをせってい</button>
+  </div>`;
+  if(tpl){
+    html+=`<div class="day-routine-preview">
+      <div style="font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:8px;">📋 ${tpl.name}</div>
+      ${tpl.steps.map(s=>`<div class="day-preview-item"><span class="dpi-emoji">${s.emoji}</span><span class="dpi-text">${s.jp}</span></div>`).join('')}
+      <button style="margin-top:10px;width:100%;padding:10px;background:var(--blue);color:white;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;" onclick="clearDayRoutine(${selectedDayIdx})">このルーティンをかいじょ</button>
+    </div>`;
+  } else {
+    html+=`<div class="day-routine-preview"><div class="no-day-routine">ルーティンがまだありません<br>「ルーティンをせってい」をおしてください</div></div>`;
+  }
+  el.innerHTML=html;
+}
+
+function openSetDayRoutine(dayIdx){
+  if(!routines.length){showToast('まずルーティンをほぞんしてください');return;}
+  const options=routines.map((r,i)=>`${i+1}. ${r.name} (${r.steps.length}ステップ)`).join('\n');
+  const input=prompt(`${DAY_JP[dayIdx]}曜日のルーティンをえらんでください：\n\n${options}\n\nばんごうをにゅうりょくしてください：`);
+  if(!input)return;
+  const idx=parseInt(input)-1;
+  if(idx<0||idx>=routines.length){showToast('ばんごうがちがいます');return;}
+  dayRoutines[dayIdx]={routineId:routines[idx].id,name:routines[idx].name};
+  saveAll();renderDayBar();renderDayRoutineContent();updateTodayBanner();
+  showToast(`✅ ${DAY_JP[dayIdx]}曜日 → ${routines[idx].name}`);
+}
+
+function clearDayRoutine(dayIdx){
+  if(confirm(`${DAY_JP[dayIdx]}曜日のルーティンをかいじょしますか？`)){
+    delete dayRoutines[dayIdx];
+    saveAll();renderDayBar();renderDayRoutineContent();updateTodayBanner();
+  }
+}
+
+function saveCurrentAsRoutine(){
+  const name=document.getElementById('routineNameInput').value.trim();
+  if(!name){showToast('ルーティン名をにゅうりょくしてください');return;}
+  if(!steps.length){showToast('ほぞんするスケジュールがありません');return;}
+  const id='r_'+Date.now();
+  const now=new Date();
+  const savedAt=`${now.getMonth()+1}/${now.getDate()}`;
+  // done state reset
+  const snapshot=JSON.parse(JSON.stringify(steps)).map(s=>({...s,done:false}));
+  routines.push({id,name,steps:snapshot,savedAt});
+  document.getElementById('routineNameInput').value='';
+  saveAll();renderRoutineList();
+  showToast(`💾 「${name}」 をほぞんしました`);
+}
+
+function loadRoutine(i){
+  const r=routines[i];
+  if(confirm(`「${r.name}」をよみこみますか？\nいまのスケジュールがかわります。`)){
+    steps=JSON.parse(JSON.stringify(r.steps)).map(s=>({...s,done:false}));
+    saveAll();render();switchTab('schedule');
+    showToast('✅ よみこみました');
+  }
+}
+
+function deleteRoutine(i){
+  if(confirm(`「${routines[i].name}」をさくじょしますか？`)){
+    const id=routines[i].id;
+    routines.splice(i,1);
+    // remove from dayRoutines
+    Object.keys(dayRoutines).forEach(d=>{if(dayRoutines[d].routineId===id)delete dayRoutines[d];});
+    saveAll();renderRoutineList();renderDayBar();renderDayRoutineContent();
+  }
+}
+
+// ── STEP MODAL ──
+function buildEmojiPicker(){document.getElementById('emojiPicker').innerHTML=EMOJIS.map(e=>`<div class="eo ${e===selectedEmoji?'sel':''}" onclick="selEmoji('${e}')">${e}</div>`).join('');}
+function selEmoji(e){selectedEmoji=e;document.querySelectorAll('.eo').forEach(el=>el.classList.toggle('sel',el.textContent===e));}
+function renderChainEditor(){
+  document.getElementById('chainEntriesEditor').innerHTML=chainDraft.map((c,ci)=>`
+    <div class="chain-entry">
+      <div class="ce-hdr">
+        <span style="font-size:14px;font-weight:900;color:var(--blue-dark)">↓ Step ${ci+1}</span>
+        <div style="display:flex;gap:4px;margin-left:auto">
+          ${ci>0?`<button style="background:var(--gray);border:none;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:12px" onclick="moveChain(${ci},-1)">⬆️</button>`:''}
+          ${ci<chainDraft.length-1?`<button style="background:var(--gray);border:none;border-radius:8px;padding:4px 8px;cursor:pointer;font-size:12px" onclick="moveChain(${ci},1)">⬇️</button>`:''}
+          <button class="ce-del" onclick="removeChainEntry(${ci})">✕</button>
+        </div>
+      </div>
+      <input class="fi" id="cjp${ci}" placeholder="例: あそぶ" maxlength="30" value="${c.jp||''}" oninput="chainDraft[${ci}].jp=this.value">
+      <div style="margin-top:6px">
+        <label style="font-size:11px;font-weight:700;color:var(--text-light);display:block;margin-bottom:4px">アイコン</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${['📍','🏫','🎮','🍱','🛁','📚','⚽','🎨','🎵','🛒','🌳','🏥'].map(e=>
+            `<div style="width:36px;height:36px;border-radius:8px;background:${(c.emoji||'📍')===e?'var(--sky)':'var(--gray)'};border:2px solid ${(c.emoji||'📍')===e?'var(--blue)':'transparent'};display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer" onclick="setChainEmoji(${ci},'${e}')">${e}</div>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="chain-pu" id="cpu${ci}" onclick="triggerChainEdPh(${ci})">
+        ${c.photo?`<img src="${c.photo}">`:'<span style="font-size:24px">📷</span><span>写真をついか（タップ）</span>'}
+      </div>
+      <input type="file" id="ceph${ci}" accept="image/*" style="display:none" onchange="handleChainEdPh(event,${ci})">
+    </div>
+  `).join('');
+}
+function setChainEmoji(ci, e){ chainDraft[ci].emoji=e; renderChainEditor(); }
+function moveChain(ci, dir){
+  const j=ci+dir;
+  if(j<0||j>=chainDraft.length) return;
+  [chainDraft[ci],chainDraft[j]]=[chainDraft[j],chainDraft[ci]];
+  renderChainEditor();
+}
+function addChainEntry(){chainDraft.push({jp:'',ko:'',photo:null});renderChainEditor();setTimeout(()=>{const es=document.querySelectorAll('.chain-entry');if(es.length)es[es.length-1].scrollIntoView({behavior:'smooth',block:'nearest'});},100);}
+function removeChainEntry(ci){chainDraft.splice(ci,1);renderChainEditor();}
+function triggerChainEdPh(ci){document.getElementById(`ceph${ci}`).click();}
+function handleChainEdPh(e,ci){const f=e.target.files[0];if(!f)return;compressImage(f,(c,ratio)=>{chainDraft[ci].photo=c;chainDraft[ci].photoRatio=ratio;const a=document.getElementById(`cpu${ci}`);if(a){a.style.height='auto';a.style.minHeight='80px';a.innerHTML=`<img src="${c}">`;}}); }
+function openAddModal(){
+  editingIdx=null;selectedEmoji='📌';mainPhotoData=null;mainPhotoRatio=null;chainDraft=[];
+  document.getElementById('modalTitle').textContent='新しいステップをついか';
+  document.getElementById('inputJp').value='';
+  document.getElementById('photoUploadArea').innerHTML='<span style="font-size:32px">📷</span><span id="modal-photo-hint">Tap to add photo</span>';
+  renderChainEditor();buildEmojiPicker();document.getElementById('modalOverlay').classList.add('open');
+}
+function openEditModal(i){
+  editingIdx=i;const s=steps[i];selectedEmoji=s.emoji;mainPhotoData=s.photo||null;mainPhotoRatio=s.photoRatio||null;chainDraft=JSON.parse(JSON.stringify(s.chain||[])).map(c=>({...c,done:c.done||false}));
+  document.getElementById('modalTitle').textContent='へんしゅう';
+  document.getElementById('inputJp').value=s.jp||'';
+  const pa=document.getElementById('photoUploadArea');
+  if(mainPhotoData){pa.style.height='auto';pa.style.minHeight='100px';pa.innerHTML=`<img src="${mainPhotoData}">`;}else{pa.style.height='160px';pa.style.minHeight='160px';pa.innerHTML='<span style="font-size:32px">📷</span><span id="modal-photo-hint">Tap to add photo</span>';}
+  renderChainEditor();buildEmojiPicker();document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');}
+function triggerPhotoUpload(){document.getElementById('photoInput').click();}
+function handleMainPhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  compressImage(f,(c,ratio)=>{
+    mainPhotoData=c; mainPhotoRatio=ratio;
+    const el=document.getElementById('photoUploadArea');
+    el.style.minHeight='100px'; el.style.height='auto';
+    el.innerHTML=`<img src="${c}">`;
+  });
+}
+function saveStep(){
+  const jp=document.getElementById('inputJp').value.trim();
+  if(!jp){showToast('なまえをにゅうりょくしてください');return;}
+  chainDraft.forEach((c,ci)=>{const j=document.getElementById(`cjp${ci}`);if(j)c.jp=j.value.trim();});
+  const validChain=chainDraft.filter(c=>c.jp).map(c=>({jp:c.jp,ko:c.jp,photo:c.photo,photoRatio:c.photoRatio||null,emoji:c.emoji||'📍',done:false}));
+  const step={jp,ko:jp,emoji:selectedEmoji,photo:mainPhotoData,done:false,chain:validChain};
+  if(editingIdx!==null){step.done=steps[editingIdx].done;steps[editingIdx]=step;}else{steps.push(step);}
+  saveAll();render();closeModal();
+  showToast(editingIdx!==null?'✏️ へんしゅうしました':'✅ ついかしました');
+}
+
+// ── LIBRARY ──
+const library={
+  move:[{emoji:'🚗',jp:'ママのくるま',ko:'엄마 차'},{emoji:'🚙',jp:'パパのくるま',ko:'아빠 차'},{emoji:'🚌',jp:'バス',ko:'버스'},{emoji:'🚃',jp:'でんしゃ',ko:'전철'},{emoji:'🚲',jp:'じてんしゃ',ko:'자전거'},{emoji:'🚶',jp:'あるく',ko:'걷기'},{emoji:'🏃',jp:'かける',ko:'뛰기'},{emoji:'🚕',jp:'タクシー',ko:'택시'},{emoji:'✈️',jp:'ひこうき',ko:'비행기'}],
+  place:[{emoji:'🏠',jp:'おうち',ko:'집'},{emoji:'🏫',jp:'がっこう',ko:'학교'},{emoji:'🏥',jp:'びょういん',ko:'병원'},{emoji:'🏪',jp:'コンビニ',ko:'편의점'},{emoji:'🛒',jp:'スーパー',ko:'마트'},{emoji:'🌳',jp:'こうえん',ko:'공원'},{emoji:'🍜',jp:'レストラン',ko:'식당'},{emoji:'📚',jp:'としょかん',ko:'도서관'},{emoji:'💈',jp:'びよういん',ko:'미용실'},{emoji:'🏊',jp:'プール',ko:'수영장'},{emoji:'🛍️',jp:'ショッピング',ko:'쇼핑몰'},{emoji:'⛩️',jp:'じんじゃ',ko:'신사'}],
+  activity:[{emoji:'🍱',jp:'ごはん',ko:'밥 먹기'},{emoji:'🛁',jp:'おふろ',ko:'목욕'},{emoji:'😴',jp:'ねる',ko:'자기'},{emoji:'🪥',jp:'はみがき',ko:'양치하기'},{emoji:'👕',jp:'きがえ',ko:'옷 입기'},{emoji:'🎮',jp:'ゲーム',ko:'게임'},{emoji:'🎨',jp:'おえかき',ko:'그림 그리기'},{emoji:'📖',jp:'ほんをよむ',ko:'책 읽기'},{emoji:'🎵',jp:'おんがく',ko:'음악 듣기'},{emoji:'📺',jp:'テレビ',ko:'TV 보기'},{emoji:'🧩',jp:'パズル',ko:'퍼즐'},{emoji:'⚽',jp:'ボールあそび',ko:'공놀이'},{emoji:'🖍️',jp:'ぬりえ',ko:'색칠하기'},{emoji:'🧸',jp:'ぬいぐるみ',ko:'인형 놀이'},{emoji:'🧼',jp:'てをあらう',ko:'손 씻기'},{emoji:'🎪',jp:'たいけん',ko:'체험'}],
+  food:[{emoji:'🍱',jp:'おべんとう',ko:'도시락'},{emoji:'🍚',jp:'ごはん',ko:'밥'},{emoji:'🍜',jp:'ラーメン',ko:'라면'},{emoji:'🍞',jp:'パン',ko:'빵'},{emoji:'🍎',jp:'りんご',ko:'사과'},{emoji:'🍌',jp:'バナナ',ko:'바나나'},{emoji:'🍪',jp:'おかし',ko:'과자'},{emoji:'🧃',jp:'ジュース',ko:'주스'},{emoji:'🍦',jp:'アイスクリーム',ko:'아이스크림'}],
+  person:[{emoji:'👩',jp:'ママ',ko:'엄마'},{emoji:'👨',jp:'パパ',ko:'아빠'},{emoji:'👦',jp:'おにいちゃん',ko:'오빠/형'},{emoji:'👧',jp:'おねえちゃん',ko:'언니/누나'},{emoji:'👴',jp:'おじいちゃん',ko:'할아버지'},{emoji:'👵',jp:'おばあちゃん',ko:'할머니'},{emoji:'👩‍🏫',jp:'せんせい',ko:'선생님'},{emoji:'🧑‍⚕️',jp:'おいしゃさん',ko:'의사 선생님'},{emoji:'👫',jp:'ともだち',ko:'친구'}],
+};
+
+// ── マイカード ──
+let myCards = [];
+let mcSelectedEmoji = '⭐';
+let mcPhotoData = null;
+let mcPhotoRatio = null;
+let mcEditingId = null;
+
+function openMycardModal(editId){
+  mcEditingId = editId || null;
+  const existing = editId ? myCards.find(c=>c.id===editId) : null;
+  mcSelectedEmoji = existing ? existing.emoji : '⭐';
+  mcPhotoData = existing ? existing.photo : null;
+  mcPhotoRatio = existing ? existing.photoRatio : null;
+  document.getElementById('mcModalTitle').textContent = existing ? '✏️ カードをへんしゅう' : '⭐ マイカードをついか';
+  document.getElementById('mcInputJp').value = existing ? existing.jp : '';
+  const pa = document.getElementById('mcPhotoArea');
+  if(mcPhotoData){pa.style.height='auto';pa.style.minHeight='100px';pa.innerHTML=`<img src="${mcPhotoData}" style="width:100%;height:auto;object-fit:contain;border-radius:11px">`;}else{pa.style.height='180px';pa.style.minHeight='180px';pa.innerHTML='<span style="font-size:40px">📷</span><span id="modal-photo-hint">Tap to add photo</span>';}
+  document.getElementById('mcEmojiPicker').innerHTML =
+    EMOJIS.map(e=>`<div class="eo ${e===mcSelectedEmoji?'sel':''}" onclick="selMcEmoji('${e}')">${e}</div>`).join('');
+  document.getElementById('mycardOverlay').classList.add('open');
+}
+function closeMycardModal(){document.getElementById('mycardOverlay').classList.remove('open');}
+function selMcEmoji(e){
+  mcSelectedEmoji=e;
+  document.querySelectorAll('#mcEmojiPicker .eo').forEach(el=>el.classList.toggle('sel',el.textContent===e));
+}
+function handleMcPhoto(e){
+  const f=e.target.files[0]; if(!f) return;
+  compressImage(f, (c,ratio)=>{
+    mcPhotoData=c; mcPhotoRatio=ratio;
+    const pa=document.getElementById('mcPhotoArea');
+    pa.style.height='auto'; pa.style.minHeight='100px';
+    pa.innerHTML=`<img src="${c}" style="width:100%;height:auto;object-fit:contain;border-radius:11px">`;
+  });
+}
+function saveMycard(){
+  const jp=document.getElementById('mcInputJp').value.trim();
+  if(!jp){showToast('なまえをにゅうりょくしてください');return;}
+  if(mcEditingId){
+    const idx=myCards.findIndex(c=>c.id===mcEditingId);
+    if(idx!==-1) myCards[idx]={...myCards[idx],jp,ko:jp,emoji:mcSelectedEmoji,photo:mcPhotoData,photoRatio:mcPhotoRatio};
+  } else {
+    myCards.push({id:'mc_'+Date.now(),jp,ko:jp,emoji:mcSelectedEmoji,photo:mcPhotoData,photoRatio:mcPhotoRatio});
+  }
+  saveAll();renderMyCards();closeMycardModal();
+  showToast('⭐ ほぞんしました');
+}
+function deleteMycard(id){
+  if(confirm('このカードをさくじょしますか？')){
+    myCards=myCards.filter(c=>c.id!==id);
+    saveAll();renderMyCards();
+  }
+}
+function addMycardToSchedule(id){
+  const c=myCards.find(m=>m.id===id);
+  if(!c)return;
+  steps.push({jp:c.jp,ko:c.jp,emoji:c.emoji,photo:c.photo||null,photoRatio:c.photoRatio||null,done:false,chain:[]});
+  saveAll();render();switchTab('schedule');
+  showToast(`${c.emoji} ${c.jp} ついかしました`);
+}
+
+function renderMyCards(){
+  const el=document.getElementById('lib-mycard');
+  if(!el)return;
+  if(!myCards.length){
+    el.innerHTML='<div class="mycard-empty">まだカードがありません<br><small>「＋ カードをついか」でついかできます</small></div>';return;
+  }
+  el.innerHTML=myCards.map(c=>`
+    <div class="lib-card" style="padding:0;overflow:hidden;" onclick="addMycardToSchedule('${c.id}')">
+      <button class="cdel" onclick="event.stopPropagation();deleteMycard('${c.id}')">✕</button>
+      <button class="cedit" onclick="event.stopPropagation();openMycardModal('${c.id}')">✏️</button>
+      ${c.photo
+        ? `<img src="${c.photo}" style="width:100%;height:auto;max-height:160px;object-fit:contain;display:block;">`
+        : `<div style="width:100%;height:90px;display:flex;align-items:center;justify-content:center;background:var(--sky);font-size:44px">${c.emoji}</div>`
+      }
+      <div style="padding:6px 4px 8px;text-align:center;">
+        <span class="cj">${c.jp}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+
+// ── バックアップ・ふっきゅう ──
+async function exportBackup(){
+  try {
+    showToast('バックアップをじゅんびちゅう...');
+    const data = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      steps: steps,
+      routines: routines,
+      dayRoutines: dayRoutines,
+      myCards: myCards
+    };
+    const json = JSON.stringify(data);
+    const blob = new Blob([json], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const now = new Date();
+    const fname = `rio-schedule-backup-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}.json`;
+    a.href = url; a.download = fname; a.click();
+    URL.revokeObjectURL(url);
+    showToast('✅ バックアップかんりょう！');
+  } catch(e) {
+    showToast('エラーがはっせいしました');
+  }
+}
+
+async function importBackup(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  if(!confirm('バックアップからデータをよみこみます。\nいまのデータはうわがきされます。よろしいですか？')) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if(!data.version) throw new Error('invalid');
+    steps = (data.steps||[]).map(s=>{if(!s.chain)s.chain=[];return s;});
+    routines = data.routines||[];
+    dayRoutines = data.dayRoutines||{};
+    myCards = data.myCards||[];
+    await saveAll();
+    const savedLang = await dbGet('lang');
+  if(savedLang && LANGS[savedLang]) currentLang = savedLang;
+  render(); renderRoutineTab(); updateTodayBanner(); renderMyCards(); updateDataStats();
+  renderLangSelector(); renderCommPanel(); applyLang(); updateDataStats();
+    showToast('✅ データをふっきゅうしました！');
+  } catch(err) {
+    showToast('ファイルがただしくありません');
+  }
+  e.target.value='';
+}
+
+function updateDataStats(){
+  const el = document.getElementById('dataStats');
+  if(!el) return;
+  el.textContent = `スケジュール ${steps.length}こ・ルーティン ${routines.length}こ・マイカード ${myCards.length}まい`;
+}
+
+
+function buildLibrary(){Object.entries(library).forEach(([key,items])=>{const el=document.getElementById(`lib-${key}`);if(!el)return;el.innerHTML=items.map(item=>`<div class="lib-card" onclick="addFromLibrary('${item.emoji}','${item.jp}','${item.ko}')"><span class="ce">${item.emoji}</span><span class="cj">${item.jp}</span></div>`).join('');});}
+function addFromLibrary(emoji,jp,ko,photo,photoRatio){steps.push({jp,ko,emoji,photo:photo||null,photoRatio:photoRatio||null,done:false,chain:[]});saveAll();render();switchTab('schedule');showToast(`${emoji} ${jp} ついかしました`);}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function speak(text){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';window.speechSynthesis.speak(u);}showToast(text);}
+//
+</script>E html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>スケジュールアプリ</title>
+<meta name="author" content="OCW-1027">
+<meta name="copyright" content="© 2025 OCW-1027. All Rights Reserved.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="発達障害のある子どもの意思疎通をサポートするスケジュールアプリ。非営利目的の個人使用に限り無料。無断複製・商業利用禁止。">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--sky:#E8F4FD;--blue:#4A90D9;--blue-dark:#2C6FAC;--green:#5CB85C;--green-light:#EAF7EA;--orange:#FF8C42;--orange-light:#FFF3EB;--pink:#F06292;--pink-light:#FDE8F0;--yellow:#FFD54F;--yellow-light:#FFFDE7;--purple:#9C6FD6;--purple-light:#F3EDFF;--gray:#F5F5F5;--text:#2D2D2D;--text-light:#888;--radius:20px;--shadow:0 4px 16px rgba(0,0,0,0.12);}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'Nunito',sans-serif;background:linear-gradient(160deg,#E8F4FD 0%,#FFF8E1 50%,#FCE4EC 100%);min-height:100vh;color:var(--text);padding-bottom:80px;}
+  header{background:white;padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,0.08);position:sticky;top:0;z-index:100;}
+  .header-title .jp{font-size:18px;font-weight:900;color:var(--blue-dark);}
+  .header-title .ko{font-size:11px;font-weight:600;color:var(--text-light);}
+  .date-badge{background:var(--blue);color:white;border-radius:12px;padding:5px 12px;font-size:13px;font-weight:700;}
+  .tabs{display:flex;margin:12px 12px 0;background:white;border-radius:16px;padding:4px;box-shadow:var(--shadow);gap:3px;}
+  .tab{flex:1;padding:8px 4px;border:none;background:transparent;border-radius:12px;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;color:var(--text-light);cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .tab .ti{font-size:18px;}
+  .tab.active{background:var(--blue);color:white;box-shadow:0 2px 8px rgba(74,144,217,0.4);}
+  .panel{display:none;padding:12px;}.panel.active{display:block;}
+  .sch-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .sch-title{font-size:14px;font-weight:800;color:var(--blue-dark);}
+  .add-btn{background:var(--orange);color:white;border:none;border-radius:12px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 3px 8px rgba(255,140,66,0.4);}
+  .step-card{background:white;border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden;animation:slideIn 0.3s ease;position:relative;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .step-num{position:absolute;top:10px;left:10px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:white;z-index:2;box-shadow:0 2px 6px rgba(0,0,0,0.25);}
+  .step-done{position:absolute;top:10px;right:10px;width:42px;height:42px;border-radius:50%;border:3px solid rgba(255,255,255,0.8);background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;transition:all 0.2s;z-index:2;}
+  .step-done.done{background:var(--green);border-color:var(--green);color:white;}
+  .step-photo{width:100%;min-height:200px;background:var(--gray);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;}
+  .step-photo img{width:100%;height:auto;display:block;object-fit:contain;}
+  .step-photo-ph{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--text-light);}
+  .step-photo-ph .big{font-size:64px;}.step-photo-ph span{font-size:12px;font-weight:600;}
+  .step-card.completed .step-photo::after{content:'✅';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(92,184,92,0.55);display:flex;align-items:center;justify-content:center;font-size:80px;}
+  .step-body{padding:10px 14px 12px;}
+  .step-jp{font-size:24px;font-weight:900;color:var(--text);}
+  .step-ko{font-size:13px;font-weight:600;color:var(--text-light);margin-top:2px;}
+  .step-card.completed .step-jp{text-decoration:line-through;color:#aaa;}
+  /* CHAIN → 독립 Step 카드 */
+  .chain-list{margin-top:0;}
+  .chain-item{display:flex;flex-direction:column;}
+  .chain-arrow-row{text-align:center;font-size:32px;color:var(--blue);line-height:1.4;padding:2px 0;}
+  /* chain-box는 메인 step-card와 동일한 스타일 */
+  .chain-box{background:white;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;position:relative;}
+  .chain-step-label{position:absolute;top:10px;left:10px;background:rgba(74,144,217,0.85);color:white;border-radius:10px;padding:3px 10px;font-size:12px;font-weight:800;z-index:2;}
+  .chain-done-btn{position:absolute;top:10px;right:10px;width:38px;height:38px;border-radius:50%;border:3px solid rgba(255,255,255,0.8);background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;transition:all 0.2s;z-index:2;}
+  .chain-done-btn.done{background:var(--green);border-color:var(--green);color:white;}
+  .chain-photo{width:100%;min-height:180px;background:#EEF5FD;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;}
+  .chain-photo img{width:100%;height:auto;display:block;object-fit:contain;}
+  .chain-photo-ph{font-size:56px;}
+  .chain-box.chain-done .chain-photo::after{content:'✅';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(92,184,92,0.55);display:flex;align-items:center;justify-content:center;font-size:70px;}
+  .chain-info{padding:10px 14px 12px;}
+  .chain-texts .jp{font-size:20px;font-weight:900;}
+  .chain-box.chain-done .chain-texts .jp{text-decoration:line-through;color:#aaa;}
+  .chain-add-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:white;border:2px dashed var(--blue);border-radius:var(--radius);padding:14px;margin-top:6px;cursor:pointer;color:var(--blue);font-size:14px;font-weight:800;box-shadow:0 2px 8px rgba(74,144,217,0.15);}
+  .step-actions{display:flex;gap:6px;margin-top:8px;border-top:1px solid #f0f0f0;padding-top:8px;}
+  .s-btn{flex:1;padding:8px 4px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;}
+  .s-edit{background:var(--sky);color:var(--blue-dark);}.s-del{background:#FFEBEE;color:#C62828;}.s-up,.s-dn{background:var(--gray);color:var(--text-light);}
+
+  /* ── ROUTINE TAB ── */
+  .routine-section{margin-bottom:20px;}
+  
+  .day-bar{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;}
+  .day-btn{flex-shrink:0;width:42px;height:42px;border-radius:50%;border:2px solid #ddd;background:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:var(--text-light);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+  .day-btn.active{background:var(--blue);color:white;border-color:var(--blue);box-shadow:0 2px 8px rgba(74,144,217,0.4);}
+  .day-btn.has-routine{border-color:var(--green);color:var(--green);}
+  .day-btn.active.has-routine{background:var(--green);border-color:var(--green);color:white;}
+  
+  .routine-card{background:white;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
+  .routine-icon{font-size:32px;flex-shrink:0;}
+  .routine-info{flex:1;}
+  .routine-name{font-size:16px;font-weight:800;color:var(--text);}
+  .routine-meta{font-size:12px;font-weight:600;color:var(--text-light);margin-top:2px;}
+  .routine-actions{display:flex;gap:6px;flex-shrink:0;}
+  .r-load-btn{background:var(--blue);color:white;border:none;border-radius:10px;padding:7px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+  .r-del-btn{background:#FFEBEE;color:#C62828;border:none;border-radius:10px;padding:7px 10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+  
+  .save-routine-bar{background:white;border-radius:14px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;}
+  .save-routine-bar input{flex:1;padding:10px 12px;border:2px solid #E0E0E0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;outline:none;}
+  .save-routine-bar input:focus{border-color:var(--blue);}
+  .save-r-btn{background:var(--green);color:white;border:none;border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;}
+  
+  .day-routine-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .day-routine-title{font-size:14px;font-weight:800;color:var(--blue-dark);}
+  .set-day-btn{background:var(--purple);color:white;border:none;border-radius:10px;padding:7px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+  .day-routine-preview{background:white;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow);}
+  .day-preview-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f5f5f5;}
+  .day-preview-item:last-child{border-bottom:none;}
+  .dpi-emoji{font-size:22px;flex-shrink:0;}
+  .dpi-text{font-size:14px;font-weight:700;}
+  .no-day-routine{text-align:center;padding:20px;color:var(--text-light);font-size:13px;font-weight:600;}
+  
+  .today-load-bar{background:linear-gradient(135deg,var(--blue),var(--blue-dark));border-radius:14px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;box-shadow:0 4px 12px rgba(74,144,217,0.35);}
+  .tlb-text{color:white;}
+  .tlb-title{font-size:14px;font-weight:800;}
+  .tlb-sub{font-size:11px;font-weight:600;opacity:0.85;margin-top:2px;}
+  .tlb-btn{background:white;color:var(--blue-dark);border:none;border-radius:10px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;}
+
+  /* LIBRARY */
+  .sec-lbl{font-size:13px;font-weight:800;color:var(--blue-dark);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+  .card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+  .lib-card{background:white;border-radius:14px;padding:10px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:0 2px 8px rgba(0,0,0,0.08);cursor:pointer;transition:transform 0.15s;border:3px solid transparent;text-align:center;}
+  .lib-card:active{transform:scale(0.94);}
+  .lib-card .ce{font-size:34px;}.lib-card .cj{font-size:12px;font-weight:800;color:var(--text);}.lib-card .ck{font-size:10px;font-weight:600;color:var(--text-light);}
+  /* COMM */
+  .comm-sec{margin-bottom:18px;}
+  .comm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .cc{border-radius:16px;padding:14px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:var(--shadow);transition:transform 0.15s;text-align:center;border:none;}
+  .cc:active{transform:scale(0.92);}
+  .cc .ce{font-size:38px;}.cc .cj{font-size:13px;font-weight:900;}.cc .ck{font-size:10px;font-weight:600;opacity:0.65;}
+  .cc.yes{background:var(--green-light);color:var(--green);}.cc.no{background:#FFEBEE;color:#E53935;}.cc.wait{background:var(--yellow-light);color:#F57F17;}
+  .cc.toilet{background:var(--purple-light);color:var(--purple);}.cc.eat{background:var(--orange-light);color:var(--orange);}.cc.play{background:var(--pink-light);color:var(--pink);}
+  .cc.tired{background:#E8EAF6;color:#3949AB;}.cc.hug{background:#FCE4EC;color:#AD1457;}.cc.water{background:#E1F5FE;color:#0277BD;}
+  /* MODAL */
+  .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:white;border-radius:24px 24px 0 0;padding:18px;width:100%;max-height:92vh;overflow-y:auto;animation:slideUp 0.3s ease;}
+  @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
+  .modal-title{font-size:16px;font-weight:900;color:var(--blue-dark);margin-bottom:14px;text-align:center;}
+  .fg{margin-bottom:12px;}.fl{font-size:12px;font-weight:700;color:var(--text-light);margin-bottom:5px;display:block;}
+  .fi{width:100%;padding:11px 13px;border:2px solid #E0E0E0;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;outline:none;transition:border-color 0.2s;}
+  .fi:focus{border-color:var(--blue);}
+  .ep{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:5px;}
+  .eo{width:100%;aspect-ratio:1;border:3px solid transparent;border-radius:10px;background:var(--gray);font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+  .eo.sel{border-color:var(--blue);background:var(--sky);}
+  .pu{width:100%;min-height:160px;border:3px dashed #ccc;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;background:var(--gray);font-size:13px;font-weight:700;color:var(--text-light);overflow:hidden;}
+  .pu img{width:100%;height:auto;object-fit:contain;border-radius:11px;}
+  .chain-ed{margin-top:12px;}
+  .chain-ed-hdr{font-size:13px;font-weight:800;color:var(--blue-dark);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+  .add-chain-btn{background:var(--blue);color:white;border:none;border-radius:10px;padding:6px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+  .chain-entry{background:var(--sky);border-radius:14px;padding:10px 12px;margin-bottom:8px;}
+  .ce-hdr{display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:12px;font-weight:800;color:var(--blue-dark);}
+  .ce-del{margin-left:auto;width:24px;height:24px;border-radius:50%;border:none;background:#FFEBEE;color:#C62828;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .chain-pu{width:100%;min-height:100px;border:2px dashed #bcd;border-radius:10px;background:white;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-light);overflow:hidden;margin-top:6px;transition:height 0.3s;}
+  .chain-pu img{width:100%;height:auto;object-fit:contain;border-radius:8px;}
+  .modal-actions{display:flex;gap:10px;margin-top:14px;}
+  .btn-cancel{flex:1;padding:13px;border:none;background:var(--gray);border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;color:var(--text-light);}
+  .btn-save{flex:2;padding:13px;border:none;background:var(--blue);border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;cursor:pointer;color:white;box-shadow:0 4px 12px rgba(74,144,217,0.4);}
+  .toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:white;padding:10px 20px;border-radius:20px;font-size:14px;font-weight:700;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;}
+  .toast.show{opacity:1;}
+  .empty{text-align:center;padding:40px 20px;color:var(--text-light);}
+  .empty .ee{font-size:60px;margin-bottom:10px;}.empty .ej{font-size:17px;font-weight:800;margin-bottom:4px;}.empty .ek{font-size:13px;font-weight:600;}
+
+
+  /* SETTINGS */
+  .settings-card{background:white;border-radius:16px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;}
+  .settings-icon{font-size:28px;flex-shrink:0;}
+  .settings-info{flex:1;}
+  .settings-title{font-size:15px;font-weight:800;color:var(--text);}
+  .settings-desc{font-size:11px;font-weight:600;color:var(--text-light);margin-top:3px;line-height:1.5;}
+  .settings-btn{border:none;border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+  .settings-btn.green{background:var(--green);color:white;box-shadow:0 2px 8px rgba(92,184,92,0.4);}
+  .settings-btn.blue{background:var(--blue);color:white;box-shadow:0 2px 8px rgba(74,144,217,0.4);}
+  .copyright-box{background:white;border-radius:16px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow);border-left:4px solid var(--blue);}
+  .copyright-title{font-size:14px;font-weight:800;color:var(--blue-dark);margin-bottom:10px;}
+  .copyright-body{font-size:11px;font-weight:600;color:var(--text-light);line-height:1.8;}
+  .copyright-body strong{display:block;margin-top:6px;margin-bottom:2px;font-size:12px;font-weight:800;color:var(--text);}
+  .settings-note{background:var(--yellow-light);border-radius:14px;padding:12px 14px;font-size:12px;font-weight:600;color:#7B6000;line-height:1.6;}
+
+  /* LANG SELECTOR */
+  .lang-selector{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .lang-btn{padding:8px 14px;border:2px solid #E0E0E0;border-radius:12px;background:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
+  .lang-btn.active{border-color:var(--blue);background:var(--sky);color:var(--blue-dark);}
+  .lang-btn:active{transform:scale(0.96);}
+  /* MYCARD */
+  .mycard-section{margin-bottom:4px;}
+  .add-mycard-btn{background:var(--green);color:white;border:none;border-radius:10px;padding:6px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
+  .mycard-empty{grid-column:1/-1;text-align:center;padding:16px;color:var(--text-light);font-size:13px;font-weight:600;}
+  .lib-card .cdel{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:#FFEBEE;color:#C62828;border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
+  .lib-card .cedit{position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.9);border:none;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;}
+  .lib-card{position:relative;}
+  .c1{background:#4A90D9}.c2{background:#5CB85C}.c3{background:#FF8C42}.c4{background:#F06292}.c5{background:#9C6FD6}.c6{background:#26B5A0}.c7{background:#FFB300}.c8{background:#EF5350}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-title">
+    <div class="jp" id="hdr-title">📅 今日のスケジュール</div>
+  </div>
+  <div class="date-badge" id="dateBadge"></div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('schedule')"><span class="ti">📋</span><span id="tab-schedule">スケジュール</span></button>
+  <button class="tab" onclick="switchTab('routine')"><span class="ti">🔁</span><span id="tab-routine">ルーティン</span></button>
+  <button class="tab" onclick="switchTab('library')"><span class="ti">🗂️</span><span id="tab-library">カード</span></button>
+  <button class="tab" onclick="switchTab('comm')"><span class="ti">💬</span><span id="tab-comm">きもち</span></button>
+  <button class="tab" onclick="switchTab('settings')"><span class="ti">⚙️</span><span id="tab-settings">せってい</span></button>
+</div>
+
+<!-- SCHEDULE -->
+<div class="panel active" id="panel-schedule">
+  <div class="sch-hdr">
+    <span class="sch-title" id="sch-title">今日すること</span>
+    <button class="add-btn" id="add-btn" onclick="openAddModal()">➕ Add</button>
+  </div>
+  <div id="stepList"></div>
+</div>
+
+<!-- ROUTINE -->
+<div class="panel" id="panel-routine">
+
+  
+  <div class="today-load-bar" id="todayLoadBar" onclick="loadTodayDayRoutine()">
+    <div class="tlb-text">
+      <div class="tlb-title" id="todayLoadTitle">🗓️ 今日のルーティンをよみこむ</div>
+      <div class="tlb-sub" id="todayLoadSub">ルーティンがあれば読み込めます</div>
+    </div>
+    <button class="tlb-btn" id="tlb-btn">Load</button>
+  </div>
+
+  
+  <div class="routine-section">
+    <div class="sec-lbl">💾 ルーティンテンプレート</div>
+    <div class="save-routine-bar">
+      <input type="text" id="routineNameInput" placeholder="ルーティン名をにゅうりょく（例：がっこうのひ）" maxlength="20">
+      <button class="save-r-btn" onclick="saveCurrentAsRoutine()">今のスケジュールをほぞん</button>
+    </div>
+    <div id="routineList"></div>
+  </div>
+
+  
+  <div class="routine-section">
+    <div class="sec-lbl">📅 曜日ルーティン</div>
+    <div class="day-bar" id="dayBar"></div>
+    <div id="dayRoutineContent"></div>
+  </div>
+</div>
+
+<!-- LIBRARY -->
+<div class="panel" id="panel-library">
+  <!-- マイカード -->
+  <div class="mycard-section">
+    <div class="sec-lbl" style="justify-content:space-between">
+      <span id="lib-mycard-lbl">⭐ My Cards</span>
+      <button class="add-mycard-btn" id="lib-add-mycard" onclick="openMycardModal()">＋ Add Card</button>
+    </div>
+    <div class="card-grid" id="lib-mycard">
+      <div class="mycard-empty">まだカードがありません</div>
+    </div>
+  </div>
+  <div class="sec-lbl" id="lib-move-lbl">🚗 Transport</div><div class="card-grid" id="lib-move"></div>
+  <div class="sec-lbl" id="lib-place-lbl">🏫 Places</div><div class="card-grid" id="lib-place"></div>
+  <div class="sec-lbl" id="lib-activity-lbl">🎮 Activities</div><div class="card-grid" id="lib-activity"></div>
+  <div class="sec-lbl" id="lib-food-lbl">🍎 Food</div><div class="card-grid" id="lib-food"></div>
+  <div class="sec-lbl" id="lib-person-lbl">👨‍👩‍👦 People</div><div class="card-grid" id="lib-person"></div>
+</div>
+
+<!-- SETTINGS -->
+<div class="panel" id="panel-settings">
+  <div class="sec-lbl" id="set-lang-lbl">🌐 Language / 언어 / 言語</div>
+  <div class="lang-selector" id="langSelector"></div>
+  <div class="sec-lbl" id="set-backup-lbl">💾 Backup & Restore</div>
+
+  <!-- バックアップ -->
+  <div class="settings-card">
+    <div class="settings-icon">📤</div>
+    <div class="settings-info">
+      <div class="settings-title" id="set-backup-title">Backup Data</div>
+      <div class="settings-desc" id="set-backup-desc">Save all schedules, routines, and cards including photos</div>
+    </div>
+    <button class="settings-btn green" id="set-backup-btn" onclick="exportBackup()">Backup</button>
+  </div>
+
+  <!-- ふっきゅう -->
+  <div class="settings-card">
+    <div class="settings-icon">📥</div>
+    <div class="settings-info">
+      <div class="settings-title" id="set-restore-title">Restore Data</div>
+      <div class="settings-desc" id="set-restore-desc">Load data from a backup file. Current data will be overwritten.</div>
+    </div>
+    <button class="settings-btn blue" id="set-restore-btn" onclick="document.getElementById('importInput').click()">Restore</button>
+    <input type="file" id="importInput" accept=".json" style="display:none" onchange="importBackup(event)">
+  </div>
+
+  <div class="settings-note" id="set-note">💡 Tip: Make a backup before changing phones or reinstalling the app!</div>
+
+  <div class="sec-lbl" style="margin-top:20px" id="set-info-lbl">ℹ️ App Info</div>
+  <div class="settings-card">
+    <div class="settings-icon">📱</div>
+    <div class="settings-info">
+      <div class="settings-title">Schedule App</div>
+      <div class="settings-desc" id="dataStats">よみこみちゅう...</div>
+    </div>
+  </div>
+
+  <div class="sec-lbl" style="margin-top:20px">⚖️ ちょさくけん</div>
+  <div class="copyright-box">
+    <div class="copyright-title">© 2025 OCW-1027. All Rights Reserved.</div>
+    <div class="copyright-body">
+      このアプリケーションおよびそのすべてのコンテンツ（デザイン・コード・こうせい・きのうをふくむ）は、ちょさくけんほうによりほごされています。<br><br>
+      <strong>きょか（허용）</strong><br>
+      · こじん・かていでの ひえいりもくてきのしよう<br>
+      · しょうがいをもつこどものしえんをもくてきとした こじんてきなしよう<br><br>
+      <strong>きんし（금지）</strong><br>
+      · このアプリのふくせい・かいへん・さいはいふ・はんばい<br>
+      · しょうぎょうもくてきでのしよう・てんよう<br>
+      · コードのむだんコピーおよびにじはいふ<br>
+      · このアプリをもとにしたるいじサービスのさくせい・こうかい<br><br>
+      <strong>비상업적 무료 사용 안내</strong><br>
+      본 앱은 발달장애 아동의 의사소통 지원을 위해 제작되었으며, 개인·가정 내 비영리 목적에 한하여 무료로 사용할 수 있습니다.<br>
+      무단 복제, 상업적 이용, 코드 도용 및 유사 서비스 제작·배포는 엄격히 금지합니다.<br>
+      저작권법에 의해 보호되며, 위반 시 법적 조치를 취할 수 있습니다.<br><br>
+      お問い合わせ / 문의: <span style="color:var(--blue-dark);font-weight:700">kumamongmong[at]gmail.com</span>
+    </div>
+  </div>
+</div>
+
+<!-- MYCARD MODAL -->
+<div class="modal-overlay" id="mycardOverlay">
+  <div class="modal">
+    <div class="modal-title" id="mcModalTitle">⭐ マイカードをついか</div>
+    <div class="fg"><label class="fl" id="modal-name-lbl">Name</label><input class="fi" id="mcInputJp" placeholder="例: リオのがっこう" maxlength="30"></div>
+    <div class="fg">
+      <label class="fl" id="mc-photo-lbl">Photo (tap to add)</label>
+      <div class="pu" id="mcPhotoArea" onclick="document.getElementById('mcPhotoInput').click()" style="height:180px">
+        <span style="font-size:40px">📷</span>
+        <span id="modal-photo-hint">Tap to add photo</span>
+      </div>
+      <input type="file" id="mcPhotoInput" accept="image/*" style="display:none" onchange="handleMcPhoto(event)">
+    </div>
+    <div class="fg"><label class="fl" id="mc-icon-lbl">Icon (shown when no photo)</label><div class="ep" id="mcEmojiPicker"></div></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="mc-cancel" onclick="closeMycardModal()">やめる</button>
+      <button class="btn-save" id="mc-save" onclick="saveMycard()">ほぞん</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMM -->
+<div class="panel" id="panel-comm" data-rendered="false">
+  <div class="comm-sec"><div class="sec-lbl">✅ 基本のへんじ</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('はい','')"><span class="ce">👍</span><span class="cj">はい</span></button>
+    <button class="cc no" onclick="speak('いいえ','')"><span class="ce">👎</span><span class="cj">いいえ</span></button>
+    <button class="cc wait" onclick="speak('ちょっとまって','')"><span class="ce">✋</span><span class="cj">ちょっとまって</span></button>
+    <button class="cc" onclick="speak('もっと','')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">➕</span><span class="cj">もっと</span></button>
+    <button class="cc" onclick="speak('おわった','')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🏁</span><span class="cj">おわった</span></button>
+    <button class="cc" onclick="speak('てつだって','')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">🙋</span><span class="cj">てつだって</span></button>
+  </div></div>
+  <div class="comm-sec"><div class="sec-lbl">😊 きもち</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('うれしい','')"><span class="ce">😄</span><span class="cj">うれしい</span></button>
+    <button class="cc no" onclick="speak('かなしい','')"><span class="ce">😢</span><span class="cj">かなしい</span></button>
+    <button class="cc no" onclick="speak('おこった','')"><span class="ce">😠</span><span class="cj">おこった</span></button>
+    <button class="cc no" onclick="speak('こわい','')"><span class="ce">😨</span><span class="cj">こわい</span></button>
+    <button class="cc tired" onclick="speak('つかれた','')"><span class="ce">😴</span><span class="cj">つかれた</span></button>
+    <button class="cc wait" onclick="speak('いやだ','')"><span class="ce">🙅</span><span class="cj">いやだ</span></button>
+    <button class="cc hug" onclick="speak('すき','')"><span class="ce">❤️</span><span class="cj">すき</span></button>
+    <button class="cc" onclick="speak('びっくりした','')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">😲</span><span class="cj">びっくりした</span></button>
+    <button class="cc" onclick="speak('たのしい','')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">🎉</span><span class="cj">たのしい</span></button>
+  </div></div>
+  <div class="comm-sec"><div class="sec-lbl">🩺 からだ</div><div class="comm-grid">
+    <button class="cc" onclick="speak('いたい','')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤕</span><span class="cj">いたい</span></button>
+    <button class="cc" onclick="speak('あたまいたい','')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤯</span><span class="cj">あたまいたい</span></button>
+    <button class="cc" onclick="speak('おなかいたい','')" style="background:var(--yellow-light);color:#E65100"><span class="ce">🤢</span><span class="cj">おなかいたい</span></button>
+    <button class="cc toilet" onclick="speak('トイレ','')"><span class="ce">🚽</span><span class="cj">トイレ</span></button>
+    <button class="cc" onclick="speak('ねつがある','')" style="background:#FFEBEE;color:#C62828"><span class="ce">🌡️</span><span class="cj">ねつがある</span></button>
+    <button class="cc" onclick="speak('きもちわるい','')" style="background:var(--green-light);color:#1B5E20"><span class="ce">🤮</span><span class="cj">きもちわるい</span></button>
+  </div></div>
+  <div class="comm-sec"><div class="sec-lbl">🙏 ほしいもの</div><div class="comm-grid">
+    <button class="cc eat" onclick="speak('おなかすいた','')"><span class="ce">🍱</span><span class="cj">おなかすいた</span></button>
+    <button class="cc water" onclick="speak('みずがのみたい','')"><span class="ce">💧</span><span class="cj">みずがのみたい</span></button>
+    <button class="cc play" onclick="speak('あそびたい','')"><span class="ce">🎈</span><span class="cj">あそびたい</span></button>
+    <button class="cc hug" onclick="speak('だっこして','')"><span class="ce">🤗</span><span class="cj">だっこして</span></button>
+    <button class="cc" onclick="speak('おうちにかえりたい','')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🏠</span><span class="cj">おうちにかえりたい</span></button>
+    <button class="cc" onclick="speak('やすみたい','')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🛋️</span><span class="cj">やすみたい</span></button>
+    <button class="cc" onclick="speak('おやつたべたい','')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍪</span><span class="cj">おやつたべたい</span></button>
+    <button class="cc" onclick="speak('テレビみたい','')" style="background:var(--sky);color:var(--blue-dark)"><span class="ce">📺</span><span class="cj">テレビみたい</span></button>
+    <button class="cc" onclick="speak('おんがくききたい','')" style="background:var(--purple-light);color:var(--purple)"><span class="ce">🎵</span><span class="cj">おんがくききたい</span></button>
+  </div></div>
+  <div class="comm-sec"><div class="sec-lbl">👋 あいさつ</div><div class="comm-grid">
+    <button class="cc yes" onclick="speak('こんにちは','')"><span class="ce">👋</span><span class="cj">こんにちは</span></button>
+    <button class="cc" onclick="speak('ありがとう','')" style="background:var(--yellow-light);color:#F57F17"><span class="ce">🙏</span><span class="cj">ありがとう</span></button>
+    <button class="cc" onclick="speak('ごめんなさい','')" style="background:var(--pink-light);color:var(--pink)"><span class="ce">😔</span><span class="cj">ごめんなさい</span></button>
+    <button class="cc" onclick="speak('いっしょにあそぼう','')" style="background:var(--green-light);color:#2E7D32"><span class="ce">🤝</span><span class="cj">いっしょにあそぼう</span></button>
+    <button class="cc" onclick="speak('おやすみ','')" style="background:#E8EAF6;color:#3949AB"><span class="ce">🌙</span><span class="cj">おやすみ</span></button>
+    <button class="cc" onclick="speak('いただきます','')" style="background:var(--orange-light);color:var(--orange)"><span class="ce">🍽️</span><span class="cj">いただきます</span></button>
+  </div></div>
+</div>
+
+<!-- STEP MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">新しいステップをついか</div>
+    <div class="fg"><label class="fl" id="modal-name-lbl">Name</label><input class="fi" id="inputJp" placeholder="例: がっこうにいく" maxlength="30"></div>
+    <div class="fg"><label class="fl" id="modal-icon-lbl">Icon</label><div class="ep" id="emojiPicker"></div></div>
+    <div class="fg">
+      <label class="fl" id="modal-photo-lbl">Photo</label>
+      <div class="pu" id="photoUploadArea" onclick="triggerPhotoUpload()"><span style="font-size:32px">📷</span><span id="modal-photo-hint">Tap to add photo</span></div>
+      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handleMainPhoto(event)">
+    </div>
+    <div class="chain-ed">
+      <div class="chain-ed-hdr"><span id="modal-step-lbl">↓ Add Steps (unlimited)</span><button class="add-chain-btn" id="modal-add-step" onclick="addChainEntry()">＋ Add Step</button></div>
+      <div id="chainEntriesEditor"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="modal-cancel" onclick="closeModal()">やめる</button>
+      <button class="btn-save" id="modal-save" onclick="saveStep()">ほぞん</button>
     </div>
   </div>
 </div>
@@ -1024,9 +1944,7 @@ const LANGS = {
   },
   en: {
     code:'en', flag:'🇺🇸', name:'English', tts:'en-US',
-    hdrTitle:"📅 Today's Schedule",
-    tabSchedule:'Schedule', tabRoutine:'Routine', tabLibrary:'Cards', tabComm:'Feelings', tabSettings:'Settings',
-    schTitle:"Today's Tasks", addBtn:'➕ Add',
+    hdrTitle:'📅 Today's Schedule',\n    tabSchedule:'Schedule', tabRoutine:'Routine', tabLibrary:'Cards', tabComm:'Feelings', tabSettings:'Settings',\n    schTitle:'Today's Tasks', addBtn:'➕ Add',
     emptyTitle:'No schedule yet',
     setBakLbl:'💾 Backup & Restore', setBakTitle:'Backup Data',
     setBakDesc:'Save all schedules, routines, and cards including photos',
@@ -1044,7 +1962,7 @@ const LANGS = {
     libMycardLbl:'⭐ My Cards', libAddMycard:'＋ Add Card',
     libMove:'🚗 Transport', libPlace:'🏫 Places', libActivity:'🎮 Activities', libFood:'🍎 Food', libPerson:'👨‍👩‍👦 People',
     mycardEmpty:'No cards yet',
-    routineLoadTitle:'🗓️ {day} Routine', routineLoadSub:"Tap to load today's routine",
+    routineLoadTitle:'🗓️ {day} Routine', routineLoadSub:'Tap to load today\'s routine',
     routineLoadBtn:'Load', routineTemplateLbl:'💾 Routine Templates',
     routinePlaceholder:'Routine name (e.g. School day)',
     routineSaveBtn:'Save Current Schedule', routineDayLbl:'📅 Day Routines',
@@ -1053,12 +1971,12 @@ const LANGS = {
     toastDone:'✅ Done!', toastAdded:'✅ Added', toastEdited:'✏️ Updated',
     toastSaved:'Saved', toastLoaded:'Loaded',
     confirmDelete:'Delete this?',
-    confirmLoad:" Load as today's schedule?\nCurrent schedule will change.",
-    confirmLoadRoutine:" Load as today's schedule?\nCurrent schedule stays.",
+    confirmLoad:' Load as today's schedule?
+Current schedule will change.',\n    confirmLoadRoutine:' Load as today's schedule?\nCurrent schedule stays.',
     promptSelectRoutine:'Select a routine:\n\n{options}\n\nEnter number:',
     confirmClearDay:'Clear routine for this day?',
     nameRequired:'Please enter a name',
-    noRoutineToday:"No routine for today",
+    noRoutineToday:'No routine for today',
     routineNotFound:'Routine not found',
     noStepsToSave:'No schedule to save',
     routineNameRequired:'Please enter a routine name',
@@ -1067,16 +1985,18 @@ const LANGS = {
       sec1:'✅ Basic Responses', sec2:'😊 Feelings', sec3:'🩺 Body', sec4:'🙏 I Want', sec5:'👋 Greetings',
       yes:'Yes', no:'No', wait:'Wait', more:'More', done:'Done', help:'Help me',
       happy:'Happy', sad:'Sad', angry:'Angry', scared:'Scared', tired:'Tired',
-      dislike:"Don't want", love:'I like it', surprised:'Surprised', fun:'Fun',
+      dislike:'Don\'t want', love:'I like it', surprised:'Surprised', fun:'Fun',
       hurt:'It hurts', headache:'Headache', stomachache:'Stomachache', toilet:'Toilet',
       fever:'I have a fever', nausea:'Feel sick',
       hungry:'Hungry', thirsty:'Thirsty', play:'Want to play', hug:'Hug me',
       goHome:'Want to go home', rest:'Want to rest', snack:'Want a snack', tv:'Want TV', music:'Want music',
-      hello:'Hello', thanks:'Thank you', sorry:'Sorry', together:"Let's play together",
-      goodnight:'Good night', letsdine:"Let's eat"
+      hello:'Hello', thanks:'Thank you', sorry:'Sorry', together:'Let\'s play together',
+      goodnight:'Good night', letsdine:'Let\'s eat'
     }
   }
 };
+
+let currentLang = 'ja';
 
 let currentLang = 'ja';
 
@@ -1209,12 +2129,4 @@ function buildLibrary(){Object.entries(library).forEach(([key,items])=>{const el
 function addFromLibrary(emoji,jp,ko,photo,photoRatio){steps.push({jp,ko,emoji,photo:photo||null,photoRatio:photoRatio||null,done:false,chain:[]});saveAll();render();switchTab('schedule');showToast(`${emoji} ${jp} ${t('toastAdded')}`);}
 
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
-function speak(text){if('speechSynthesis' in window){window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=LANGS[currentLang].tts;window.speechSynthesis.speak(u);}showToast(text);}
-
-buildLibrary();
-openDB().then(loadAll);
-// reconstruct email to avoid CF encoding
-(function(){
-  const el = document.getElementById('contact-email');
-  if(el) el.textContent = ['kumamongmong','gmail.com'].join('@');
-})();
+function speak(t

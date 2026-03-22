@@ -78,10 +78,10 @@
   .r-load-btn{background:var(--blue);color:white;border:none;border-radius:10px;padding:7px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
   .r-del-btn{background:#FFEBEE;color:#C62828;border:none;border-radius:10px;padding:7px 10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;}
   
-  .save-routine-bar{background:white;border-radius:14px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow);display:flex;align-items:center;gap:10px;}
-  .save-routine-bar input{flex:1;padding:10px 12px;border:2px solid #E0E0E0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;outline:none;}
+  .save-routine-bar{background:white;border-radius:14px;padding:12px 14px;margin-bottom:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;}
+  .save-routine-bar input{width:100%;padding:10px 12px;border:2px solid #E0E0E0;border-radius:10px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;outline:none;}
   .save-routine-bar input:focus{border-color:var(--blue);}
-  .save-r-btn{background:var(--green);color:white;border:none;border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;}
+  .save-r-btn{background:var(--green);color:white;border:none;border-radius:10px;padding:12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;width:100%;}
   
   .day-routine-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
   .day-routine-title{font-size:14px;font-weight:800;color:var(--blue-dark);}
@@ -195,7 +195,7 @@
 <div class="panel active" id="panel-schedule">
   <div class="sch-hdr">
     <span class="sch-title" id="sch-title">今日すること</span>
-    <button class="add-btn" id="add-btn" onclick="openAddModal()">➕ Add</button>
+    <button class="add-btn" id="add-btn" onclick="openAddModal()">➕ ついか</button>
   </div>
   <div id="stepList"></div>
 </div>
@@ -209,7 +209,7 @@
       <div class="tlb-title" id="todayLoadTitle">🗓️ 今日のルーティンをよみこむ</div>
       <div class="tlb-sub" id="todayLoadSub">ルーティンがあれば読み込めます</div>
     </div>
-    <button class="tlb-btn" id="tlb-btn">Load</button>
+    <button class="tlb-btn" id="tlb-btn">よみこむ</button>
   </div>
 
   
@@ -217,7 +217,7 @@
     <div class="sec-lbl">💾 ルーティンテンプレート</div>
     <div class="save-routine-bar">
       <input type="text" id="routineNameInput" placeholder="ルーティン名をにゅうりょく（例：がっこうのひ）" maxlength="20">
-      <button class="save-r-btn" onclick="saveCurrentAsRoutine()">今のスケジュールをほぞん</button>
+      <button class="save-r-btn" onclick="saveCurrentAsRoutine()">ほぞん</button>
     </div>
     <div id="routineList"></div>
   </div>
@@ -251,9 +251,9 @@
 
 <!-- SETTINGS -->
 <div class="panel" id="panel-settings">
-  <div class="sec-lbl" id="set-lang-lbl">🌐 げんごせってい / 언어 / 言語</div>
-  <div class="lang-selector" id="langSelector" style="display:none"></div>
-  <div class="sec-lbl" id="set-backup-lbl">💾 Backup & Restore</div>
+  <div class="sec-lbl" id="set-lang-lbl" style="display:none">🌐 げんごせってい / 언어 / 言語</div>
+  <div id="langSelector" style="display:none"></div>
+  <div class="sec-lbl" id="set-backup-lbl">💾 バックアップ・ふっきゅう</div>
 
   <!-- バックアップ -->
   <div class="settings-card">
@@ -262,7 +262,7 @@
       <div class="settings-title" id="set-backup-title">データをバックアップ</div>
       <div class="settings-desc" id="set-backup-desc">スケジュール・ルーティン・マイカードをぜんぶほぞん。写真もふくまれます</div>
     </div>
-    <button class="settings-btn green" id="set-backup-btn" onclick="exportBackup()">Backup</button>
+    <button class="settings-btn green" id="set-backup-btn" onclick="exportBackup()">バックアップ</button>
   </div>
 
   <!-- ふっきゅう -->
@@ -270,19 +270,19 @@
     <div class="settings-icon">📥</div>
     <div class="settings-info">
       <div class="settings-title" id="set-restore-title">データをふっきゅう</div>
-      <div class="settings-desc" id="set-restore-desc">Load data from a backup file. Current data will be overwritten.</div>
+      <div class="settings-desc" id="set-restore-desc">バックアップファイルからよみこみます。いまのデータはうわがきされます</div>
     </div>
-    <button class="settings-btn blue" id="set-restore-btn" onclick="document.getElementById('importInput').click()">Restore</button>
+    <button class="settings-btn blue" id="set-restore-btn" onclick="document.getElementById('importInput').click()">ふっきゅう</button>
     <input type="file" id="importInput" accept=".json" style="display:none" onchange="importBackup(event)">
   </div>
 
-  <div class="settings-note" id="set-note">💡 Tip: Make a backup before changing phones or reinstalling the app!</div>
+  <div class="settings-note" id="set-note">💡 ヒント：スマホをかえるまえにバックアップをとっておきましょう！</div>
 
   <div class="sec-lbl" style="margin-top:20px" id="set-info-lbl">ℹ️ アプリじょうほう</div>
   <div class="settings-card">
     <div class="settings-icon">📱</div>
     <div class="settings-info">
-      <div class="settings-title">Schedule App</div>
+      <div class="settings-title">スケジュールアプリ</div>
       <div class="settings-desc" id="dataStats">よみこみちゅう...</div>
     </div>
   </div>
@@ -324,8 +324,8 @@
     </div>
     <div class="fg"><label class="fl" id="mc-icon-lbl">アイコン（写真がないときにひょうじ）</label><div class="ep" id="mcEmojiPicker"></div></div>
     <div class="modal-actions">
-      <button class="btn-cancel" id="mc-cancel" onclick="closeMycardModal()">Cancel</button>
-      <button class="btn-save" id="mc-save" onclick="saveMycard()">Save</button>
+      <button class="btn-cancel" id="mc-cancel" onclick="closeMycardModal()">やめる</button>
+      <button class="btn-save" id="mc-save" onclick="saveMycard()">ほぞん</button>
     </div>
   </div>
 </div>
@@ -383,7 +383,7 @@
 <!-- STEP MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
-    <div class="modal-title" id="modalTitle">Add Step</div>
+    <div class="modal-title" id="modalTitle">新しいステップをついか</div>
     <div class="fg"><label class="fl" id="modal-name-lbl">なまえ</label><input class="fi" id="inputJp" placeholder="例: がっこうにいく" maxlength="30"></div>
     <div class="fg"><label class="fl" id="modal-icon-lbl">アイコン</label><div class="ep" id="emojiPicker"></div></div>
     <div class="fg">
@@ -396,8 +396,8 @@
       <div id="chainEntriesEditor"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn-cancel" id="modal-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-save" id="modal-save" onclick="saveStep()">Save</button>
+      <button class="btn-cancel" id="modal-cancel" onclick="closeModal()">やめる</button>
+      <button class="btn-save" id="modal-save" onclick="saveStep()">ほぞん</button>
     </div>
   </div>
 </div>

@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>今日のスケジュール</title>
+<title>スケジュールアプリ</title>
+<meta name="author" content="OCW-1027">
+<meta name="copyright" content="© 2025 OCW-1027. All Rights Reserved.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="発達障害のある子どもの意思疎通をサポートするスケジュールアプリ。非営利目的の個人使用に限り無料。無断複製・商業利用禁止。">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{--sky:#E8F4FD;--blue:#4A90D9;--blue-dark:#2C6FAC;--green:#5CB85C;--green-light:#EAF7EA;--orange:#FF8C42;--orange-light:#FFF3EB;--pink:#F06292;--pink-light:#FDE8F0;--yellow:#FFD54F;--yellow-light:#FFFDE7;--purple:#9C6FD6;--purple-light:#F3EDFF;--gray:#F5F5F5;--text:#2D2D2D;--text-light:#888;--radius:20px;--shadow:0 4px 16px rgba(0,0,0,0.12);}
@@ -150,6 +154,10 @@
   .settings-btn{border:none;border-radius:10px;padding:10px 14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;}
   .settings-btn.green{background:var(--green);color:white;box-shadow:0 2px 8px rgba(92,184,92,0.4);}
   .settings-btn.blue{background:var(--blue);color:white;box-shadow:0 2px 8px rgba(74,144,217,0.4);}
+  .copyright-box{background:white;border-radius:16px;padding:16px 18px;margin-bottom:10px;box-shadow:var(--shadow);border-left:4px solid var(--blue);}
+  .copyright-title{font-size:14px;font-weight:800;color:var(--blue-dark);margin-bottom:10px;}
+  .copyright-body{font-size:11px;font-weight:600;color:var(--text-light);line-height:1.8;}
+  .copyright-body strong{display:block;margin-top:6px;margin-bottom:2px;font-size:12px;font-weight:800;color:var(--text);}
   .settings-note{background:var(--yellow-light);border-radius:14px;padding:12px 14px;font-size:12px;font-weight:600;color:#7B6000;line-height:1.6;}
   /* MYCARD */
   .mycard-section{margin-bottom:4px;}
@@ -268,8 +276,29 @@
   <div class="settings-card">
     <div class="settings-icon">📱</div>
     <div class="settings-info">
-      <div class="settings-title">リオのスケジュールアプリ</div>
+      <div class="settings-title">スケジュールアプリ</div>
       <div class="settings-desc" id="dataStats">よみこみちゅう...</div>
+    </div>
+  </div>
+
+  <div class="sec-lbl" style="margin-top:20px">⚖️ ちょさくけん / 저작권</div>
+  <div class="copyright-box">
+    <div class="copyright-title">© 2025 OCW-1027. All Rights Reserved.</div>
+    <div class="copyright-body">
+      このアプリケーションおよびそのすべてのコンテンツ（デザイン・コード・構成・機能を含む）は、著作権法により保護されています。<br><br>
+      <strong>허용 / きょか</strong><br>
+      · 個人・家庭での非営利目的の使用<br>
+      · 障害を持つ子どもの支援を目的とした個人的な使用<br><br>
+      <strong>禁止 / きんし</strong><br>
+      · 本アプリの複製・改変・再配布・販売<br>
+      · 商業目的での使用・転用<br>
+      · コードの無断コピーおよび二次配布<br>
+      · 本アプリを基にした類似サービスの作成・公開<br><br>
+      <strong>비상업적 무료 사용 안내</strong><br>
+      본 앱은 발달장애 아동의 의사소통 지원을 위해 제작되었으며, 개인·가정 내 비영리 목적에 한하여 무료로 사용할 수 있습니다.<br>
+      무단 복제, 상업적 이용, 코드 도용 및 유사 서비스 제작·배포는 엄격히 금지합니다.<br>
+      저작권법에 의해 보호되며, 위반 시 법적 조치를 취할 수 있습니다.<br><br>
+      문의: <span style="color:var(--blue-dark);font-weight:700">ocw-1027@github</span>
     </div>
   </div>
 </div>
@@ -879,6 +908,8 @@ function speak(jp,ko){if('speechSynthesis' in window){window.speechSynthesis.can
 
 buildLibrary();
 openDB().then(loadAll);
+console.log('%c© 2025 OCW-1027. All Rights Reserved.', 'color:#2C6FAC;font-weight:bold;font-size:14px;');
+console.log('%c무단 복제 및 상업적 이용을 금지합니다. 저작권법에 의해 보호됩니다.', 'color:#888;font-size:12px;');
 </script>
 </body>
 </html>
